@@ -14,7 +14,7 @@ public class Journals {
 
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer jid;
+    private Integer journalId;
     private String jtitle;
     private String jcontents;
     private LocalDateTime jdatetime;
@@ -23,7 +23,7 @@ public class Journals {
 
     // 외래키 참조
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "userbid")
+    @JoinColumn(name = "book_uid")
     private UserBooks userBooks;
 
     public void setUserBooks(UserBooks userBooks) {
