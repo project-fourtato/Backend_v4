@@ -13,12 +13,11 @@ import java.util.List;
 public class Profile {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_uid")
     private Integer profileUid;
     private String nickname;
-    private String userImageUrl;
-    private String userImageName;
-    private String userMessage;
+    private String userimageUrl;
+    private String userimageName;
+    private String usermessage;
 
     // 외래키 참조
     @OneToOne
@@ -32,7 +31,7 @@ public class Profile {
     @OneToMany(mappedBy = "profile")
     private List<Interests> interests = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromUserId")
+    @OneToMany(mappedBy = "profile")
     private List<Follow> follow = new ArrayList<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -66,16 +65,16 @@ public class Profile {
 
     public Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
         this.nickname = nickname;
-        this.userImageUrl = userImageUrl;
-        this.userImageName = userImageName;
-        this.userMessage = userMessage;
+        this.userimageUrl = userImageUrl;
+        this.userimageName = userImageName;
+        this.usermessage = userMessage;
     }
 
     // 수정 메서드
     public Profile change(String userImageUrl, String userImageName, String userMessage) {
-        this.userImageUrl = userImageUrl;
-        this.userImageName = userImageName;
-        this.userMessage = userMessage;
+        this.userimageUrl = userImageUrl;
+        this.userimageName = userImageName;
+        this.usermessage = userMessage;
 
         return this;
     }

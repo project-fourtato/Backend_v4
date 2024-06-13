@@ -17,10 +17,10 @@ public class Follow {
     // 외래키 참조
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name= "from_user_id", referencedColumnName = "profile_uid")
-    private Profile fromUserId;
+    private Profile profile;
 
     public void setProfile(Profile profile) {
-        this.fromUserId = profile;
+        this.profile = profile;
     }
     public Follow() {}
     public Follow(Integer toUserId) {

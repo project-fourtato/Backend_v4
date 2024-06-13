@@ -21,14 +21,14 @@ public class DirectMessage {
     private LocalDateTime mdate;
 
     @OneToMany(mappedBy = "directMessage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
+    private List<ProfileDirectM> profileDirectM = new ArrayList<>();
 
     private Integer senderUid;
 
     private Integer recipientUid;
 
     public void setProfileDirectM(ProfileDirectM profileDirectMs) {
-        this.profileDirectMs.add(profileDirectMs);
+        this.profileDirectM.add(profileDirectMs);
         profileDirectMs.setDirectMessage(this);
     }
     public DirectMessage() {}
