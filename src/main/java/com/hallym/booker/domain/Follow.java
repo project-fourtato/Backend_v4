@@ -12,7 +12,7 @@ public class Follow {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer followId;
-    private String toUserId;
+    private Integer toUserId;
 
     // 외래키 참조
     @ManyToOne(fetch = LAZY)
@@ -23,12 +23,12 @@ public class Follow {
         this.fromUserId = profile;
     }
     public Follow() {}
-    public Follow(String toUserId) {
+    public Follow(Integer toUserId) {
         this.toUserId = toUserId;
     }
 
     // 생성 메서드
-    public static Follow create(Profile profile, String toUserId){
+    public static Follow create(Profile profile, Integer toUserId){
         Follow follows = new Follow(toUserId);
         follows.setProfile(profile);
         return follows;

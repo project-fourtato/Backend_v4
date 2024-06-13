@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -13,13 +16,12 @@ public class ProfileDirectM {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer profileDirectMId;
 
-    // 이건... GPT의 도움을 받은 거라... 이렇게 해도 될지 모르겠네 ㅠㅠㅠ
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_uid")
     private Profile profile;
 
-    @OneToOne
-    @JoinColumn(name = "message_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "message_uid")
     private DirectMessage directMessage;
 
     public void setProfile(Profile profile) {

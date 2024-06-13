@@ -37,9 +37,6 @@ public class Profile {
     @OneToMany(mappedBy = "profileUid", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profileUid")
-    private List<DirectMessage> directMessages = new ArrayList<>();
-
     public void setLogin(Login login) {
         this.login = login;
     }
@@ -57,10 +54,7 @@ public class Profile {
         this.follow.add(follow);
         follow.setProfile(this);
     }
-    public void setDirectMessage(DirectMessage directMessages) {
-        this.directMessages.add(directMessages);
-        directMessages.setRecipientUid(this);
-    }
+
     public void setProfileDirectM(ProfileDirectM profileDirectMs) {
         this.profileDirectMs.add(profileDirectMs);
         profileDirectMs.setProfile(this);
@@ -95,9 +89,6 @@ public class Profile {
         }
         if (profileDirectMs != null) {
             profile.setProfileDirectM(profileDirectMs);
-        }
-        if (directMessages != null) {
-            profile.setDirectMessage(directMessages);
         }
         if (follow != null) {
             profile.setFollow(follow);

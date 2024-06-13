@@ -18,6 +18,7 @@ public class Login {
     @OneToOne(mappedBy = "login", cascade = CascadeType.REMOVE)
     private Profile profile;
 
+    // 연관관계 메서드
     public void setProfile(Profile profile) {
         this.profile = profile;
         profile.setLogin(this);

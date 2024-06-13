@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,30 +20,17 @@ public class DirectMessage {
     private String mcontents;
     private LocalDateTime mdate;
 
-    // 이건... GPT의 도움을 받은 거라... 이렇게 해도 될지 모르겠네 ㅠㅠㅠ
-    @ManyToOne
-    @JoinColumn(name = "sender_uid")
-    private Profile senderUid;
+    @OneToMany(mappedBy = "messageId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "recipient_uid")
-    private Profile recipientUid;
+    private Integer senderUid;
 
-    // 부모일 때 가지는 거
-    @OneToOne(mappedBy = "messageId")
-    private ProfileDirectM profileDirectM;
+    private Integer recipientUid;
 
-    public void setSenderUid(Profile senderUid) {
-        this.senderUid = senderUid;
+    public void setProfileDirectM(ProfileDirectM profileDirectMs) {
+        this.profileDirectMs.add(profileDirectMs);
+        profileDirectMs.setDirectMessage(this);
     }
-
-    public void setRecipientUid(Profile recipientUid) {
-        this.recipientUid = recipientUid;
-    }
-    public void setProfileDirectM(ProfileDirectM profileDirectM) {
-        this.profileDirectM = profileDirectM;
-    }
-
     public DirectMessage() {}
 
     public DirectMessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate) {
@@ -59,7 +48,7 @@ public class DirectMessage {
     }
 
     // 생성 메서드
-    public static DirectMessage create(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Profile senderUid, Profile recipientUid, ProfileDirectM profileDirectM){
+    public static DirectMessage create(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Integer senderUid, Integer recipientUid, ProfileDirectM profileDirectM){
         DirectMessage directMessage = new DirectMessage(mcheck, mtitle, mcontents, mdate);
         directMessage.setSenderUid(senderUid);
         directMessage.setRecipientUid(recipientUid);
