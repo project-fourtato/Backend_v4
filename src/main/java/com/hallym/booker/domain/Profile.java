@@ -28,13 +28,13 @@ public class Profile {
     @OneToMany(mappedBy = "profile")
     private List<UserBooks> userBooks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profileUid")
+    @OneToMany(mappedBy = "profile")
     private List<Interests> interests = new ArrayList<>();
 
     @OneToMany(mappedBy = "fromUserId")
     private List<Follow> follow = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profileUid", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
     public void setLogin(Login login) {
