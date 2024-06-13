@@ -8,6 +8,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -19,11 +21,11 @@ public class UserBooks {
     private Integer saleStatus;
 
     // 외래키 참조
-    @OneToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "isbn")
     private BookDetails bookDetails;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "profile_uid")
     private Profile profile;
 

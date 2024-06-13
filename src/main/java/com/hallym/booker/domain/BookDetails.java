@@ -2,9 +2,13 @@ package com.hallym.booker.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,11 +23,11 @@ public class BookDetails {
     private String coverImageUrl;
 
     // 부모일 때 가지는 거
-    @OneToOne(mappedBy = "isbn")
-    private UserBooks userBooks;
+    @OneToMany(mappedBy = "bookDetails")
+    private List<UserBooks> userBooks = new ArrayList<>();
 
     public void setUserBooks(UserBooks userBooks) {
-        this.userBooks = userBooks;
+        this.userBooks.add(userBooks);
         userBooks.setBookDetails(this);
     }
 

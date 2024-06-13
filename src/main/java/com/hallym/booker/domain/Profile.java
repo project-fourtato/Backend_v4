@@ -25,7 +25,7 @@ public class Profile {
     private Login login;
 
     // 부모일 때 가지는 거
-    @OneToMany(mappedBy = "profileUid")
+    @OneToMany(mappedBy = "profile")
     private List<UserBooks> userBooks = new ArrayList<>();
 
     @OneToMany(mappedBy = "profileUid")
