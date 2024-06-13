@@ -20,7 +20,7 @@ public class DirectMessage {
     private String mcontents;
     private LocalDateTime mdate;
 
-    @OneToMany(mappedBy = "messageId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "directMessage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
     private Integer senderUid;

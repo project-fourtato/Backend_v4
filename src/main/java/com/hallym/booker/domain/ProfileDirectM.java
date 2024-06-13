@@ -21,7 +21,7 @@ public class ProfileDirectM {
     private Profile profile;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_uid")
+    @JoinColumn(name = "message_id")
     private DirectMessage directMessage;
 
     public void setProfile(Profile profile) {
