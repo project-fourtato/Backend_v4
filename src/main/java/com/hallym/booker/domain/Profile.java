@@ -20,7 +20,7 @@ public class Profile {
     private String usermessage;
 
     // 외래키 참조
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "login_uid")
     private Login login;
 

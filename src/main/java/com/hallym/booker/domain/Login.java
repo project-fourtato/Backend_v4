@@ -15,7 +15,7 @@ public class Login {
 
     // 부모일 때 가지는 거
     // foreign key constraint fails 에러를 위한 생쿼리문
-    @OneToOne(mappedBy = "login", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "login", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Profile profile;
 
     // 연관관계 메서드
