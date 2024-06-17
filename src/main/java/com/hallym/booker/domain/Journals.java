@@ -14,7 +14,7 @@ public class Journals {
 
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer journalId;
+    private Long journalId;
     private String jtitle;
     private String jcontents;
     private LocalDateTime jdatetime;

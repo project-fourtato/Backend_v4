@@ -16,7 +16,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class UserBooks {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bookUid;
+    private Long bookUid;
     private Integer readStatus;
     private Integer saleStatus;
 

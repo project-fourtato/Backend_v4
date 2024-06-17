@@ -14,7 +14,7 @@ public class ProfileDirectM {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer profileDirectmId;
+    private Long profileDirectmId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_uid")

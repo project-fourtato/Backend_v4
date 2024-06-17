@@ -14,7 +14,7 @@ import java.util.List;
 public class DirectMessage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer messageId;
+    private Long messageId;
     private Integer mcheck;
     private String mtitle;
     private String mcontents;

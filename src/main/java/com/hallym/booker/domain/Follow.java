@@ -11,7 +11,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class Follow {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer followId;
+    private Long followId;
     private Integer toUserId;
 
     // 외래키 참조

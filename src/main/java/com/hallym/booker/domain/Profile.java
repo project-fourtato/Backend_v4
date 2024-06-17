@@ -13,7 +13,7 @@ import java.util.List;
 public class Profile {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer profileUid;
+    private Long profileUid;
     private String nickname;
     private String userimageUrl;
     private String userimageName;
