@@ -3,6 +3,8 @@ package com.hallym.booker.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.Date;
+
 @Entity
 @Getter
 public class Login {
@@ -11,7 +13,8 @@ public class Login {
     private String loginUid;
     private String pw;
     private String email;
-    private String birth;
+    @Temporal(TemporalType.DATE)
+    private Date birth;
 
     @OneToOne(mappedBy = "login", fetch = FetchType.LAZY)
     private Profile profile;
@@ -19,7 +22,7 @@ public class Login {
     // 생성자
     public Login() {}
 
-    public Login(String loginUid, String pw, String email, String birth) {
+    public Login(String loginUid, String pw, String email, Date birth) {
         this.loginUid = loginUid;
         this.pw = pw;
         this.email = email;
@@ -27,7 +30,7 @@ public class Login {
     }
 
     // 수정 메서드
-    public Login change(String pw, String email, String birth) {
+    public Login change(String pw, String email, Date birth) {
         this.pw = pw;
         this.email = email;
         this.birth = birth;
@@ -36,7 +39,7 @@ public class Login {
     }
 
     // 생성 메서드
-    public static Login create(String loginUid, String pw, String email, String birth){
+    public static Login create(String loginUid, String pw, String email, Date birth){
         Login login = new Login(loginUid, pw, email, birth);
         return login;
     }
