@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 public class ProfileDirectM {
 
     @Id
@@ -24,23 +23,25 @@ public class ProfileDirectM {
     @JoinColumn(name = "message_id")
     private DirectMessage directMessage;
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
-
-    public void setDirectMessage(DirectMessage directMessage) {
-        this.directMessage = directMessage;
-    }
-
     // 생성자
     public ProfileDirectM() {}
 
     // 생성 메서드
     public static ProfileDirectM create(Profile profile, DirectMessage directMessage) {
         ProfileDirectM profileDirectM = new ProfileDirectM();
-        profileDirectM.setProfile(profile);
-        profileDirectM.setDirectMessage(directMessage);
-
+        profileDirectM.changeProfile(profile);
+        profileDirectM.changeDirectMessage(directMessage);
         return profileDirectM;
     }
+
+    //연관관계 편의 메서드
+    private void changeProfile(Profile profile){
+        this.profile = profile;
+        profile.getProfileDirectMs().add(this);
+    }
+    private void changeDirectMessage(DirectMessage directMessage){
+        this.directMessage = directMessage;
+        directMessage.getProfileDirectM().add(this);
+    }
+
 }

@@ -13,16 +13,8 @@ public class Login {
     private String email;
     private String birth;
 
-    // 부모일 때 가지는 거
-    // foreign key constraint fails 에러를 위한 생쿼리문
-    @OneToOne(mappedBy = "login", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "login", fetch = FetchType.LAZY)
     private Profile profile;
-
-    // 연관관계 메서드
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-        profile.setLogin(this);
-    }
 
     // 생성자
     public Login() {}
@@ -44,10 +36,12 @@ public class Login {
     }
 
     // 생성 메서드
-    public static Login create(Profile profile, String loginUid, String pw, String email, String birth){
+    public static Login create(String loginUid, String pw, String email, String birth){
         Login login = new Login(loginUid, pw, email, birth);
-        login.setProfile(profile);
-
         return login;
+    }
+
+    protected void setProfile(Profile profile) { //1대1의 경우도 한 쪽에서만 연관관계편의메서드를 만들면 됨. 그것을 위한 setter
+        this.profile = profile;
     }
 }

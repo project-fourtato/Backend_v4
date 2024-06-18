@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
-@Setter
 public class Journals {
 
 
@@ -26,10 +25,6 @@ public class Journals {
     @JoinColumn(name = "book_uid")
     private UserBooks userBooks;
 
-    public void setUserBooks(UserBooks userBooks) {
-        this.userBooks = userBooks;
-    }
-
     public Journals() {}
     public Journals(String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
@@ -39,21 +34,26 @@ public class Journals {
         this.jimageName = jimageName;
     }
 
+    // 생성 메서드
+    public static Journals create(UserBooks userBooks, String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName){
+        Journals journals = new Journals(jtitle, jcontents, jdatetime, jimageUrl, jimageName);
+        journals.changeUserBooks(userBooks);
+        return journals;
+    }
+
+    //연관관계 편의 메서드
+    private void changeUserBooks(UserBooks userBooks) {
+        this.userBooks = userBooks;
+        userBooks.getJournals().add(this);
+    }
+
     // 수정 메서드
     public Journals change(String jtitle, String jcontents, String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
         this.jcontents = jcontents;
         this.jimageUrl = jimageUrl;
         this.jimageName = jimageName;
-
         return this;
     }
 
-    // 생성 메서드
-    public static Journals create(UserBooks userBooks, String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName){
-        Journals journals = new Journals(jtitle, jcontents, jdatetime, jimageUrl, jimageName);
-        journals.setUserBooks(userBooks);
-
-        return journals;
-    }
 }

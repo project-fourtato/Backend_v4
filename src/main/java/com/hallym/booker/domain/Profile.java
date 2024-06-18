@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 public class Profile {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +18,10 @@ public class Profile {
     private String userimageName;
     private String usermessage;
 
-    // 외래키 참조
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "login_uid")
     private Login login;
 
-    // 부모일 때 가지는 거
     @OneToMany(mappedBy = "profile")
     private List<UserBooks> userBooks = new ArrayList<>();
 
@@ -37,29 +34,6 @@ public class Profile {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
-    public void setLogin(Login login) {
-        this.login = login;
-    }
-
-    public void setUserBooks(UserBooks userBooks) {
-        this.userBooks.add(userBooks);
-        userBooks.setProfile(this);
-    }
-
-    public void setInterests(Interests interests) {
-        this.interests.add(interests);
-        interests.setProfile(this);
-    }
-    public void setFollow(Follow follow) {
-        this.follow.add(follow);
-        follow.setProfile(this);
-    }
-
-    public void setProfileDirectM(ProfileDirectM profileDirectMs) {
-        this.profileDirectMs.add(profileDirectMs);
-        profileDirectMs.setProfile(this);
-    }
-
     // 생성자
     public Profile() {}
 
@@ -70,6 +44,19 @@ public class Profile {
         this.usermessage = userMessage;
     }
 
+    // 생성 메서드
+    public static Profile create(Login login, String nickname, String userImageUrl, String userImageName, String userMessage) {
+        Profile profile = new Profile(nickname, userImageUrl, userImageName, userMessage);
+        profile.changeLogin(login);
+        return profile;
+    }
+
+    //연관관계 편의메서드
+    private void changeLogin(Login login) {
+        this.login = login;
+        login.setProfile(this);
+    }
+
     // 수정 메서드
     public Profile change(String userImageUrl, String userImageName, String userMessage) {
         this.userimageUrl = userImageUrl;
@@ -77,28 +64,6 @@ public class Profile {
         this.usermessage = userMessage;
 
         return this;
-    }
-
-    // 생성 메서드
-    public static Profile create(Login login, Follow follow, Interests interests, UserBooks userBooks, ProfileDirectM profileDirectMs, DirectMessage directMessages, String nickname, String userImageUrl, String userImageName, String userMessage) {
-        Profile profile = new Profile(nickname, userImageUrl, userImageName, userMessage);
-        profile.setLogin(login);
-
-        if (userBooks != null) {
-            profile.setUserBooks(userBooks);
-        }
-        if (profileDirectMs != null) {
-            profile.setProfileDirectM(profileDirectMs);
-        }
-        if (follow != null) {
-            profile.setFollow(follow);
-        }
-        profile.setLogin(login);
-        if (interests != null) {
-            profile.setInterests(interests);
-        }
-
-        return profile;
     }
 
 }

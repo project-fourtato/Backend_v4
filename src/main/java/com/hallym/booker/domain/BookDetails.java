@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 public class BookDetails {
 
     @Id
@@ -22,14 +21,8 @@ public class BookDetails {
     private String publisher;
     private String coverImageUrl;
 
-    // 부모일 때 가지는 거
     @OneToMany(mappedBy = "bookDetails")
     private List<UserBooks> userBooks = new ArrayList<>();
-
-    public void setUserBooks(UserBooks userBooks) {
-        this.userBooks.add(userBooks);
-        userBooks.setBookDetails(this);
-    }
 
     // 생성자
     public BookDetails() {}
@@ -43,12 +36,8 @@ public class BookDetails {
     }
 
     // 생성 메서드
-    public static BookDetails create(UserBooks userBooks, String isbn, String bookTitle, String author, String publisher, String coverImageUrl){
+    public static BookDetails create(String isbn, String bookTitle, String author, String publisher, String coverImageUrl){
         BookDetails bookDetails = new BookDetails(isbn, bookTitle, author, publisher, coverImageUrl);
-        if(userBooks != null) {
-            bookDetails.setUserBooks(userBooks);
-        }
-
         return bookDetails;
     }
 

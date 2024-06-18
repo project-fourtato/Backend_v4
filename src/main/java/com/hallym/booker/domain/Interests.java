@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 public class Interests {
 
     @Id
@@ -30,15 +29,20 @@ public class Interests {
     // 수정 메서드
     public Interests update(String interestName) {
         this.interestName = interestName;
-
         return this;
     }
 
     // 생성 메서드
     public static Interests create(String interestName, Profile profile){
         Interests interests = new Interests(interestName);
-        interests.setProfile(profile);
-
+        interests.changeProfile(profile);
         return interests;
     }
+
+    //연관관계 편의 메서드
+    private void changeProfile(Profile profile){
+        this.profile = profile;
+        profile.getInterests().add(this);
+    }
+
 }
