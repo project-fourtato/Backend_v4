@@ -21,7 +21,7 @@ public class BookDetails {
     private String publisher;
     private String coverImageUrl;
 
-    @OneToMany(mappedBy = "bookDetails")
+    @OneToMany(mappedBy = "bookDetails") //유저가 저장한 책이 삭제되어도 책 상세정보는 그대로이다. 즉 종속적이지 않으므로 영속성 전이 코드 X
     private List<UserBooks> userBooks = new ArrayList<>();
 
     // 생성자
