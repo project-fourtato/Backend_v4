@@ -16,8 +16,8 @@ public class Login {
     @Temporal(TemporalType.DATE)
     private Date birth;
 
-    @OneToOne(mappedBy = "login", fetch = FetchType.LAZY)
-    private Profile profile;
+    @OneToOne(mappedBy = "login", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Profile profile; //Login이 Profile의 부모이므로, 나중에 회원 삭제 시 login 객체를 삭제하면 된다.
 
     // 생성자
     public Login() {}

@@ -27,7 +27,7 @@ public class UserBooks {
     @JoinColumn(name = "profile_uid")
     private Profile profile;
 
-    @OneToMany(mappedBy = "userBooks")
+    @OneToMany(mappedBy = "userBooks", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Journals> journals = new ArrayList<>();
 
     // 생성자
