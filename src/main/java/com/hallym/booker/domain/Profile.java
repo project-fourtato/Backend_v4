@@ -2,7 +2,6 @@ package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class Profile {
     // 생성자
     public Profile() {}
 
-    public Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
+    private Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
         this.nickname = nickname;
         this.userimageUrl = userImageUrl;
         this.userimageName = userImageName;
@@ -47,12 +46,12 @@ public class Profile {
     // 생성 메서드
     public static Profile create(Login login, String nickname, String userImageUrl, String userImageName, String userMessage) {
         Profile profile = new Profile(nickname, userImageUrl, userImageName, userMessage);
-        profile.changeLogin(login);
+        profile.addLogin(login);
         return profile;
     }
 
     //연관관계 편의메서드
-    private void changeLogin(Login login) {
+    private void addLogin(Login login) {
         this.login = login;
         login.setProfile(this);
     }

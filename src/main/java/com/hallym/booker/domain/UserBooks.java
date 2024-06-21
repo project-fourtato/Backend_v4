@@ -3,7 +3,6 @@ package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ public class UserBooks {
     // 생성자
     public UserBooks() {}
 
-    public UserBooks(Integer readStatus, Integer saleStatus) {
+    private UserBooks(Integer readStatus, Integer saleStatus) {
         this.readStatus = readStatus;
         this.saleStatus = saleStatus;
     }
@@ -41,17 +40,17 @@ public class UserBooks {
     // 생성 메서드
     public static UserBooks create(Profile profile, BookDetails bookDetails, Integer readStatus, Integer saleStatus) {
         UserBooks userBooks = new UserBooks(readStatus, saleStatus);
-        userBooks.changeProfile(profile);
-        userBooks.changeBookDetails(bookDetails);
+        userBooks.addProfile(profile);
+        userBooks.addBookDetails(bookDetails);
         return userBooks;
     }
 
     //연관관계 편의 메서드
-    private void changeProfile(Profile profile){
+    private void addProfile(Profile profile){
         this.profile = profile;
         profile.getUserBooks().add(this);
     }
-    private void changeBookDetails(BookDetails bookDetails){
+    private void addBookDetails(BookDetails bookDetails){
         this.bookDetails = bookDetails;
         bookDetails.getUserBooks().add(this);
     }

@@ -28,7 +28,7 @@ public class DirectMessage {
 
     public DirectMessage() {}
 
-    public DirectMessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
+    private DirectMessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
         this.mcheck = mcheck;
         this.mtitle = mtitle;
         this.mcontents = mcontents;

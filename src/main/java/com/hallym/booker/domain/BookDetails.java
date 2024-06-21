@@ -27,7 +27,7 @@ public class BookDetails {
     // 생성자
     public BookDetails() {}
 
-    public BookDetails(String isbn, String bookTitle, String author, String publisher, String coverImageUrl) {
+    private BookDetails(String isbn, String bookTitle, String author, String publisher, String coverImageUrl) {
         this.isbn = isbn;
         this.bookTitle = bookTitle;
         this.author = author;

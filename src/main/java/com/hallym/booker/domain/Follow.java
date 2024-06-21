@@ -2,7 +2,6 @@ package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import static jakarta.persistence.FetchType.LAZY;
 @Entity
@@ -19,19 +18,19 @@ public class Follow {
     private Profile profile;
 
     public Follow() {}
-    public Follow(Long toUserId) {
+    private Follow(Long toUserId) {
         this.toUserId = toUserId;
     }
 
     // 생성 메서드
     public static Follow create(Profile profile, Long toUserId){
         Follow follows = new Follow(toUserId);
-        follows.changeProfile(profile);
+        follows.addProfile(profile);
         return follows;
     }
 
     //연관관계 편의 메서드
-    private void changeProfile(Profile profile){
+    private void addProfile(Profile profile){
         this.profile = profile;
         profile.getFollow().add(this);
     }

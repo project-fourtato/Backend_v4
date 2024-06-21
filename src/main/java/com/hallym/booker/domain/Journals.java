@@ -2,7 +2,6 @@ package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +25,7 @@ public class Journals {
     private UserBooks userBooks;
 
     public Journals() {}
-    public Journals(String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName) {
+    private Journals(String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
         this.jcontents = jcontents;
         this.jdatetime = jdatetime;
@@ -37,12 +36,12 @@ public class Journals {
     // 생성 메서드
     public static Journals create(UserBooks userBooks, String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName){
         Journals journals = new Journals(jtitle, jcontents, jdatetime, jimageUrl, jimageName);
-        journals.changeUserBooks(userBooks);
+        journals.addUserBooks(userBooks);
         return journals;
     }
 
     //연관관계 편의 메서드
-    private void changeUserBooks(UserBooks userBooks) {
+    private void addUserBooks(UserBooks userBooks) {
         this.userBooks = userBooks;
         userBooks.getJournals().add(this);
     }

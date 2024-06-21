@@ -22,7 +22,7 @@ public class Login {
     // 생성자
     public Login() {}
 
-    public Login(String loginUid, String pw, String email, Date birth) {
+    private Login(String loginUid, String pw, String email, Date birth) {
         this.loginUid = loginUid;
         this.pw = pw;
         this.email = email;
