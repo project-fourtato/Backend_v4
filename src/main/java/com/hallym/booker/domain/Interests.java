@@ -1,10 +1,13 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Interests {
 
     @Id
@@ -17,9 +20,6 @@ public class Interests {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_uid")
     private Profile profile;
-
-    // 생성자
-    protected Interests() {}
 
     private Interests(String interestName) {
         this.interestName = interestName;

@@ -1,7 +1,9 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DirectMessage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +28,6 @@ public class DirectMessage {
     private Long senderUid;
 
     private Long recipientUid;
-
-    protected DirectMessage() {}
 
     private DirectMessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
         this.mcheck = mcheck;

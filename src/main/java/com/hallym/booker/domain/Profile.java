@@ -1,13 +1,16 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profile {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +35,6 @@ public class Profile {
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
-
-    // 생성자
-    protected Profile() {}
 
     private Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
         this.nickname = nickname;

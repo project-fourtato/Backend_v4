@@ -1,11 +1,14 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +20,6 @@ public class Follow {
     @JoinColumn(name= "from_user_id")
     private Profile profile;
 
-    protected Follow() {}
     private Follow(Long toUserId) {
         this.toUserId = toUserId;
     }

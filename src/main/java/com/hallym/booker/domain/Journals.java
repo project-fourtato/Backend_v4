@@ -1,13 +1,16 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Journals {
 
 
@@ -24,7 +27,6 @@ public class Journals {
     @JoinColumn(name = "book_uid")
     private UserBooks userBooks;
 
-    protected Journals() {}
     private Journals(String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
         this.jcontents = jcontents;

@@ -1,10 +1,13 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileDirectM {
 
     @Id
@@ -18,9 +21,6 @@ public class ProfileDirectM {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "message_id")
     private DirectMessage directMessage;
-
-    // 생성자
-    protected ProfileDirectM() {}
 
     // 생성 메서드
     public static ProfileDirectM create(Profile profile, DirectMessage directMessage) {
