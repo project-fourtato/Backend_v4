@@ -20,7 +20,7 @@ public class ProfileDirectM {
     private DirectMessage directMessage;
 
     // 생성자
-    public ProfileDirectM() {}
+    protected ProfileDirectM() {}
 
     // 생성 메서드
     public static ProfileDirectM create(Profile profile, DirectMessage directMessage) {

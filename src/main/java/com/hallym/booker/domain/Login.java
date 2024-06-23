@@ -20,7 +20,7 @@ public class Login {
     private Profile profile; //Login이 Profile의 부모이므로, 나중에 회원 삭제 시 login 객체를 삭제하면 된다.
 
     // 생성자
-    public Login() {}
+    protected Login() {}
 
     private Login(String loginUid, String pw, String email, Date birth) {
         this.loginUid = loginUid;

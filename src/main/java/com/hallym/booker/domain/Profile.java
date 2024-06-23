@@ -34,7 +34,7 @@ public class Profile {
     private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
 
     // 생성자
-    public Profile() {}
+    protected Profile() {}
 
     private Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
         this.nickname = nickname;

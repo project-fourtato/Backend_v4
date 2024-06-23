@@ -30,7 +30,7 @@ public class UserBooks {
     private List<Journals> journals = new ArrayList<>();
 
     // 생성자
-    public UserBooks() {}
+    protected UserBooks() {}
 
     private UserBooks(Integer readStatus, Integer saleStatus) {
         this.readStatus = readStatus;

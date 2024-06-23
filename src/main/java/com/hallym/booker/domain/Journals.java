@@ -24,7 +24,7 @@ public class Journals {
     @JoinColumn(name = "book_uid")
     private UserBooks userBooks;
 
-    public Journals() {}
+    protected Journals() {}
     private Journals(String jtitle, String jcontents, LocalDateTime jdatetime,String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
         this.jcontents = jcontents;

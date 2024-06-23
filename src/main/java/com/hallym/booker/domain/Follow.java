@@ -17,7 +17,7 @@ public class Follow {
     @JoinColumn(name= "from_user_id")
     private Profile profile;
 
-    public Follow() {}
+    protected Follow() {}
     private Follow(Long toUserId) {
         this.toUserId = toUserId;
     }

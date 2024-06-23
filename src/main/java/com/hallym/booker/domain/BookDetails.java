@@ -25,7 +25,7 @@ public class BookDetails {
     private List<UserBooks> userBooks = new ArrayList<>();
 
     // 생성자
-    public BookDetails() {}
+    protected BookDetails() {}
 
     private BookDetails(String isbn, String bookTitle, String author, String publisher, String coverImageUrl) {
         this.isbn = isbn;

@@ -19,7 +19,7 @@ public class Interests {
     private Profile profile;
 
     // 생성자
-    public Interests() {}
+    protected Interests() {}
 
     private Interests(String interestName) {
         this.interestName = interestName;
