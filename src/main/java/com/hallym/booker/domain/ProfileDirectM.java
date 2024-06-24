@@ -1,14 +1,13 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileDirectM {
 
     @Id
@@ -23,23 +22,20 @@ public class ProfileDirectM {
     @JoinColumn(name = "message_id")
     private DirectMessage directMessage;
 
-    // 생성자
-    public ProfileDirectM() {}
-
     // 생성 메서드
     public static ProfileDirectM create(Profile profile, DirectMessage directMessage) {
         ProfileDirectM profileDirectM = new ProfileDirectM();
-        profileDirectM.changeProfile(profile);
-        profileDirectM.changeDirectMessage(directMessage);
+        profileDirectM.addProfile(profile);
+        profileDirectM.addDirectMessage(directMessage);
         return profileDirectM;
     }
 
     //연관관계 편의 메서드
-    private void changeProfile(Profile profile){
+    private void addProfile(Profile profile){
         this.profile = profile;
         profile.getProfileDirectMs().add(this);
     }
-    private void changeDirectMessage(DirectMessage directMessage){
+    private void addDirectMessage(DirectMessage directMessage){
         this.directMessage = directMessage;
         directMessage.getProfileDirectM().add(this);
     }

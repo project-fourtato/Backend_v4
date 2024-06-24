@@ -1,11 +1,13 @@
 package com.hallym.booker.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Interests {
 
     @Id
@@ -19,10 +21,7 @@ public class Interests {
     @JoinColumn(name = "profile_uid")
     private Profile profile;
 
-    // 생성자
-    public Interests() {}
-
-    public Interests(String interestName) {
+    private Interests(String interestName) {
         this.interestName = interestName;
     }
 
@@ -35,12 +34,12 @@ public class Interests {
     // 생성 메서드
     public static Interests create(String interestName, Profile profile){
         Interests interests = new Interests(interestName);
-        interests.changeProfile(profile);
+        interests.addProfile(profile);
         return interests;
     }
 
     //연관관계 편의 메서드
-    private void changeProfile(Profile profile){
+    private void addProfile(Profile profile){
         this.profile = profile;
         profile.getInterests().add(this);
     }
