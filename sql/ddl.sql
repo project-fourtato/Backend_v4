@@ -48,16 +48,8 @@ CREATE TABLE `DIRECTMESSAGE` (
                                  `mdate` DATETIME DEFAULT NULL,
                                  `sender_uid` INT UNSIGNED NOT NULL,
                                  `recipient_uid` INT UNSIGNED NOT NULL,
+                                 FOREIGN KEY (`sender_uid`) REFERENCES `PROFILE`(`profile_uid`),
                                  PRIMARY KEY (`message_id`)
-);
-
-CREATE TABLE `PROFILE_DIRECTM` (
-                                   `profile_directm_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                   `profile_uid` INT UNSIGNED NOT NULL,
-                                   `message_id` INT UNSIGNED NOT NULL,
-                                   FOREIGN KEY (`message_id`) REFERENCES `DIRECTMESSAGE`(`message_id`),
-                                   FOREIGN KEY (`profile_uid`) REFERENCES `PROFILE`(`profile_uid`),
-                                   PRIMARY KEY (`profile_directm_id`)
 );
 
 CREATE TABLE `FOLLOW` (
