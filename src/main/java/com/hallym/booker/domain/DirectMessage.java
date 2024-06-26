@@ -4,16 +4,15 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DirectMessage {
+public class Directmessage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
@@ -22,30 +21,34 @@ public class DirectMessage {
     private String mcontents;
     private LocalDateTime mdate;
 
-    @OneToMany(mappedBy = "directMessage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProfileDirectM> profileDirectM = new ArrayList<>();
-
-    private Long senderUid;
-
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "sender_uid")
+    private Profile profile;
     private Long recipientUid;
 
-    private DirectMessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
+    private Directmessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long recipientUid) {
         this.mcheck = mcheck;
         this.mtitle = mtitle;
         this.mcontents = mcontents;
         this.mdate = mdate;
-        this.senderUid = senderUid;
         this.recipientUid = recipientUid;
     }
 
     // 생성 메서드
-    public static DirectMessage create(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid){
-        DirectMessage directMessage = new DirectMessage(mcheck, mtitle, mcontents, mdate, senderUid, recipientUid);
+    public static Directmessage create(Profile profile, Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long recipientUid){
+        Directmessage directMessage = new Directmessage(mcheck, mtitle, mcontents, mdate, recipientUid);
+        directMessage.addProfile(profile);
         return directMessage;
     }
 
+    //연관관계 편의 메서드
+    private void addProfile(Profile profile) {
+        this.profile = profile;
+        profile.getDirectmessages().add(this);
+    }
+
     // 수정 메서드
-    public DirectMessage change(Integer mcheck) {
+    public Directmessage change(Integer mcheck) {
         this.mcheck = mcheck;
         return this;
     }

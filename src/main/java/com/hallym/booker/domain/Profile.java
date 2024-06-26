@@ -34,7 +34,7 @@ public class Profile {
     private List<Follow> follow = new ArrayList<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProfileDirectM> profileDirectMs = new ArrayList<>();
+    private List<Directmessage> directmessages = new ArrayList<>();
 
     private Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
         this.nickname = nickname;
