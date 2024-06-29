@@ -20,36 +20,37 @@ public class Directmessage {
     private String mtitle;
     private String mcontents;
     private LocalDateTime mdate;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "sender_uid")
-    private Profile profile;
+    private Long senderUid;
     private Long recipientUid;
 
-    private Directmessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long recipientUid) {
+    private Directmessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
         this.mcheck = mcheck;
         this.mtitle = mtitle;
         this.mcontents = mcontents;
         this.mdate = mdate;
+        this.senderUid = senderUid;
         this.recipientUid = recipientUid;
     }
 
     // 생성 메서드
-    public static Directmessage create(Profile profile, Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long recipientUid){
-        Directmessage directMessage = new Directmessage(mcheck, mtitle, mcontents, mdate, recipientUid);
-        directMessage.addProfile(profile);
+    public static Directmessage create(Profile profile, Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid){
+        Directmessage directMessage = new Directmessage(mcheck, mtitle, mcontents, mdate, senderUid, recipientUid);
         return directMessage;
     }
 
-    //연관관계 편의 메서드
-    private void addProfile(Profile profile) {
-        this.profile = profile;
-        profile.getDirectmessages().add(this);
+    // 수정 메서드
+    public Directmessage changeMCheck(Integer mcheck) {
+        this.mcheck = mcheck;
+        return this;
     }
 
-    // 수정 메서드
-    public Directmessage change(Integer mcheck) {
-        this.mcheck = mcheck;
+    public Directmessage changeRecipientUid() {
+        this.recipientUid = -1L;
+        return this;
+    }
+
+    public Directmessage changeSenderUid() {
+        this.recipientUid = -1L;
         return this;
     }
 }
