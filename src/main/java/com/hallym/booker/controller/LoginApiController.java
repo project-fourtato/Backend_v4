@@ -25,10 +25,21 @@ public class LoginApiController {
      * 회원 등록
      */
     @PostMapping("/login/new")
-    public ResponseEntity<String> loginRegister(@RequestBody LoginDto request){
-        Login login = Login.create(request.getUid(), request.getPw(), request.getEmail(), request.getBirth());
+    public LoginResponse loginRegister(@RequestBody LoginDto loginDto, HttpServletRequest request){
+        Login login = Login.create(loginDto.getUid(), loginDto.getPw(), loginDto.getEmail(), loginDto.getBirth());
         loginservice.join(login);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+        LoginResponse loginResponse = new LoginResponse(login.getLoginUid());
+
+        //로그인 성공 처리
+
+        //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
+        HttpSession session = request.getSession(true);
+
+        //세션에 로그인 회원 정보 저장
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginResponse);
+
+        return loginResponse;
+
     }
 
     /**
