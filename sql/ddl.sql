@@ -51,22 +51,13 @@ CREATE TABLE `DIRECTMESSAGE` (
                                  PRIMARY KEY (`message_id`)
 );
 
-CREATE TABLE `FOLLOWINGS` (
-                          `followings_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                          `following_uid` INT UNSIGNED NOT NULL,
-                          `profile_uid` INT UNSIGNED NOT NULL,
-                          FOREIGN KEY (`profile_uid`) REFERENCES `PROFILE`(`profile_uid`),
-                          PRIMARY KEY (`followings_id`),
-                          CONSTRAINT `followings_uk` UNIQUE (`following_uid`, `profile_uid`)
-);
-
-CREATE TABLE `FOLLOWERS` (
-                          `followers_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                          `follower_uid` INT UNSIGNED NOT NULL,
-                          `profile_uid` INT UNSIGNED NOT NULL,
-                          FOREIGN KEY (`profile_uid`) REFERENCES `PROFILE`(`profile_uid`),
-                          PRIMARY KEY (`followers_id`),
-                          CONSTRAINT `followers_uk` UNIQUE (`follower_uid`, `profile_uid`)
+CREATE TABLE `FOLLOW` (
+                          `follow_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                          `from_user_id` INT UNSIGNED NOT NULL,
+                          `to_user_id` INT UNSIGNED NOT NULL,
+                          FOREIGN KEY (`from_user_id`) REFERENCES `PROFILE`(`profile_uid`),
+                          PRIMARY KEY (`follow_id`),
+                          CONSTRAINT `follow_uk` UNIQUE (`from_user_id`, `to_user_id`)
 );
 
 CREATE TABLE `INTERESTS` (
