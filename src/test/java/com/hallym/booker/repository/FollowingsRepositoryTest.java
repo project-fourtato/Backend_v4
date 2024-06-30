@@ -57,7 +57,7 @@ public class FollowingsRepositoryTest {
     }
 
     @Test
-    @DisplayName("followings 조회, 객체 카운팅 쿼리 테스트")
+    @DisplayName("fromUserId로 follow 객체 조회, 객체 카운팅 쿼리 테스트")
     public void findByProfile_ProfileUidAndCountTest() {
         Login loginA = Login.create("gamja", "gamgamja", "gam@gamja.com", new Date(2000, 12, 21));
         Login userALogin = loginRepository.save(loginA);
