@@ -46,8 +46,8 @@ CREATE TABLE `DIRECTMESSAGE` (
                                  `mtitle` LONGTEXT DEFAULT NULL,
                                  `mcontents` LONGTEXT DEFAULT NULL,
                                  `mdate` DATETIME DEFAULT NULL,
-                                 `sender_uid` INT UNSIGNED NOT NULL,
-                                 `recipient_uid` INT UNSIGNED NOT NULL,
+                                 `sender_uid` BIGINT NOT NULL,
+                                 `recipient_uid` BIGINT NOT NULL,
                                  PRIMARY KEY (`message_id`)
 );
 
