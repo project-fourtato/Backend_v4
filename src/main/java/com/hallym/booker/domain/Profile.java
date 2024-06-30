@@ -31,7 +31,7 @@ public class Profile {
     private List<Interests> interests = new ArrayList<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Follow> follow = new ArrayList<>();
+    private List<Followings> followings = new ArrayList<>();
 
 
     private Profile(String nickname, String userImageUrl, String userImageName, String userMessage) {
