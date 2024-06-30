@@ -43,21 +43,21 @@ public class DirectmessageRepositoryTest {
         Profile profileB = Profile.create(userBLogin, "gogumaa", "https://gogumasprofileimage.com", "gogumasprofileimage", "무력 고구마");
         Profile userProfileB = profileRepository.save(profileB);
 
-        Directmessage userAMessage = Directmessage.create(userProfileA, 1, "비가 내리면 여는 상점 책 구매할 수 있을까요?", "도서관에도 책이 없네요,,ㅠ",
-                LocalDateTime.now(), userProfileB.getProfileUid());
-        Directmessage userAToUserB = directmessageRepository.save(userAMessage);
-        Directmessage userBMessage = Directmessage.create(userProfileB, 1, "구매 가능하세요!", "결제 방식 다시 회답 주시면 감사하겠습니다!",
-                LocalDateTime.now(), userProfileA.getProfileUid());
+        Directmessage userBMessage = Directmessage.create(1, "비가 내리면 여는 상점 책 구매할 수 있을까요?", "도서관에도 책이 없네요,,ㅠ",
+                LocalDateTime.now(), userProfileB.getProfileUid(), userProfileA.getProfileUid());
         Directmessage userBToUserA = directmessageRepository.save(userBMessage);
-        Directmessage userAMessageRe = Directmessage.create(userProfileA, 0, "계좌번호 주시면 입금하겠습니다!", "감사합니다!",
-                LocalDateTime.now(), userProfileB.getProfileUid());
-        Directmessage userAToUserBRe = directmessageRepository.save(userAMessageRe);
+        Directmessage userAMessage = Directmessage.create(1, "구매 가능하세요!", "결제 방식 다시 회답 주시면 감사하겠습니다!",
+                LocalDateTime.now(), userProfileA.getProfileUid(),userProfileB.getProfileUid());
+        Directmessage userAToUserB = directmessageRepository.save(userAMessage);
+        Directmessage userBMessageRe = Directmessage.create(0, "계좌번호 주시면 입금하겠습니다!", "감사합니다!",
+                LocalDateTime.now(), userProfileB.getProfileUid(),userProfileA.getProfileUid());
+        Directmessage userBToUserARe = directmessageRepository.save(userBMessageRe);
 
         //when
-        List<Directmessage> allDirectmessagesBySender = directmessageRepository.findAllDirectmessagesBySender(userProfileA.getProfileUid());
+        List<Directmessage> allDirectmessagesBySender = directmessageRepository.findAllDirectmessagesBySender(userProfileB.getProfileUid());
 
         //then
-        assertThat(allDirectmessagesBySender).extracting(Directmessage::getMtitle).contains(userAToUserB.getMtitle(), userAToUserBRe.getMtitle());
+        assertThat(allDirectmessagesBySender).extracting(Directmessage::getMtitle).contains(userBToUserA.getMtitle(), userBToUserARe.getMtitle());
     }
 
     @Test
@@ -73,21 +73,21 @@ public class DirectmessageRepositoryTest {
         Profile profileB = Profile.create(userBLogin, "gogumaa", "https://gogumasprofileimage.com", "gogumasprofileimage", "무력 고구마");
         Profile userProfileB = profileRepository.save(profileB);
 
-        Directmessage userAMessage = Directmessage.create(userProfileA, 1, "비가 내리면 여는 상점 책 구매할 수 있을까요?", "도서관에도 책이 없네요,,ㅠ",
-                LocalDateTime.now(), userProfileB.getProfileUid());
-        Directmessage userAToUserB = directmessageRepository.save(userAMessage);
-        Directmessage userBMessage = Directmessage.create(userProfileB, 1, "구매 가능하세요!", "결제 방식 다시 회답 주시면 감사하겠습니다!",
-                LocalDateTime.now(), userProfileA.getProfileUid());
+        Directmessage userBMessage = Directmessage.create(1, "비가 내리면 여는 상점 책 구매할 수 있을까요?", "도서관에도 책이 없네요,,ㅠ",
+                LocalDateTime.now(), userProfileB.getProfileUid(), userProfileA.getProfileUid());
         Directmessage userBToUserA = directmessageRepository.save(userBMessage);
-        Directmessage userAMessageRe = Directmessage.create(userProfileA, 0, "계좌번호 주시면 입금하겠습니다!", "감사합니다!",
-                LocalDateTime.now(), userProfileB.getProfileUid());
-        Directmessage userAToUserBRe = directmessageRepository.save(userAMessageRe);
+        Directmessage userAMessage = Directmessage.create(1, "구매 가능하세요!", "결제 방식 다시 회답 주시면 감사하겠습니다!",
+                LocalDateTime.now(), userProfileA.getProfileUid(),userProfileB.getProfileUid());
+        Directmessage userAToUserB = directmessageRepository.save(userAMessage);
+        Directmessage userBMessageRe = Directmessage.create(0, "계좌번호 주시면 입금하겠습니다!", "감사합니다!",
+                LocalDateTime.now(), userProfileB.getProfileUid(),userProfileA.getProfileUid());
+        Directmessage userBToUserARe = directmessageRepository.save(userBMessageRe);
 
         //when
-        List<Directmessage> allDirectMessagesByRecipient = directmessageRepository.findAllDirectMessagesByRecipient(userProfileB.getProfileUid());
+        List<Directmessage> allDirectMessagesByRecipient = directmessageRepository.findAllDirectMessagesByRecipient(userProfileA.getProfileUid());
 
         //then
-        assertThat(allDirectMessagesByRecipient).extracting(Directmessage::getProfile).extracting(Profile::getNickname).contains("gamjaa");
+        assertThat(allDirectMessagesByRecipient).extracting(Directmessage::getSenderUid).contains(userProfileB.getProfileUid());
     }
 
 }
