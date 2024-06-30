@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DirectmessageRepository extends JpaRepository<Directmessage, Long> {
 
-    @Query(value = "SELECT m FROM Directmessage m WHERE m.profile.profileUid = :sender_uid")
+    @Query(value = "SELECT m FROM Directmessage m WHERE m.senderUid = :sender_uid")
     List<Directmessage> findAllDirectmessagesBySender(@Param("sender_uid") Long senderUid);
 
     @Query(value = "SELECT m FROM Directmessage m WHERE m.recipientUid = :recipient_uid")

@@ -33,7 +33,7 @@ public class Directmessage {
     }
 
     // 생성 메서드
-    public static Directmessage create(Profile profile, Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid){
+    public static Directmessage create(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid){
         Directmessage directMessage = new Directmessage(mcheck, mtitle, mcontents, mdate, senderUid, recipientUid);
         return directMessage;
     }
