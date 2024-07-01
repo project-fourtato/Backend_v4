@@ -1,5 +1,6 @@
 package com.hallym.booker.domain;
 
+import com.hallym.booker.exception.FollowCountException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class Profile {
     private String userimageUrl;
     private String userimageName;
     private String usermessage;
+    private Long countFollowers;
+    private Long countFollowings;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "login_uid")
@@ -39,6 +42,8 @@ public class Profile {
         this.userimageUrl = userImageUrl;
         this.userimageName = userImageName;
         this.usermessage = userMessage;
+        this.countFollowers = 0L;
+        this.countFollowings = 0L;
     }
 
     // 생성 메서드
@@ -61,6 +66,31 @@ public class Profile {
         this.usermessage = userMessage;
 
         return this;
+    }
+
+    //비지니스 로직
+    public void addFollowings(){
+        this.countFollowings += 1;
+    }
+
+    public void addFollowers(){
+        this.countFollowers += 1;
+    }
+
+    public void removeFollowings(){
+        Long restFollowings = this.countFollowings-1;
+        if (restFollowings < 0) {
+            throw new FollowCountException("need more following");
+        }
+        this.countFollowings -= 1;
+    }
+
+    public void removeFollowers(){
+        Long restFollowers = this.countFollowers-1;
+        if (restFollowers < 0) {
+            throw new FollowCountException("need more follower");
+        }
+        this.countFollowers -= 1;
     }
 
 }

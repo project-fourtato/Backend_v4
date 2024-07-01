@@ -38,7 +38,7 @@ public class Directmessage {
         return directMessage;
     }
 
-    // 수정 메서드
+    // 비지니스 로직
     public Directmessage changeMCheck(Integer mcheck) {
         this.mcheck = mcheck;
         return this;
@@ -50,7 +50,7 @@ public class Directmessage {
     }
 
     public Directmessage changeSenderUid() {
-        this.recipientUid = -1L;
+        this.senderUid = -1L;
         return this;
     }
 }

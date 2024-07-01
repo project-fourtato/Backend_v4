@@ -15,6 +15,8 @@ CREATE TABLE `PROFILE` (
                            `userimage_name` VARCHAR(255) DEFAULT NULL,
                            `usermessage` VARCHAR(255) DEFAULT NULL,
                            `login_uid` VARCHAR(255) NOT NULL,
+                           `count_followers` INT UNSIGNED NOT NULL,
+                           `count_followings` INT UNSIGNED NOT NULL,
                            FOREIGN KEY (`login_uid`) REFERENCES `LOGIN`(`login_uid`),
                            PRIMARY KEY (`profile_uid`)
 );
@@ -46,8 +48,8 @@ CREATE TABLE `DIRECTMESSAGE` (
                                  `mtitle` LONGTEXT DEFAULT NULL,
                                  `mcontents` LONGTEXT DEFAULT NULL,
                                  `mdate` DATETIME DEFAULT NULL,
-                                 `sender_uid` INT UNSIGNED NOT NULL,
-                                 `recipient_uid` INT UNSIGNED NOT NULL,
+                                 `sender_uid` BIGINT NOT NULL,
+                                 `recipient_uid` BIGINT NOT NULL,
                                  PRIMARY KEY (`message_id`)
 );
 
