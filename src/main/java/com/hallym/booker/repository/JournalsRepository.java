@@ -12,6 +12,6 @@ public interface JournalsRepository extends JpaRepository<Journals, Long> {
     List<Journals> findByUserBooks_BookUid(Long bookUid);
 
     //팔로잉 하는 유저들의 최신 독서록 목록 조회에 사용
-    List<Journals> findByUserBooks_BookUidOrderByJdatetimeDesc(Long bookUid);
+    List<Journals> findByUserBooks_Profile_ProfileUidOrderByJdatetimeDesc(Long profileUid);
 
 }
