@@ -60,7 +60,7 @@ class ProfileServiceTest {
 
     @Test
     void join() {
-//        profileService.join("id1",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
+        profileService.join("id1",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
         assertThat(profileRepository.findAll().size()).isEqualTo(1);
     }
 

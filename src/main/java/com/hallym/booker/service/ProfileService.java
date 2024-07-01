@@ -1,6 +1,7 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
+import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.RegisterRequest;
 import com.hallym.booker.dto.Profile.S3Dto;
 import com.hallym.booker.repository.*;
@@ -24,13 +25,13 @@ public class ProfileService {
      *  프로필 등록
      */
     @Transactional
-    public void join(String loginUid, RegisterRequest registerRequest, S3Dto s3Dto){
+    public void join(String loginUid, ProfileDto profileDto){
         Login l = loginRepository.findById(loginUid).get();
 
-        Profile profile = Profile.create(l, registerRequest.getNickname(), s3Dto.getImageUrl(), s3Dto.getImageName(), registerRequest.getUsermessage());
+        Profile profile = Profile.create(l, profileDto.getNickname(), profileDto.getImageUrl(), profileDto.getImageName(), profileDto.getUsermessage());
         profile = profileRepository.save(profile);
 
-        String[] interests_arr = new String[]{registerRequest.getUinterest1(),registerRequest.getUinterest2(),registerRequest.getUinterest3(),registerRequest.getUinterest4(),registerRequest.getUinterest5()};
+        String[] interests_arr = new String[]{profileDto.getUinterest1(),profileDto.getUinterest2(),profileDto.getUinterest3(),profileDto.getUinterest4(),profileDto.getUinterest5()};
         for (int i =0;i<interests_arr.length;i++){
             if (interests_arr[i] != null){
                 Interests interests = Interests.create(interests_arr[i],profile);
@@ -46,9 +47,12 @@ public class ProfileService {
     public void deleteOne(String loginUid){
         Login login = loginRepository.findById(loginUid).get();
         Profile profile = login.getProfile();
-        List<Follow> followList = followRepository.findAllByToUserId(profile.getProfileUid());
-        for (int i=0;i<followList.size();i++){
-            followRepository.delete(followList.get(i));
+
+        List<Follow> followList = followRepository.findAllByToUserId(profile.getProfileUid()); //딴 사람이 날 팔로우한 것을 취소해야 함
+        for (Follow follow : followList){
+            Profile following = profileRepository.findById(follow.getProfile().getProfileUid()).get();
+            following.getFollow().remove(follow);
+            followRepository.delete(follow);
         }
         List<Directmessage> directMessagesByRecipientList = directmessageRepository.findAllDirectMessagesByRecipient(profile.getProfileUid());
         for (int i=0;i<directMessagesByRecipientList.size();i++){
@@ -58,9 +62,10 @@ public class ProfileService {
         List<Directmessage> directMessagesBySenderList = directmessageRepository.findAllDirectmessagesBySender(profile.getProfileUid());
         for (int i=0;i<directMessagesBySenderList.size();i++){
             Directmessage directmessage = directMessagesBySenderList.get(i);
-            directmessage.changeRecipientUid();
+            directmessage.changeSenderUid();
         }
-        profileRepository.delete(profile);
+
+        profileRepository.deleteById(profile.getProfileUid());
     }
 
 }

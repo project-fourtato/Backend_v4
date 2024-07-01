@@ -2,6 +2,7 @@ package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Login.LoginResponse;
+import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.RegisterRequest;
 import com.hallym.booker.dto.Profile.S3Dto;
 import com.hallym.booker.service.ProfileService;
@@ -37,7 +38,8 @@ public class ProfileApiController {
             s3Dto = new S3Dto("S3에 새로 저장 후 넣은 사진","resources/DummyImg/S3UploadedImg.png");
         }
 
-        profileService.join(loginUid, registerRequest, s3Dto);
+        profileService.join(loginUid,
+                new ProfileDto(registerRequest.getNickname(),s3Dto.getImageUrl(), s3Dto.getImageName(), registerRequest.getUsermessage(), registerRequest.getUinterest1(), registerRequest.getUinterest2(), registerRequest.getUinterest3(), registerRequest.getUinterest4(), registerRequest.getUinterest5()));
 
         removeSessionValue(session);
 
