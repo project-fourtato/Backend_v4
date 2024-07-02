@@ -1,7 +1,10 @@
 package com.hallym.booker.global.S3;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
@@ -10,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class S3Service {
         this.bucket = bucket;
     }
 
-    public S3ResponseUploadEntity upload(MultipartFile multipartFile, String dir) throws Exception {
+    public S3ResponseUploadEntity upload(MultipartFile multipartFile, String dir) throws IOException {
         String fileName = multipartFile.getOriginalFilename();
 
         String uuid = UUID.randomUUID().toString();
@@ -53,5 +54,16 @@ public class S3Service {
         metadata.setContentType(file.getContentType());
 
         return metadata;
+    }
+
+    public String delete(String fileName) throws IOException {
+        try {
+            amazonS3.getObjectMetadata(new GetObjectMetadataRequest(bucket, fileName));
+        } catch (AmazonServiceException e) {
+            throw new AmazonServiceException("This file does not exist");
+        }
+
+        amazonS3.deleteObject(bucket, fileName);
+        return "Deleted complete";
     }
 }
