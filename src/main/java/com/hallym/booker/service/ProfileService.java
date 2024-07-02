@@ -4,12 +4,15 @@ import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.RegisterRequest;
 import com.hallym.booker.dto.Profile.S3Dto;
+import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,6 +23,7 @@ public class ProfileService {
     private final InterestsRepository interestsRepository;
     private final FollowRepository followRepository;
     private final DirectmessageRepository directmessageRepository;
+    private final S3Service s3Service;
 
     /**
      *  프로필 등록
@@ -44,9 +48,14 @@ public class ProfileService {
      * 회원 삭제
      */
     @Transactional
-    public void deleteOne(String loginUid){
+    public void deleteOne(String loginUid) throws IOException {
         Login login = loginRepository.findById(loginUid).get();
         Profile profile = login.getProfile();
+
+        //사진 삭제
+        if(!Objects.equals(profile.getUserimageName(), "/default/default-profile.png")) {
+            s3Service.delete(profile.getUserimageName());
+        }
 
         List<Follow> followList = followRepository.findAllByToUserId(profile.getProfileUid()); //딴 사람이 날 팔로우한 것을 취소해야 함
         for (Follow follow : followList){
