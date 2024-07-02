@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -65,11 +66,11 @@ class ProfileServiceTest {
     }
 
     @Test
-    void deleteOne() {
+    void deleteOne() throws IOException {
         //Given
-        Profile profile1 = Profile.create(loginRepository.findById("id1").get(),"콩쥐","resources/DummyImg/S3BasicImg.jpg","default","안녕하세요 전 소설 좋아해요");
+        Profile profile1 = Profile.create(loginRepository.findById("id1").get(),"콩쥐","https://booker-v4-bucket.s3.amazonaws.com/default-profile.png","/default/default-profile.png","안녕하세요 전 소설 좋아해요");
         profile1 = profileRepository.save(profile1);
-        Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","resources/DummyImg/S3BasicImg.jpg","default","책 안좋아해요");
+        Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","https://booker-v4-bucket.s3.amazonaws.com/default-profile.png","/default/default-profile.png","책 안좋아해요");
         profile2 = profileRepository.save(profile2);
 
         Interests interests1 = Interests.create("호러",profile1);
