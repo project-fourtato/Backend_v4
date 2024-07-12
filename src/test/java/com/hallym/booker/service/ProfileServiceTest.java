@@ -128,4 +128,42 @@ class ProfileServiceTest {
         assertThat(loginRepository.findById("id1")).isEqualTo(Optional.empty());
         assertThat(followRepository.findAll().size()).isEqualTo(0);
     }
+
+    @Test
+    void getEditProfileFormTest() {
+        //when
+        ProfileEditResponse profileEditForm = profileService.getProfileEditForm(profile1Id);
+
+        //then
+        assertThat(profileEditForm.getNickname()).isEqualTo("콩쥐");
+    }
+
+    @Test
+    void notExistProfileExceptionTest() {
+        assertThrows(NoSuchProfileException.class, () -> {
+            profileService.getProfileEditForm(300L);
+        });
+    }
+
+    @Test
+    void editProfileTest() {
+        //given
+        Profile profile = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new);
+
+        List<Interests> interests = new LinkedList<>();
+        Interests interests1 = Interests.create("로맨스", profile);
+        Interests interests2 = Interests.create("스릴러", profile);
+        Interests interests3 = Interests.create("판타지", profile);
+        interests.add(interests1);
+        interests.add(interests2);
+        interests.add(interests3);
+
+        ProfileEditRequest profileEditRequest = new ProfileEditRequest("https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png", "default-profile.png", "무력 감자", interests);
+
+        //when
+        profileService.editProfile(profile.getProfileUid(), profileEditRequest);
+
+        //then
+        assertThat(profile.getInterests()).extracting(Interests::getInterestName).contains("로맨스", "스릴러", "판타지");
+    }
 }
