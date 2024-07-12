@@ -2,8 +2,10 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.ProfileDto;
-import com.hallym.booker.dto.Profile.RegisterRequest;
-import com.hallym.booker.dto.Profile.S3Dto;
+import com.hallym.booker.dto.Profile.ProfileEditRequest;
+import com.hallym.booker.dto.Profile.ProfileEditResponse;
+import com.hallym.booker.exception.profile.NoSuchProfileException;
+import com.hallym.booker.exception.profile.TooManyInterestException;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,4 +79,26 @@ public class ProfileService {
         profileRepository.deleteById(profile.getProfileUid());
     }
 
+    /**
+     * 프로필 수정 폼
+     */
+    @Transactional
+    public ProfileEditResponse getProfileEditForm(Long uid) {
+        Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
+        List<Interests> profileInterests = interestsRepository.findByProfile_ProfileUid(uid);
+
+        return new ProfileEditResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage(), profileInterests);
+    }
+
+    /**
+     * 프로필 수정
+     */
+    @Transactional
+    public void editProfile(Long uid, ProfileEditRequest profileEdit) {
+        Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
+        profile.change(profileEdit.getImageUrl(), profileEdit.getImageName(), profileEdit.getUsermessage());
+
+        interestsRepository.deleteAll(profile.getInterests());
+        interestsRepository.saveAll(profileEdit.getInterests());
+    }
 }
