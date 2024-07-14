@@ -30,43 +30,39 @@ public class FollowApiController {
     }
 
     // 팔로잉 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/follow/followingsList/{fromUserId}")
-    public Result followingsList(@PathVariable("fromUserId") Long fromUserId) {
+    public ResponseEntity<List<ProfileDto>> followingsList(@PathVariable("fromUserId") Long fromUserId) {
         List<Profile> followings = followService.findAllToUserIdProfile(fromUserId);
         List<ProfileDto> followingsInfo = new ArrayList<>();
         for(Profile profile : followings){
             followingsInfo.add(new ProfileDto(profile.getProfileUid(),profile.getNickname(),
                     profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage()));
         }
-        return new Result(followingsInfo);
+        return ResponseEntity.ok().body(followingsInfo);
     }
 
     // 팔로워 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/follow/followersList/{toUserId}")
-    public Result followersList(@PathVariable("toUserId") Long toUserId) {
+    public ResponseEntity<List<ProfileDto>> followersList(@PathVariable("toUserId") Long toUserId) {
         List<Profile> followers = followService.findAllFromUserIdProfile(toUserId);
         List<ProfileDto> followersInfo = new ArrayList<>();
         for(Profile profile : followers){
             followersInfo.add(new ProfileDto(profile.getProfileUid(),profile.getNickname(),
                     profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage()));
         }
-        return new Result(followersInfo);
+        return ResponseEntity.ok().body(followersInfo);
     }
 
     // 팔로잉들의 최신 독서록 목록 조회 - 프로필(사진 이름, URL)&닉네임
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/follow/followingsLatestJournals/{fromUserId}")
-    public Result followingsLatestJournals(@PathVariable("fromUserId") Long fromUserId) {
+    public ResponseEntity<List<Journals>> followingsLatestJournals(@PathVariable("fromUserId") Long fromUserId) {
         List<Journals> journalsList = followService.findFollowingsLatestJournals(fromUserId);
         // 최대 7개의 항목을 선택 (만약 리스트 크기가 5개보다 작으면 전체 리스트 반환)
         int numberOfJournalsToShow = Math.min(7, journalsList.size());
-        return new Result(journalsList.subList(0, numberOfJournalsToShow));
+        return ResponseEntity.ok().body(journalsList.subList(0, numberOfJournalsToShow));
     }
 
     // 팔로잉 삭제
-    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/follow/delete")
     public ResponseEntity<String> deleteFollow(@RequestParam Long toUserId, @RequestParam Long fromUserId) {
         followService.removeFollowing(fromUserId,toUserId);
@@ -74,9 +70,8 @@ public class FollowApiController {
     }
 
     //팔로잉 유무 확인
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/follow/followCheck/toUserId={toUserId}&fromUserId={fromUserId}")
-    public Result followCheck(@PathVariable Long toUserId, @PathVariable Long fromUserId){
-        return new Result(followService.checkFollowing(fromUserId,toUserId));
+    public ResponseEntity<Boolean> followCheck(@PathVariable Long toUserId, @PathVariable Long fromUserId){
+        return ResponseEntity.ok().body(followService.checkFollowing(fromUserId,toUserId));
     }
 }
