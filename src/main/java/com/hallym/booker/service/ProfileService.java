@@ -4,6 +4,7 @@ import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.ProfileEditRequest;
 import com.hallym.booker.dto.Profile.ProfileEditResponse;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.profile.TooManyInterestException;
 import com.hallym.booker.global.S3.S3Service;
@@ -32,7 +33,12 @@ public class ProfileService {
      */
     @Transactional
     public void join(String loginUid, ProfileDto profileDto){
-        Login l = loginRepository.findById(loginUid).get();
+        Login l ;
+        try {
+            l = loginRepository.findById(loginUid).get();
+        } catch (NoSuchElementException e){
+            throw new NoSuchLoginException();
+        }
 
         Profile profile = Profile.create(l, profileDto.getNickname(), profileDto.getImageUrl(), profileDto.getImageName(), profileDto.getUsermessage());
         profile = profileRepository.save(profile);
@@ -51,7 +57,12 @@ public class ProfileService {
      */
     @Transactional
     public void deleteOne(String loginUid) throws IOException {
-        Login login = loginRepository.findById(loginUid).get();
+        Login login ;
+        try {
+            login = loginRepository.findById(loginUid).get();
+        } catch (NoSuchElementException e){
+            throw new NoSuchLoginException();
+        }
         Profile profile = login.getProfile();
 
         //사진 삭제
@@ -63,7 +74,6 @@ public class ProfileService {
         for (Follow follow : followList){
             Profile following = profileRepository.findById(follow.getProfile().getProfileUid()).get();
             following.getFollow().remove(follow);
-            followRepository.delete(follow);
         }
         List<Directmessage> directMessagesByRecipientList = directmessageRepository.findAllDirectMessagesByRecipient(profile.getProfileUid());
         for (int i=0;i<directMessagesByRecipientList.size();i++){
