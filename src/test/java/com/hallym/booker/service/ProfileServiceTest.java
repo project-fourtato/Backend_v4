@@ -1,10 +1,10 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
-import com.hallym.booker.dto.Profile.ProfileDto;
-import com.hallym.booker.dto.Profile.RegisterRequest;
-import com.hallym.booker.dto.Profile.S3Dto;
+import com.hallym.booker.dto.Profile.*;
+import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +49,9 @@ class ProfileServiceTest {
     @Autowired
     UserBooksRepository userBooksRepository;
 
+    Long profile1Id = 0L;
+    Long profile2Id = 0L;
+
     @BeforeEach
     void setUp() {
         //Given
@@ -56,21 +61,13 @@ class ProfileServiceTest {
         Login login2 = Login.create("id2","pw2","email2",now);
         login2 = loginRepository.save(login2);
 
-    }
-
-    @Test
-    void join() {
-        profileService.join("id1",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
-        assertThat(profileRepository.findAll().size()).isEqualTo(1);
-    }
-
-    @Test
-    void deleteOne() {
-        //Given
-        Profile profile1 = Profile.create(loginRepository.findById("id1").get(),"콩쥐","resources/DummyImg/S3BasicImg.jpg","default","안녕하세요 전 소설 좋아해요");
+        Profile profile1 = Profile.create(loginRepository.findById("id1").get(),"콩쥐","https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png","/default/default-profile.png","안녕하세요 전 소설 좋아해요");
         profile1 = profileRepository.save(profile1);
-        Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","resources/DummyImg/S3BasicImg.jpg","default","책 안좋아해요");
+        Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png","/default/default-profile.png","책 안좋아해요");
         profile2 = profileRepository.save(profile2);
+
+        profile1Id = profile1.getProfileUid();
+        profile2Id = profile2.getProfileUid();
 
         Interests interests1 = Interests.create("호러",profile1);
         Interests interests2 = Interests.create("로맨스",profile1);
@@ -103,6 +100,19 @@ class ProfileServiceTest {
         Journals journals2 = Journals.create(userBooks2, "다른 출판사껀데 이것도 너무 감동적","인생작",LocalDateTime.now(),"resources/DummyImg/S3BasicImg.jpg","default");
         journals1 = journalsRepository.save(journals1);
         journals2 = journalsRepository.save(journals2);
+    }
+
+    @Test
+    void join() {
+        profileService.join("id1",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
+        assertThat(profileRepository.findAll().size()).isEqualTo(3);
+    }
+
+    @Test
+    void deleteOne() throws IOException {
+        //Given
+        Profile profile1 = profileRepository.findById(profile1Id).get();
+        Profile profile2 = profileRepository.findById(profile2Id).get();
 
         //When
         profileService.deleteOne(profile1.getLogin().getLoginUid());
@@ -117,5 +127,43 @@ class ProfileServiceTest {
         assertThat(interestsRepository.findAll().size()).isEqualTo(0);
         assertThat(loginRepository.findById("id1")).isEqualTo(Optional.empty());
         assertThat(followRepository.findAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    void getEditProfileFormTest() {
+        //when
+        ProfileEditResponse profileEditForm = profileService.getProfileEditForm(profile1Id);
+
+        //then
+        assertThat(profileEditForm.getNickname()).isEqualTo("콩쥐");
+    }
+
+    @Test
+    void notExistProfileExceptionTest() {
+        assertThrows(NoSuchProfileException.class, () -> {
+            profileService.getProfileEditForm(300L);
+        });
+    }
+
+    @Test
+    void editProfileTest() {
+        //given
+        Profile profile = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new);
+
+        List<Interests> interests = new LinkedList<>();
+        Interests interests1 = Interests.create("로맨스", profile);
+        Interests interests2 = Interests.create("스릴러", profile);
+        Interests interests3 = Interests.create("판타지", profile);
+        interests.add(interests1);
+        interests.add(interests2);
+        interests.add(interests3);
+
+        ProfileEditRequest profileEditRequest = new ProfileEditRequest("https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png", "default-profile.png", "무력 감자", interests);
+
+        //when
+        profileService.editProfile(profile.getProfileUid(), profileEditRequest);
+
+        //then
+        assertThat(profile.getInterests()).extracting(Interests::getInterestName).contains("로맨스", "스릴러", "판타지");
     }
 }

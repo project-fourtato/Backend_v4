@@ -4,7 +4,8 @@ import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.RegisterRequest;
-import com.hallym.booker.dto.Profile.S3Dto;
+import com.hallym.booker.global.S3.S3Service;
+import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.service.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.io.IOException;
 
 @Slf4j
@@ -21,6 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ProfileApiController {
     private final ProfileService profileService;
+    private final S3Service s3Service;
 
     /**
      * 프로필 등록
@@ -30,16 +33,17 @@ public class ProfileApiController {
         HttpSession session = request.getSession(false);
         String loginUid = getSessionValue(session);
 
-        S3Dto s3Dto;
-        if(registerRequest.getFile().isEmpty()) {
-            s3Dto = new S3Dto("basisImage", "resources/DummyImg/S3BasicImg.jpg");
-        }
-        else {
-            s3Dto = new S3Dto("S3에 새로 저장 후 넣은 사진","resources/DummyImg/S3UploadedImg.png");
+        String imgUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
+        String imgName = "default/default-profile.png";
+        // 사진 등록
+        if(!registerRequest.getFile().isEmpty()) {
+            S3ResponseUploadEntity s3Entity = s3Service.upload(registerRequest.getFile(), "profile");
+            imgUrl = s3Entity.getImageUrl();
+            imgName = s3Entity.getImageName();
         }
 
         profileService.join(loginUid,
-                new ProfileDto(registerRequest.getNickname(),s3Dto.getImageUrl(), s3Dto.getImageName(), registerRequest.getUsermessage(), registerRequest.getUinterest1(), registerRequest.getUinterest2(), registerRequest.getUinterest3(), registerRequest.getUinterest4(), registerRequest.getUinterest5()));
+                new ProfileDto(registerRequest.getNickname(),imgUrl, imgName, registerRequest.getUsermessage(), registerRequest.getUinterest1(), registerRequest.getUinterest2(), registerRequest.getUinterest3(), registerRequest.getUinterest4(), registerRequest.getUinterest5()));
 
         removeSessionValue(session);
 
@@ -51,7 +55,7 @@ public class ProfileApiController {
      * 프로필 삭제
      */
     @PostMapping("/profile/delete")
-    public ResponseEntity<String> profileDelete(HttpServletRequest request) {
+    public ResponseEntity<String> profileDelete(HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         String loginUid = getSessionValue(session);
 
