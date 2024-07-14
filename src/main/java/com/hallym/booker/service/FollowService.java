@@ -4,6 +4,7 @@ import com.hallym.booker.domain.Follow;
 import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Follow.LatestJournalsResponse;
+import com.hallym.booker.exception.follow.DuplicateFollowException;
 import com.hallym.booker.repository.FollowRepository;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.ProfileRepository;
@@ -26,10 +27,16 @@ public class FollowService {
 
     @Transactional
     public void newFollow(Long fromUserId, Long toUserId){
+        Boolean check = checkFollowing(fromUserId,toUserId);
+        if (check == Boolean.TRUE){
+            throw new DuplicateFollowException();
+        }
+
         Profile from = profileRepository.findById(fromUserId).get();
         from.addFollowings();
         Profile to = profileRepository.findById(toUserId).get();
         to.addFollowers();
+
         Follow follow = Follow.create(from, toUserId);
         followRepository.save(follow);
     }
@@ -85,7 +92,6 @@ public class FollowService {
         Profile from = profileRepository.findById(fromUserId).get();
         from.removeFollowings();
         from.removeFollow(followRepository.findByFromUserIdAndToUserId(fromUserId,toUserId).get());
-//        followRepository.deleteByToUserIdAndProfile_ProfileUid(fromUserId,toUserId);
     }
 
     public Boolean checkFollowing(Long fromUserId,Long toUserId){
