@@ -1,6 +1,8 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Login;
+import com.hallym.booker.exception.login.DuplicateProfileException;
+import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.LoginRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -28,7 +31,7 @@ public class LoginService {
     private void validateDuplicateMember(Login login) {
         //중복 예외 처리
         if(loginRepository.findById(login.getLoginUid()).orElse(null) != null){
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new DuplicateProfileException();
         }
     }
 
@@ -49,7 +52,11 @@ public class LoginService {
      * 회원 찾기
      */
     public Login findOne(String uid){
-        return loginRepository.findById(uid).get();
+        try{
+            return loginRepository.findById(uid).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchProfileException();
+        }
     }
 
 
@@ -58,8 +65,12 @@ public class LoginService {
      */
     @Transactional
     public void deleteOne(String uid) {
-        Login login = loginRepository.findById(uid).get();
-        loginRepository.delete(login);
+        try {
+            Login login = loginRepository.findById(uid).get();
+            loginRepository.delete(login);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchProfileException();
+        }
     }
 
     /**
@@ -67,8 +78,12 @@ public class LoginService {
      */
     @Transactional
     public void updateLogin(String uid, String pw, String email, Date birth) {
-        Login findLogin = loginRepository.findById(uid).get();
-        findLogin.change(pw, email, birth);
+        try {
+            Login findLogin = loginRepository.findById(uid).get();
+            findLogin.change(pw, email, birth);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchProfileException();
+        }
     }
 
     /**
