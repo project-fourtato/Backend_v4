@@ -3,6 +3,7 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Follow;
 import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.Profile;
+import com.hallym.booker.dto.Follow.LatestJournalsResponse;
 import com.hallym.booker.repository.FollowRepository;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.ProfileRepository;
@@ -51,20 +52,31 @@ public class FollowService {
         return profiles;
     }
 
-    public List<Journals> findFollowingsLatestJournals(Long fromUserId){
+    public List<LatestJournalsResponse> findFollowingsLatestJournals(Long fromUserId){
         List<Follow> followList = followRepository.findAllByFromUserId(fromUserId);
         List<Profile> profiles = new ArrayList<>();
         for (Follow follow : followList){
             profiles.add(profileRepository.findById(follow.getToUserId()).get());
         }
-        List<Journals> AllFollowingsjournals = new ArrayList<>();
+        List<LatestJournalsResponse> AllFollowingsjournals = new ArrayList<>();
         for (Profile profile: profiles){
             List<Journals> journals = journalsRepository.findByUserBooks_Profile_ProfileUidOrderByJdatetimeDesc(profile.getProfileUid());
             for(Journals journal : journals){
-                AllFollowingsjournals.add(journal);
+                LatestJournalsResponse l = LatestJournalsResponse.builder()
+                                        .toUserId(profile.getProfileUid())
+                                        .jid(journal.getJournalId())
+                                        .pdatetime(journal.getJdatetime())
+                                        .ptitle(journal.getJtitle())
+                                        .pcontents(journal.getJcontents())
+                                        .nickname(profile.getNickname())
+                                        .userimageUrl(profile.getUserimageUrl())
+                                        .userimageName(profile.getUserimageName())
+                                        .build();
+                AllFollowingsjournals.add(l);
             }
         }
-        return AllFollowingsjournals;
+        int numberOfJournalsToShow = Math.min(7, AllFollowingsjournals.size()); //개수 제한
+        return AllFollowingsjournals.subList(0,numberOfJournalsToShow);
     }
 
     @Transactional
