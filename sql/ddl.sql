@@ -15,6 +15,8 @@ CREATE TABLE `PROFILE` (
                            `userimage_name` VARCHAR(255) DEFAULT NULL,
                            `usermessage` VARCHAR(255) DEFAULT NULL,
                            `login_uid` VARCHAR(255) NOT NULL,
+                           `count_followers` INT UNSIGNED NOT NULL,
+                           `count_followings` INT UNSIGNED NOT NULL,
                            FOREIGN KEY (`login_uid`) REFERENCES `LOGIN`(`login_uid`),
                            PRIMARY KEY (`profile_uid`)
 );
