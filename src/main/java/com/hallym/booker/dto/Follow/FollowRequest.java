@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class CountDto {
-    private String cnt;
+public class FollowRequest {
+    private Long toUserId;
+    private Long fromUserId;
 }
