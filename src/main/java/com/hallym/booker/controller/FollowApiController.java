@@ -2,10 +2,10 @@ package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.Profile;
-import com.hallym.booker.dto.Follow.CountDto;
+import com.hallym.booker.dto.Follow.FollowRequest;
 import com.hallym.booker.dto.Follow.ProfileDto;
-import com.hallym.booker.dto.Result;
 import com.hallym.booker.service.FollowService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,21 +17,22 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("/follow")
 @RequiredArgsConstructor
 public class FollowApiController {
 
     private final FollowService followService;
 
     // 팔로잉 & 팔로워 추가
-    @PostMapping("/follow/new")
-    public ResponseEntity<String> addFollow(@RequestParam Long toUserId, @RequestParam Long fromUserId) {
-        followService.newFollow(fromUserId,toUserId);
+    @PostMapping("/new")
+    public ResponseEntity<String> addFollow(@RequestBody @Valid FollowRequest followRequest) {
+        followService.newFollow(followRequest.getFromUserId(), followRequest.getToUserId());
         return new ResponseEntity<>("Follow created successfully", HttpStatus.OK);
     }
 
     // 팔로잉 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
-    @GetMapping("/follow/followingsList/{fromUserId}")
-    public ResponseEntity<List<ProfileDto>> followingsList(@PathVariable("fromUserId") Long fromUserId) {
+    @PostMapping("/followingsList")
+    public ResponseEntity<List<ProfileDto>> followingsList(@RequestBody Long fromUserId) {
         List<Profile> followings = followService.findAllToUserIdProfile(fromUserId);
         List<ProfileDto> followingsInfo = new ArrayList<>();
         for(Profile profile : followings){
@@ -42,8 +43,8 @@ public class FollowApiController {
     }
 
     // 팔로워 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
-    @GetMapping("/follow/followersList/{toUserId}")
-    public ResponseEntity<List<ProfileDto>> followersList(@PathVariable("toUserId") Long toUserId) {
+    @PostMapping("/followersList")
+    public ResponseEntity<List<ProfileDto>> followersList(@RequestBody Long toUserId) {
         List<Profile> followers = followService.findAllFromUserIdProfile(toUserId);
         List<ProfileDto> followersInfo = new ArrayList<>();
         for(Profile profile : followers){
@@ -54,8 +55,8 @@ public class FollowApiController {
     }
 
     // 팔로잉들의 최신 독서록 목록 조회 - 프로필(사진 이름, URL)&닉네임
-    @GetMapping("/follow/followingsLatestJournals/{fromUserId}")
-    public ResponseEntity<List<Journals>> followingsLatestJournals(@PathVariable("fromUserId") Long fromUserId) {
+    @PostMapping("/followingsLatestJournals")
+    public ResponseEntity<List<Journals>> followingsLatestJournals(@RequestBody Long fromUserId) {
         List<Journals> journalsList = followService.findFollowingsLatestJournals(fromUserId);
         // 최대 7개의 항목을 선택 (만약 리스트 크기가 5개보다 작으면 전체 리스트 반환)
         int numberOfJournalsToShow = Math.min(7, journalsList.size());
@@ -63,15 +64,15 @@ public class FollowApiController {
     }
 
     // 팔로잉 삭제
-    @PostMapping("/follow/delete")
-    public ResponseEntity<String> deleteFollow(@RequestParam Long toUserId, @RequestParam Long fromUserId) {
-        followService.removeFollowing(fromUserId,toUserId);
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteFollow(@RequestBody @Valid FollowRequest followRequest) {
+        followService.removeFollowing(followRequest.getFromUserId(),followRequest.getToUserId());
         return new ResponseEntity<>("Follow deleted successfully",HttpStatus.OK);
     }
 
     //팔로잉 유무 확인
-    @GetMapping("/follow/followCheck/toUserId={toUserId}&fromUserId={fromUserId}")
-    public ResponseEntity<Boolean> followCheck(@PathVariable Long toUserId, @PathVariable Long fromUserId){
-        return ResponseEntity.ok().body(followService.checkFollowing(fromUserId,toUserId));
+    @PostMapping("/followCheck")
+    public ResponseEntity<Boolean> followCheck(@RequestBody @Valid FollowRequest followRequest){
+        return ResponseEntity.ok().body(followService.checkFollowing(followRequest.getFromUserId(),followRequest.getToUserId()));
     }
 }
