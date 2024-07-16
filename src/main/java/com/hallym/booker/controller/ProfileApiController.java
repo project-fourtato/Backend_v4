@@ -3,6 +3,8 @@ package com.hallym.booker.controller;
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.dto.Profile.ProfileDto;
+import com.hallym.booker.dto.Profile.ProfileEditRequest;
+import com.hallym.booker.dto.Profile.ProfileEditResponse;
 import com.hallym.booker.dto.Profile.RegisterRequest;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
@@ -15,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -81,6 +85,26 @@ public class ProfileApiController {
     private void removeSessionValue(HttpSession session) { //세션 삭제
         session.removeAttribute(SessionConst.LOGIN_MEMBER); //회원가입 완료 후 세션 삭제
         session.invalidate(); //관련된 모든 session 속성 삭제
+    }
+
+    /**
+     * 프로필 수정 폼
+     */
+    @GetMapping("/profile/{uid}/edit")
+    public ProfileEditResponse profileEditForm(@PathVariable Long uid) {
+        return profileService.getProfileEditForm(uid);
+    }
+
+    /**
+     * 프로필 수정
+     */
+    @PutMapping("/profile/{uid}/edit")
+    public ResponseEntity<String> profileEdit(@PathVariable Long uid,
+                                              @RequestParam(required = false) MultipartFile file,
+                                              @RequestParam(required = false) String usermessage,
+                                              @RequestParam(required = false) List<String> interests) throws IOException {
+        profileService.editProfile(uid, new ProfileEditRequest(file, usermessage, interests));
+        return new ResponseEntity<>("Edit Profile Success", HttpStatus.OK);
     }
 
 }

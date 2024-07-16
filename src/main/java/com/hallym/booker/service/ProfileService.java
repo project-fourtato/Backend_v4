@@ -8,6 +8,7 @@ import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.profile.TooManyInterestException;
 import com.hallym.booker.global.S3.S3Service;
+import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,18 +98,44 @@ public class ProfileService {
         Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
         List<Interests> profileInterests = interestsRepository.findByProfile_ProfileUid(uid);
 
-        return new ProfileEditResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage(), profileInterests);
+        List<String> interestsList = new ArrayList<>();
+        for (Interests profileInterest : profileInterests) {
+            interestsList.add(profileInterest.getInterestName());
+        }
+        return new ProfileEditResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage(), interestsList);
     }
 
     /**
      * 프로필 수정
      */
     @Transactional
-    public void editProfile(Long uid, ProfileEditRequest profileEdit) {
+    public void editProfile(Long uid, ProfileEditRequest profileEdit) throws IOException {
         Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
-        profile.change(profileEdit.getImageUrl(), profileEdit.getImageName(), profileEdit.getUsermessage());
 
-        interestsRepository.deleteAll(profile.getInterests());
-        interestsRepository.saveAll(profileEdit.getInterests());
+        S3ResponseUploadEntity uploadEntity = new S3ResponseUploadEntity(profile.getUserimageName(), profile.getUserimageUrl());
+        if(profileEdit.getFile() != null) {
+            if(!profile.getUserimageName().equals("/default/default-profile.png")) {
+                s3Service.delete(profile.getUserimageName());
+            }
+            uploadEntity = s3Service.upload(profileEdit.getFile(), "profile");
+        }
+
+        //profile 갱신
+        profile.change(uploadEntity.getImageUrl(), uploadEntity.getImageName(), profileEdit.getUsermessage());
+
+        //interests 갱신
+        if(profileEdit.getInterests() != null) {
+            List<Interests> interestsList = new ArrayList<>(profile.getInterests());
+
+            for (Interests interests : interestsList) {
+                interests.removeProfile(profile);
+            }
+            interestsRepository.deleteAllByProfile_ProfileUid(profile.getProfileUid());
+
+            for (String interest : profileEdit.getInterests()) {
+                Interests interests = Interests.create(interest, profile);
+                interestsRepository.save(interests);
+            }
+        }
     }
 }
