@@ -44,4 +44,7 @@ public class Interests {
         profile.getInterests().add(this);
     }
 
+    public void removeProfile(Profile profile) {
+        profile.getInterests().remove(this);
+    }
 }
