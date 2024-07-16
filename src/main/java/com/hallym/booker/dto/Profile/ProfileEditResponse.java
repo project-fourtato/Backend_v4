@@ -13,5 +13,5 @@ public class ProfileEditResponse {
     String imageUrl;
     String imageName;
     String usermessage;
-    List<Interests> interests;
+    List<String> interests;
 }
