@@ -168,4 +168,13 @@ class ProfileServiceTest {
         //then
         assertThat(profile.getInterests()).extracting(Interests::getInterestName).contains("로맨스", "스릴러", "판타지");
     }
+
+    @Test
+    void getProfileTest() {
+        //when
+        ProfileGetResponse profile = profileService.getProfile(profile1Id);
+
+        //then
+        assertThat(profile.getNickname()).isEqualTo("콩쥐");
+    }
 }
