@@ -9,6 +9,7 @@ import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.service.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class ProfileApiController {
      * 프로필 등록
      */
     @PostMapping("/profile/new") // @RequestBody ProfileInterestDto request
-    public ResponseEntity<String> profileRegister(@RequestBody RegisterRequest registerRequest, HttpServletRequest request) throws IOException {
+    public ResponseEntity<String> profileRegister(@RequestBody @Valid final RegisterRequest registerRequest, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         String loginUid = getSessionValue(session);
 
