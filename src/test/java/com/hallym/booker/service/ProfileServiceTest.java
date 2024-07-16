@@ -14,9 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedList;
@@ -146,19 +147,20 @@ class ProfileServiceTest {
     }
 
     @Test
-    void editProfileTest() {
+    void editProfileTest() throws IOException {
         //given
         Profile profile = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new);
 
-        List<Interests> interests = new LinkedList<>();
-        Interests interests1 = Interests.create("로맨스", profile);
-        Interests interests2 = Interests.create("스릴러", profile);
-        Interests interests3 = Interests.create("판타지", profile);
-        interests.add(interests1);
-        interests.add(interests2);
-        interests.add(interests3);
+        List<String> interests = new LinkedList<>();
+        interests.add("로맨스");
+        interests.add("스릴러");
+        interests.add("판타지");
 
-        ProfileEditRequest profileEditRequest = new ProfileEditRequest("https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png", "default-profile.png", "무력 감자", interests);
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/DummyImg/S3BasicImg.jpg");
+        MultipartFile multipartFile = new MockMultipartFile("/default/default-profile.png"
+                , "S3BasicImg.jpg", "src/main/resources/DummyImg/S3BasicImg.jpg", fileInputStream);
+
+        ProfileEditRequest profileEditRequest = new ProfileEditRequest(multipartFile, "무력 감자", interests);
 
         //when
         profileService.editProfile(profile.getProfileUid(), profileEditRequest);
