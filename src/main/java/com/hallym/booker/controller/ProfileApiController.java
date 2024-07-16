@@ -2,10 +2,7 @@ package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Login.LoginResponse;
-import com.hallym.booker.dto.Profile.ProfileDto;
-import com.hallym.booker.dto.Profile.ProfileEditRequest;
-import com.hallym.booker.dto.Profile.ProfileEditResponse;
-import com.hallym.booker.dto.Profile.RegisterRequest;
+import com.hallym.booker.dto.Profile.*;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.service.ProfileService;
@@ -105,6 +102,14 @@ public class ProfileApiController {
                                               @RequestParam(required = false) List<String> interests) throws IOException {
         profileService.editProfile(uid, new ProfileEditRequest(file, usermessage, interests));
         return new ResponseEntity<>("Edit Profile Success", HttpStatus.OK);
+    }
+
+    /**
+     * 프로필 조회
+     */
+    @GetMapping("/profile/{uid}")
+    public ProfileGetResponse getProfile(@PathVariable Long uid) {
+        return profileService.getProfile(uid);
     }
 
 }

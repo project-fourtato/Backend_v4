@@ -4,6 +4,7 @@ import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.ProfileDto;
 import com.hallym.booker.dto.Profile.ProfileEditRequest;
 import com.hallym.booker.dto.Profile.ProfileEditResponse;
+import com.hallym.booker.dto.Profile.ProfileGetResponse;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.profile.TooManyInterestException;
@@ -137,5 +138,20 @@ public class ProfileService {
                 interestsRepository.save(interests);
             }
         }
+    }
+
+    /**
+     * 프로필 조회
+     */
+    public ProfileGetResponse getProfile(Long uid) {
+        Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
+
+        List<String> interestsList = new ArrayList<>();
+        for (Interests interest : profile.getInterests()) {
+            interestsList.add(interest.getInterestName());
+        }
+
+        return new ProfileGetResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName()
+        ,profile.getUsermessage(), interestsList);
     }
 }
