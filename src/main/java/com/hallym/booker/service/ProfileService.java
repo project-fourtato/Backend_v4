@@ -1,13 +1,9 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
-import com.hallym.booker.dto.Profile.ProfileDto;
-import com.hallym.booker.dto.Profile.ProfileEditRequest;
-import com.hallym.booker.dto.Profile.ProfileEditResponse;
-import com.hallym.booker.dto.Profile.ProfileGetResponse;
+import com.hallym.booker.dto.Profile.*;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
-import com.hallym.booker.exception.profile.TooManyInterestException;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.repository.*;
@@ -17,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -153,5 +148,16 @@ public class ProfileService {
 
         return new ProfileGetResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName()
         ,profile.getUsermessage(), interestsList);
+    }
+
+    /**
+     * 관심사가 동일한 프로필 목록 조회
+     */
+    public SameAllInterestProfileResponse getProfileSameInterests(Long profileId) {
+        Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchProfileException::new);
+        List<Profile> sameInterestProfile = interestsRepository.findSameInterestProfile(profileId);
+        sameInterestProfile.remove(profile);
+
+        return SameAllInterestProfileResponse.from(sameInterestProfile);
     }
 }

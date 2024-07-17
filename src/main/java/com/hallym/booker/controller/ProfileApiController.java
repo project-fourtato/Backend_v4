@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -112,4 +111,12 @@ public class ProfileApiController {
         return profileService.getProfile(uid);
     }
 
+    /**
+     * 관심사가 동일한 프로필 목록 조회
+     */
+    @GetMapping("/profile/interests/{uid}")
+    public SameAllInterestProfileResponse getSameInterestProfile(@PathVariable Long uid) {
+        SameAllInterestProfileResponse profileSameInterests = profileService.getProfileSameInterests(uid);
+        return profileSameInterests;
+    }
 }
