@@ -127,4 +127,13 @@ public class ProfileApiController {
     public List<SearchNicknameResultResponse> searchByNickname(@PathVariable String nickname) {
         return profileService.serachNickname(nickname);
     }
+
+    /**
+     * 프로필 닉네임 중복검사
+     */
+    @GetMapping("/profile/checkNickname/{nickname}")
+    public ResponseEntity<Void> duplicateNickname(@PathVariable String nickname) {
+        profileService.duplicateNickname(nickname);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

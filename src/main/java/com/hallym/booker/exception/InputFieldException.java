@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class InputFieldException extends BookerException {
     protected static final String EMAIL = "email";
-    protected static final String USER_NAME = "userName";
+    protected static final String NICKNAME = "nickname";
     protected static final String PASSWORD = "password";
     protected static final String INTEREST_COUNT = "interestCount";
 

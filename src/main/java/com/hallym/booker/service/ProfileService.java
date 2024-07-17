@@ -2,6 +2,7 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.*;
+import com.hallym.booker.exception.profile.DuplicateNicknameException;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.global.S3.S3Service;
@@ -174,5 +175,14 @@ public class ProfileService {
         }
 
         return allSearchByNickname;
+    }
+
+    /**
+     * 닉네임 중복 확인
+     */
+    public void duplicateNickname(String nickname) {
+        if(profileRepository.existsByNickname(nickname)) {
+            throw new DuplicateNicknameException();
+        }
     }
 }

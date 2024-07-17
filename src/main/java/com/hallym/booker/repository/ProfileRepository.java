@@ -11,4 +11,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     @Query("SELECT p FROM Profile p WHERE p.nickname like %:nickname%")
     List<Profile> findAllByNickname(@Param("nickname") String nickname);
+
+    boolean existsByNickname(String nickname);
 }
