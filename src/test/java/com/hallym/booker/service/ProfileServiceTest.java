@@ -2,6 +2,7 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.*;
+import com.hallym.booker.exception.profile.DuplicateNicknameException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -176,5 +177,22 @@ class ProfileServiceTest {
 
         //then
         assertThat(profile.getNickname()).isEqualTo("콩쥐");
+    }
+
+    @Test
+    void duplicateNicknameTest() {
+        //given
+        Date now = new Date();
+        Login login = Login.create("id3","pw3","email3",now);
+        login = loginRepository.save(login);
+
+        Profile profile = Profile.create(login,"콩쥐","https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png","/default/default-profile.png","안녕하세요 전 소설 좋아해요");
+        profile = profileRepository.save(profile);
+
+        //when, then
+        String profileNickname = profile.getNickname();
+        assertThrows(DuplicateNicknameException.class, () -> {
+            profileService.duplicateNickname(profileNickname);
+        });
     }
 }
