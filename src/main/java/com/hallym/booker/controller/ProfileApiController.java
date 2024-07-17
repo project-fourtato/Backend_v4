@@ -119,4 +119,12 @@ public class ProfileApiController {
         SameAllInterestProfileResponse profileSameInterests = profileService.getProfileSameInterests(uid);
         return profileSameInterests;
     }
+
+    /**
+     * 유저 검색에서 유저 닉네임을 통해 조회
+     */
+    @GetMapping("/profile/search/{nickname}")
+    public List<SearchNicknameResultResponse> searchByNickname(@PathVariable String nickname) {
+        return profileService.serachNickname(nickname);
+    }
 }

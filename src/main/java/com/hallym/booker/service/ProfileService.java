@@ -146,7 +146,7 @@ public class ProfileService {
             interestsList.add(interest.getInterestName());
         }
 
-        return new ProfileGetResponse(profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName()
+        return new ProfileGetResponse(profile.getProfileUid(), profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName()
         ,profile.getUsermessage(), interestsList);
     }
 
@@ -159,5 +159,20 @@ public class ProfileService {
         sameInterestProfile.remove(profile);
 
         return SameAllInterestProfileResponse.from(sameInterestProfile);
+    }
+
+    /**
+     * 유저 검색에서 유저 닉네임을 통해 조회
+     */
+    public List<SearchNicknameResultResponse> serachNickname(String nickname) {
+        List<Profile> allByNickname = profileRepository.findAllByNickname(nickname);
+
+        List<SearchNicknameResultResponse> allSearchByNickname = new ArrayList<>();
+        for (Profile profile : allByNickname) {
+            allSearchByNickname.add(new SearchNicknameResultResponse(profile.getProfileUid(),
+                    profile.getNickname(), profile.getUserimageUrl(), profile.getUsermessage()));
+        }
+
+        return allSearchByNickname;
     }
 }
