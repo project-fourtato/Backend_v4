@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ProfileGetResponse {
+    Long uid;
     String nickname;
     String imageUrl;
     String imageName;

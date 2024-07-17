@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 public class SameInterestProfileResponse {
+    Long uid;
     String nickname;
     String imageUrl;
     String imageName;
@@ -20,6 +21,7 @@ public class SameInterestProfileResponse {
 
     public static SameInterestProfileResponse from(Profile profile) {
         return new SameInterestProfileResponse(
+                profile.getProfileUid(),
                 profile.getNickname(),
                 profile.getUserimageUrl(),
                 profile.getUserimageName(),
