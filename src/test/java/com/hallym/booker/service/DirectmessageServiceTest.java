@@ -3,7 +3,8 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Directmessage;
 import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
-import com.hallym.booker.dto.DirectmessageSendRequest;
+import com.hallym.booker.dto.directmessage.DirectmessageGetResponse;
+import com.hallym.booker.dto.directmessage.DirectmessageSendRequest;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
 import com.hallym.booker.repository.LoginRepository;
@@ -13,8 +14,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -82,5 +80,19 @@ public class DirectmessageServiceTest {
         assertThrows(NoSuchProfileException.class, (ThrowingRunnable) () -> {
             directmessageService.directmessageSend(directmessageSendRequest);
         });
+    }
+
+    @Test
+    public void getDirectmessageTest() {
+        //given
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, profileUidB, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        directmessageService.directmessageSend(directmessageSendRequest);
+        List<Directmessage> directmessageList = directmessageRepository.findAll();
+
+        //when
+        DirectmessageGetResponse directmessage = directmessageService.getDirectmessage(directmessageList.get(0).getMessageId());
+
+        //then
+        Assertions.assertThat(directmessage.getMtitle()).isEqualTo("책 좀 사게 해줘요");
     }
 }
