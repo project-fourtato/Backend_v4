@@ -144,14 +144,6 @@ public class ProfileRepositoryTest {
         Date now = new Date();
         Login login = Login.create("id","pw","email", now);
         Login logins = loginRepository.save(login);
-        Profile profile = Profile.create(logins,"nickname","userimageUrl","userimageName", "usermessage");
-        Profile profiles = profileRepository.save(profile);
-
-        //when
-        boolean existsResult = profileRepository.existsByProfileUid(profile.getProfileUid());
-
-        //then
-        assertThat(existsResult).isEqualTo(true);
         Profile profile = Profile.create(logins,"감자","userimageUrl","userimageName", "usermessage");
         Profile profiles = profileRepository.save(profile);
 

@@ -1,6 +1,8 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Login;
+import com.hallym.booker.exception.login.DuplicateProfileException;
+import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.LoginRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
@@ -12,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +48,7 @@ class LoginServiceTest {
     void 이미등록된회원일경우(){
         Date now = new Date();
         Login new_login = Login.create("id1","newPw","newEmail",now);
-        assertThrows(IllegalStateException.class,
+        assertThrows(DuplicateProfileException.class,
                 ()-> loginService.join(new_login));
     }
 
@@ -69,7 +70,7 @@ class LoginServiceTest {
     @Test
     void deleteOne() {
         loginService.deleteOne("id1");
-        assertThrows(NoSuchElementException.class, ()->
+        assertThrows(NoSuchProfileException.class, ()->
                 loginService.findOne("id1"));
     }
 
