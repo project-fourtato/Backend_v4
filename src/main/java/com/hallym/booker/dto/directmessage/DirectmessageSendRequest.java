@@ -1,4 +1,4 @@
-package com.hallym.booker.dto;
+package com.hallym.booker.dto.directmessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,9 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Directmessage;
-import com.hallym.booker.dto.DirectmessageSendRequest;
+import com.hallym.booker.dto.directmessage.DirectmessageGetResponse;
+import com.hallym.booker.dto.directmessage.DirectmessageSendRequest;
+import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
 import com.hallym.booker.repository.ProfileRepository;
@@ -32,5 +34,15 @@ public class DirectmessageService {
         } else {
             throw new NoSuchProfileException();
         }
+    }
+
+    /**
+     * 쪽지 조회
+     */
+    public DirectmessageGetResponse getDirectmessage(Long messageId) {
+        Directmessage directmessage = directmessageRepository.findById(messageId).orElseThrow(NoSuchMessageException::new);
+
+        return new DirectmessageGetResponse(directmessage.getMessageId(), directmessage.getSenderUid(), directmessage.getRecipientUid(),
+                directmessage.getMdate(), directmessage.getMcheck(), directmessage.getMtitle(), directmessage.getMcontents());
     }
 }
