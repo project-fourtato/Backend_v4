@@ -38,4 +38,10 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
     @Query("SELECT ub FROM UserBooks ub WHERE ub.profile = :profile AND ub.bookDetails = :bookDetails")
     List<UserBooks> findByProfileAndBookDetails(@Param("profile") Profile profile, @Param("bookDetails") BookDetails bookDetails);
 
+
+    // 같이 읽고 있는 유저 목록
+    @Query("SELECT ub2 " +
+            "FROM UserBooks ub1 JOIN UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
+            "WHERE ub1.profile.profileUid = :profileId AND ub1.profile.profileUid != ub2.profile.profileUid")
+    List<UserBooks> findWithProfileList(@Param("profileId") Long profileId);
 }
