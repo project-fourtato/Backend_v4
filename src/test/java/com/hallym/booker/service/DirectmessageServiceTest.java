@@ -5,6 +5,7 @@ import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.directmessage.DirectmessageSendRequest;
+import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
 import com.hallym.booker.repository.LoginRepository;
@@ -94,5 +95,21 @@ public class DirectmessageServiceTest {
 
         //then
         Assertions.assertThat(directmessage.getMtitle()).isEqualTo("책 좀 사게 해줘요");
+    }
+
+    @Test
+    public void deleteDirectmessageTest() {
+        //given
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, profileUidB, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        directmessageService.directmessageSend(directmessageSendRequest);
+        List<Directmessage> directmessageList = directmessageRepository.findAll();
+
+        //when
+        directmessageService.directmessageDelete(directmessageList.get(0).getMessageId());
+
+        //then
+        org.junit.jupiter.api.Assertions.assertThrows(NoSuchMessageException.class, () -> {
+            directmessageService.directmessageDelete(directmessageList.get(0).getMessageId());
+        });
     }
 }
