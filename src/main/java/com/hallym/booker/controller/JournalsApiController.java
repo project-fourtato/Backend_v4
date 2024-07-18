@@ -1,6 +1,7 @@
 package com.hallym.booker.controller;
 
 import com.hallym.booker.dto.journals.JournalSaveRequest;
+import com.hallym.booker.dto.journals.JournalsEditFormResponse;
 import com.hallym.booker.exception.journals.NoJournalContentException;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,7 +29,7 @@ public class JournalsApiController {
                                                @RequestParam(required = false) String jcontents) throws IOException {
         String imageName = "";
         String imageUrl = "";
-        if(file.isEmpty()) {
+        if(file == null) {
             imageName = "default-profile.png";
             imageUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
         } else {
@@ -47,5 +45,10 @@ public class JournalsApiController {
             journalsService.journalSave(journalSaveRequest);
         }
         return new ResponseEntity<>("Save Journals Success", HttpStatus.OK);
+    }
+
+    @GetMapping("/journals/{journalId}/edit")
+    public JournalsEditFormResponse getJournalsEditForm(@PathVariable Long journalId) {
+        return journalsService.getJournalsEditForm(journalId);
     }
 }
