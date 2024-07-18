@@ -2,6 +2,7 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.journals.JournalSaveRequest;
+import com.hallym.booker.dto.journals.JournalsEditFormResponse;
 import com.hallym.booker.exception.journals.NoSuchUserBooksException;
 import com.hallym.booker.repository.*;
 import jakarta.transaction.Transactional;
@@ -79,6 +80,21 @@ public class JournalsServiceTest {
         //then
         List<Journals> journalsList = journalsRepository.findAll();
         Assertions.assertThat(journalsList.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void getJournalsEditFormTest() {
+        //given
+        JournalSaveRequest journalSaveRequest = new JournalSaveRequest(userBooksId, "해리포터 잼따..", "해리포터 진짜 잼쓰니까 다 봐봐여,,",
+                "https://default-image", "default-image");
+        journalsService.journalSave(journalSaveRequest);
+        List<Journals> journalsList = journalsRepository.findAll();
+
+        //when
+        JournalsEditFormResponse journalsEditForm = journalsService.getJournalsEditForm(journalsList.get(0).getJournalId());
+
+        //then
+        Assertions.assertThat(journalsEditForm.getJtitle()).isEqualTo("해리포터 잼따..");
     }
 
 }
