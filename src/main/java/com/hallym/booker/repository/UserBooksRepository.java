@@ -33,4 +33,9 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
     // 주어진 ISBN과 판매 상태가 활성화된 책을 가진 프로필들을 조회
     @Query("SELECT ub.profile FROM UserBooks ub WHERE ub.bookDetails.isbn = :isbn AND ub.saleStatus = 1")
     List<Profile> findByIsbnAndSalesstate(@Param("isbn") String isbn);
+
+    // 책 등록
+    @Query("SELECT ub FROM UserBooks ub WHERE ub.profile = :profile AND ub.bookDetails = :bookDetails")
+    List<UserBooks> findByProfileAndBookDetails(@Param("profile") Profile profile, @Param("bookDetails") BookDetails bookDetails);
+
 }
