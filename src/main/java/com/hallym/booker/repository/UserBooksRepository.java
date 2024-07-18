@@ -1,5 +1,6 @@
 package com.hallym.booker.repository;
 
+import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,15 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
     // 주어진 ISBN과 판매 상태가 활성화된 책을 가진 프로필들을 조회
     @Query("SELECT ub.profile FROM UserBooks ub WHERE ub.bookDetails.isbn = :isbn AND ub.saleStatus = 1")
     List<Profile> findByIsbnAndSalesstate(@Param("isbn") String isbn);
+
+    // 책 등록
+    @Query("SELECT ub FROM UserBooks ub WHERE ub.profile = :profile AND ub.bookDetails = :bookDetails")
+    List<UserBooks> findByProfileAndBookDetails(@Param("profile") Profile profile, @Param("bookDetails") BookDetails bookDetails);
+
+
+    // 같이 읽고 있는 유저 목록
+    @Query("SELECT ub2 " +
+            "FROM UserBooks ub1 JOIN UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
+            "WHERE ub1.profile.profileUid = :profileId AND ub1.profile.profileUid != ub2.profile.profileUid")
+    List<UserBooks> findWithProfileList(@Param("profileId") Long profileId);
 }

@@ -6,6 +6,7 @@ import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,6 +211,39 @@ public class UserBooksRepositoryTest {
         // log deletion confirmation
         // logger.info("Deleted UserBooks with id {}", savedUserBook.getId());
 
+    }
+
+    @Test
+    public void findWithProfileListTest() {
+        //given
+        Date now = new Date();
+        Login login = Login.create("id", "pw", "email", now);
+        Login logins = loginRepository.save(login);
+        Login login2 = Login.create("id2", "pw2", "email", now);
+        Login logins2 = loginRepository.save(login2);
+
+        Profile profile = Profile.create(logins, "nickname", "userimageUrl", "userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+        Profile profile2 = Profile.create(logins, "nickname2", "userimageUrl2", "userimageName2", "usermessage2");
+        Profile profiles2 = profileRepository.save(profile2);
+
+        BookDetails bookDetails = BookDetails.create("isbn", "bookTitle", "author", "publisher", "coverImageUrl");
+        BookDetails bookDetail1 = bookDetailsRepository.save(bookDetails);
+        BookDetails bookDetails2 = BookDetails.create("isbn2", "bookTitle2", "author2", "publisher2", "coverImageUrl2");
+        BookDetails bookDetail2 = bookDetailsRepository.save(bookDetails2);
+
+        UserBooks userBook = UserBooks.create(profiles, bookDetail1, 0, 0);
+        UserBooks userBooks = userBooksRepository.save(userBook);
+        UserBooks userBook2 = UserBooks.create(profiles, bookDetail2, 0, 0);
+        UserBooks userBooks2 = userBooksRepository.save(userBook2);
+        UserBooks userBook3 = UserBooks.create(profiles2, bookDetail1, 0, 0);
+        UserBooks userBooks3 = userBooksRepository.save(userBook);
+        
+        //then
+        List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profiles.getProfileUid());
+
+        //then
+        Assertions.assertThat(withProfileList).extracting(UserBooks::getProfile).extracting(Profile::getNickname).contains("nickname2");
     }
 
 }
