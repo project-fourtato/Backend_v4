@@ -1,5 +1,6 @@
 package com.hallym.booker.repository;
 
+import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
 import org.springframework.data.jpa.repository.JpaRepository;

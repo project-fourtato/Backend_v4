@@ -1,4 +1,4 @@
-package com.hallym.booker.dto.userbooks;
+package com.hallym.booker.dto.UserBooks;
 
 import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.Profile;
@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor

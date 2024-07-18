@@ -1,7 +1,10 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
-import com.hallym.booker.dto.userbooks.*;
+import com.hallym.booker.dto.UserBooks.ReadingAllBooksListResponse;
+import com.hallym.booker.dto.UserBooks.ReadingProfile;
+import com.hallym.booker.dto.UserBooks.ReadingWithAllProfileList;
+import com.hallym.booker.dto.UserBooks.ReadingWithProfile;
 import com.hallym.booker.repository.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -21,7 +24,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class UserBooksServiceTest {
     @Autowired
-    UserBooksService userBooksService;
+    UserBooksServiceImpl userBooksServiceImpl;
     @Autowired
     LoginRepository loginRepository;
     @Autowired
@@ -70,7 +73,7 @@ public class UserBooksServiceTest {
     @Test
     public void readingAllBooksListTest() {
         //when
-        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksService.readingAllBooksList(profile1Id);
+        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksServiceImpl.readingAllBooksList(profile1Id);
 
         //then
         Assertions.assertThat(readingAllBooksListResponse.getResult().size()).isEqualTo(2);
@@ -94,7 +97,7 @@ public class UserBooksServiceTest {
         userBooks3 = userBooksRepository.save(userBooks3);
 
         //when
-        ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(profile1Id);
+        ReadingWithAllProfileList readingWithAllProfileList = userBooksServiceImpl.readingWithProfileList(profile1Id);
         List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getResult();
         ReadingWithProfile readingWithProfile = readingWithProfiles.get(0);
         List<ReadingProfile> profiles = readingWithProfile.getProfileList();
