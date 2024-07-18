@@ -3,6 +3,7 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.journals.JournalSaveRequest;
 import com.hallym.booker.dto.journals.JournalsEditFormResponse;
+import com.hallym.booker.dto.journals.JournalsEditRequest;
 import com.hallym.booker.exception.journals.NoSuchUserBooksException;
 import com.hallym.booker.repository.*;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -95,6 +97,24 @@ public class JournalsServiceTest {
 
         //then
         Assertions.assertThat(journalsEditForm.getJtitle()).isEqualTo("해리포터 잼따..");
+    }
+
+    @Test
+    public void journalsEdit() throws IOException {
+        //given
+        JournalSaveRequest journalSaveRequest = new JournalSaveRequest(userBooksId, "해리포터 잼따..", "해리포터 진짜 잼쓰니까 다 봐봐여,,",
+                "https://default-image", "default-image");
+        journalsService.journalSave(journalSaveRequest);
+        List<Journals> journalsList = journalsRepository.findAll();
+
+        Journals journals = journalsList.get(0);
+        JournalsEditRequest journalsEditRequest = new JournalsEditRequest(journalsList.get(0).getJournalId(), "해리포터는 아즈카반의 죄수가 젤 잼씀,,", journals.getJcontents(), null);
+
+        //when
+        journalsService.journalsEdit(journalsEditRequest);
+
+        //then
+        Assertions.assertThat(journals.getJtitle()).isEqualTo("해리포터는 아즈카반의 죄수가 젤 잼씀,,");
     }
 
 }
