@@ -93,4 +93,7 @@ public class Profile {
         this.countFollowers -= 1;
     }
 
+    public void removeFollow(Follow follow){
+        this.getFollow().remove(follow);
+    }
 }
