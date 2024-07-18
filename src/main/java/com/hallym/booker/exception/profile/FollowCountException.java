@@ -1,4 +1,4 @@
-package com.hallym.booker.exception;
+package com.hallym.booker.exception.profile;
 
 public class FollowCountException extends RuntimeException{
     public FollowCountException(){
