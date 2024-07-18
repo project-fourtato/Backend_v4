@@ -1,6 +1,7 @@
 package com.hallym.booker.controller;
 
-import com.hallym.booker.dto.ReadingAllBooksListResponse;
+import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
+import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
 import com.hallym.booker.service.UserBooksService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,5 +18,10 @@ public class UserBooksApiController {
     @GetMapping("/booksList/{profileId}")
     public ReadingAllBooksListResponse readingAllBooksList(@PathVariable Long profileId) {
         return userBooksService.readingAllBooksList(profileId);
+    }
+
+    @GetMapping("/books/{profileId}")
+    public ReadingWithAllProfileList readingWithAllProfile(@PathVariable Long profileId) {
+        return userBooksService.readingWithProfileList(profileId);
     }
 }

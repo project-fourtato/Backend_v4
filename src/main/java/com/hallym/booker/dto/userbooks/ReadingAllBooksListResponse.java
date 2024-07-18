@@ -1,6 +1,5 @@
-package com.hallym.booker.dto;
+package com.hallym.booker.dto.userbooks;
 
-import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.UserBooks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
