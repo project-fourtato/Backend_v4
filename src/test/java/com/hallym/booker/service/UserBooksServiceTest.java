@@ -1,10 +1,7 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
-import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
-import com.hallym.booker.dto.userbooks.ReadingProfile;
-import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
-import com.hallym.booker.dto.userbooks.ReadingWithProfile;
+import com.hallym.booker.dto.userbooks.*;
 import com.hallym.booker.repository.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -98,7 +95,7 @@ public class UserBooksServiceTest {
 
         //when
         ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(profile1Id);
-        List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getReadingWithProfiles();
+        List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getResult();
         ReadingWithProfile readingWithProfile = readingWithProfiles.get(0);
         List<ReadingProfile> profiles = readingWithProfile.getProfileList();
 
