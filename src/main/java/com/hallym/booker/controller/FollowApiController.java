@@ -1,6 +1,5 @@
 package com.hallym.booker.controller;
 
-import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Follow.FollowRequest;
 import com.hallym.booker.dto.Follow.LatestJournalsResponse;

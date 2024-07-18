@@ -23,7 +23,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class JournalsApiController {
-    private final JournalsServiceImpl journalsServiceml;
     private final JournalsService journalsService;
     private final S3Service s3Service;
 
@@ -47,14 +46,14 @@ public class JournalsApiController {
             throw new NoJournalContentException();
         } else {
             JournalSaveRequest journalSaveRequest = new JournalSaveRequest(bookUid, jtitle, jcontents, imageUrl, imageName);
-            journalsServiceml.journalSave(journalSaveRequest);
+            journalsService.journalSave(journalSaveRequest);
         }
         return new ResponseEntity<>("Save Journals Success", HttpStatus.OK);
     }
 
     @GetMapping("/journals/{journalId}/edit")
     public JournalsEditFormResponse getJournalsEditForm(@PathVariable Long journalId) {
-        return journalsServiceml.getJournalsEditForm(journalId);
+        return journalsService.getJournalsEditForm(journalId);
     }
 
     @PutMapping("/journals/{journalId}/edit")
@@ -63,7 +62,7 @@ public class JournalsApiController {
                                                @RequestParam(required = false) String jtitle,
                                                @RequestParam(required = false) String jcontents) throws IOException {
         JournalsEditRequest journalsEditRequest = new JournalsEditRequest(journalId, jtitle, jcontents, file);
-        journalsServiceml.journalsEdit(journalsEditRequest);
+        journalsService.journalsEdit(journalsEditRequest);
         return new ResponseEntity<>("Edit Journals Success", HttpStatus.OK);
     }
 

@@ -128,6 +128,7 @@ public class JournalsServiceImpl implements JournalsService {
      * 독서록 등록
      */
     @Transactional
+    @Override
     public void journalSave(JournalSaveRequest journalSaveRequest) {
         UserBooks userBooks = userBooksRepository.findById(journalSaveRequest.getBookUid()).orElseThrow(NoSuchUserBooksException::new);
 
@@ -140,6 +141,7 @@ public class JournalsServiceImpl implements JournalsService {
     /**
      * 독서록 수정 폼
      */
+    @Override
     public JournalsEditFormResponse getJournalsEditForm(Long journalId) {
         Journals journals = journalsRepository.findById(journalId).orElseThrow(NoSuchJournalsException::new);
 
@@ -152,6 +154,7 @@ public class JournalsServiceImpl implements JournalsService {
      * 독서록 수정
      */
     @Transactional
+    @Override
     public void journalsEdit(JournalsEditRequest journalsEditRequest) throws IOException {
         Journals journals = journalsRepository.findById(journalsEditRequest.getJournalId()).orElseThrow(NoSuchJournalsException::new);
 
