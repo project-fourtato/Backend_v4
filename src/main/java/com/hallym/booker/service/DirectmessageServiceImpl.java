@@ -2,6 +2,7 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Directmessage;
 import com.hallym.booker.domain.Profile;
+import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
 import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
 import com.hallym.booker.exception.directmessage.NoSuchDirectmessageException;
@@ -9,7 +10,6 @@ import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
 import com.hallym.booker.repository.ProfileRepository;
-import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
