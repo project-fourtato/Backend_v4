@@ -90,4 +90,31 @@ public class DirectmessageRepositoryTest {
         assertThat(allDirectMessagesByRecipient).extracting(Directmessage::getSenderUid).contains(userProfileB.getProfileUid());
     }
 
+    @Test
+    public void existsByMessageIdTest() {
+        //given
+        Login loginA = Login.create("gamja", "gamgamja", "gam@gamja.com", new Date(2000, 12, 21));
+        Login userALogin = loginRepository.save(loginA);
+        Profile profileA = Profile.create(userALogin, "gamjaa", "https://gmajasprofileimage.com", "gmajasprofileimage", "무력 감자");
+        Profile userProfileA = profileRepository.save(profileA);
+
+        Login loginB = Login.create("goguma", "gogoguma", "go@gamja.com", new Date(2000, 07, 03));
+        Login userBLogin = loginRepository.save(loginB);
+        Profile profileB = Profile.create(userBLogin, "gogumaa", "https://gogumasprofileimage.com", "gogumasprofileimage", "무력 고구마");
+        Profile userProfileB = profileRepository.save(profileB);
+
+        Directmessage userBMessage = Directmessage.create(1, "비가 내리면 여는 상점 책 구매할 수 있을까요?", "도서관에도 책이 없네요,,ㅠ",
+                LocalDateTime.now(), userProfileB.getProfileUid(), userProfileA.getProfileUid());
+        Directmessage userBToUserA = directmessageRepository.save(userBMessage);
+        Directmessage userAMessage = Directmessage.create(1, "구매 가능하세요!", "결제 방식 다시 회답 주시면 감사하겠습니다!",
+                LocalDateTime.now(), userProfileA.getProfileUid(),userProfileB.getProfileUid());
+        Directmessage userAToUserB = directmessageRepository.save(userAMessage);
+
+        //when
+        boolean existsByMessageId = directmessageRepository.existsByMessageId(userAToUserB.getMessageId());
+
+        //then
+        Assertions.assertThat(existsByMessageId).isEqualTo(true);
+    }
+
 }
