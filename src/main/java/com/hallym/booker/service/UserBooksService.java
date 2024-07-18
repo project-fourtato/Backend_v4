@@ -2,6 +2,7 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
 import com.hallym.booker.dto.UserBooks.*;
+import org.w3c.dom.Element;
 
 import java.util.List;
 
@@ -27,4 +28,16 @@ public interface UserBooksService {
 
     // 책 교환에서 isbn과 salesstate을 이용하여 profileUid 추출 후 프로필 목록 조회
     List<ProfileResponseDTO> getProfilesByIsbnAndSaleStatus(String isbn);
+
+    //읽고 있는 책 목록
+    ReadingAllBooksListResponse readingAllBooksList(Long profileId);
+
+    //책을 같이 읽는 유저 목록
+    ReadingWithAllProfileList readingWithProfileList(Long profileId);
+
+    //베스트셀러
+    BestSellerListResponse bestseller();
+
+    // tag값의 정보를 가져오는 함수
+    String getTagValue(String tag, Element eElement);
 }

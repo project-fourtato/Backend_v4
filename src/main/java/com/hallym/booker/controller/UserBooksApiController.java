@@ -2,14 +2,14 @@ package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.UserBooks;
+import com.hallym.booker.dto.LibraryList.LibraryListDTO;
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
+import com.hallym.booker.dto.Result;
 import com.hallym.booker.dto.UserBooks.*;
-import com.hallym.booker.dto.userbooks.BestSellerListResponse;
-import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
-import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
 import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.UserBooksRepository;
+import com.hallym.booker.service.LibraryListService;
 import com.hallym.booker.service.UserBooksService;
 import com.hallym.booker.service.UserBooksServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +25,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserBooksApiController {
     private final UserBooksService userBooksService;
-    private final UserBooksServiceImpl userBooksServiceImpl;
     private final JournalsRepository journalsRepository;
     private final UserBooksRepository userBooksRepository;
-
+    private final LibraryListService libraryListService;
 
     @GetMapping("/booksList/{profileId}")
     public ReadingAllBooksListResponse readingAllBooksList(@PathVariable Long profileId) {
-        return userBooksServiceImpl.readingAllBooksList(profileId);
+        return userBooksService.readingAllBooksList(profileId);
     }
 
     @GetMapping("/books/{profileId}")
     public ReadingWithAllProfileList readingWithAllProfile(@PathVariable Long profileId) {
-        return userBooksServiceImpl.readingWithProfileList(profileId);
+        return userBooksService.readingWithProfileList(profileId);
     }
 
     @GetMapping("/bestseller")
     public BestSellerListResponse bestseller() {
-        return userBooksServiceImpl.bestseller();
+        return userBooksService.bestseller();
     }
 
     // 책 등록 API

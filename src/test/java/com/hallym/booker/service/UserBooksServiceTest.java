@@ -24,8 +24,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class UserBooksServiceTest {
     @Autowired
-    UserBooksServiceImpl userBooksServiceImpl;
-    @Autowired
     LoginRepository loginRepository;
     @Autowired
     ProfileRepository profileRepository;
@@ -35,6 +33,8 @@ public class UserBooksServiceTest {
     JournalsRepository journalsRepository;
     @Autowired
     BookDetailsRepository bookDetailsRepository;
+    @Autowired
+    UserBooksService userBooksService;
 
     Long profile1Id = 0L;
     Long profile2Id = 0L;
@@ -73,7 +73,7 @@ public class UserBooksServiceTest {
     @Test
     public void readingAllBooksListTest() {
         //when
-        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksServiceImpl.readingAllBooksList(profile1Id);
+        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksService.readingAllBooksList(profile1Id);
 
         //then
         Assertions.assertThat(readingAllBooksListResponse.getResult().size()).isEqualTo(2);
@@ -97,7 +97,7 @@ public class UserBooksServiceTest {
         userBooks3 = userBooksRepository.save(userBooks3);
 
         //when
-        ReadingWithAllProfileList readingWithAllProfileList = userBooksServiceImpl.readingWithProfileList(profile1Id);
+        ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(profile1Id);
         List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getResult();
         ReadingWithProfile readingWithProfile = readingWithProfiles.get(0);
         List<ReadingProfile> profiles = readingWithProfile.getProfileList();

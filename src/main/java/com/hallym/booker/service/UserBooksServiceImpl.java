@@ -227,6 +227,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     /**
      * 읽고 있는 책 목록
      */
+    @Override
     public ReadingAllBooksListResponse readingAllBooksList(Long profileId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchProfileException::new);
 
@@ -237,6 +238,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     /**
      * 책을 같이 읽는 유저 목록
      */
+    @Override
     public ReadingWithAllProfileList readingWithProfileList(Long profileId) {
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profileId);
 
@@ -261,6 +263,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     /**
      * 베스트셀러
      */
+    @Override
     public BestSellerListResponse bestseller() {
         // 본인이 받은 api키를 추가
         String key = "ttbblossom69842039002";
@@ -296,6 +299,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     }
 
     // tag값의 정보를 가져오는 함수
+    @Override
     public String getTagValue(String tag, Element eElement) {
 
         //결과를 저장할 result 변수 선언
