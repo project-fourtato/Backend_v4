@@ -1,34 +1,18 @@
 package com.hallym.booker.service;
 
-import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
-import com.hallym.booker.dto.userbooks.BestSellerListResponse;
-import com.hallym.booker.dto.userbooks.BestSellerResponse;
-import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
-import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
+import com.hallym.booker.dto.ReadingAllBooksListResponse;
+import com.hallym.booker.dto.ReadingBookResponse;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.BookDetailsRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 @Service
 @Transactional(readOnly = true)
