@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -49,8 +50,9 @@ public class Journals {
     }
 
     // 수정 메서드
-    public Journals change(String jtitle, String jcontents, String jimageUrl, String jimageName) {
+    public Journals change(String jtitle, LocalDateTime jdatetime, String jcontents, String jimageUrl, String jimageName) {
         this.jtitle = jtitle;
+        this.jdatetime = jdatetime;
         this.jcontents = jcontents;
         this.jimageUrl = jimageUrl;
         this.jimageName = jimageName;
