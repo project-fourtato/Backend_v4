@@ -1,7 +1,6 @@
 package com.hallym.booker.exception.profile;
 
 import com.hallym.booker.exception.BookerException;
-import com.hallym.booker.exception.InputFieldException;
 import org.springframework.http.HttpStatus;
 
 public class NoSuchProfileException extends BookerException {

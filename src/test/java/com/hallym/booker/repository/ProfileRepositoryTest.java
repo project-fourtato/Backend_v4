@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -122,11 +123,35 @@ public class ProfileRepositoryTest {
     }
 
     @Test
+    public void existsByProfileUidTest() {
+        //given
+        Date now = new Date();
+        Login login = Login.create("id","pw","email", now);
+        Login logins = loginRepository.save(login);
+        Profile profile = Profile.create(logins,"nickname","userimageUrl","userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+
+        //when
+        boolean existsResult = profileRepository.existsByProfileUid(profile.getProfileUid());
+
+        //then
+        assertThat(existsResult).isEqualTo(true);
+    }
+  
+    @Test
     public void findAllByNicknameTest() {
         //given
         Date now = new Date();
         Login login = Login.create("id","pw","email", now);
         Login logins = loginRepository.save(login);
+        Profile profile = Profile.create(logins,"nickname","userimageUrl","userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+
+        //when
+        boolean existsResult = profileRepository.existsByProfileUid(profile.getProfileUid());
+
+        //then
+        assertThat(existsResult).isEqualTo(true);
         Profile profile = Profile.create(logins,"감자","userimageUrl","userimageName", "usermessage");
         Profile profiles = profileRepository.save(profile);
 

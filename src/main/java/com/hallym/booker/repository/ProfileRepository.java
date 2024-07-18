@@ -9,8 +9,12 @@ import java.util.List;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
+
+    boolean existsByProfileUid(Long profileUid);
+
     @Query("SELECT p FROM Profile p WHERE p.nickname like %:nickname%")
     List<Profile> findAllByNickname(@Param("nickname") String nickname);
 
     boolean existsByNickname(String nickname);
+
 }
