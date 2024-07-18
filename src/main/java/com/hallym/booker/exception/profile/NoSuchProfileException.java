@@ -9,5 +9,4 @@ public class NoSuchProfileException extends BookerException {
     public NoSuchProfileException() {
         super(MESSAGE, HttpStatus.NOT_FOUND);
     }
-
 }
