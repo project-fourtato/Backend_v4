@@ -21,7 +21,7 @@ class InterestsServiceTest {
     private InterestsRepository interestsRepository;
 
     @InjectMocks
-    private InterestsServiceImpl interestsService;
+    private InterestsService interestsService;
 
     @BeforeEach
     void setUp() {

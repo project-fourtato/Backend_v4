@@ -23,7 +23,7 @@ class BookDetailsServiceTest {
     private ApiTagValue apiTagValue;
 
     @InjectMocks
-    private BookDetailsServiceImpl bookDetailsService;
+    private BookDetailsService bookDetailsService;
 
     @Value("${aladin.api.key}")
     private String apiKey;

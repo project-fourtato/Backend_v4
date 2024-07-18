@@ -23,7 +23,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class JournalsServiceTest {
     @Autowired
-    JournalsServiceImpl journalsService;
+    JournalsService journalsService;
     @Autowired
     JournalsRepository journalsRepository;
     @Autowired
