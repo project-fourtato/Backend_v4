@@ -4,15 +4,19 @@ import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.UserBooks;
 import com.hallym.booker.dto.journals.JournalSaveRequest;
 import com.hallym.booker.dto.journals.JournalsEditFormResponse;
+import com.hallym.booker.dto.journals.JournalsEditRequest;
 import com.hallym.booker.exception.journals.NoJournalContentException;
 import com.hallym.booker.exception.journals.NoSuchJournalsException;
 import com.hallym.booker.exception.journals.NoSuchUserBooksException;
+import com.hallym.booker.global.S3.S3Service;
+import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -22,6 +26,7 @@ import java.util.Optional;
 public class JournalsService {
     private final JournalsRepository journalsRepository;
     private final UserBooksRepository userBooksRepository;
+    private final S3Service s3Service;
 
     /**
      * 독서록 등록
@@ -45,5 +50,25 @@ public class JournalsService {
         return new JournalsEditFormResponse(journalId,
                 journals.getJdatetime(), journals.getJtitle(), journals.getJcontents(),
                 journals.getJimageUrl(), journals.getJimageName());
+    }
+
+    /**
+     * 독서록 수정
+     */
+    @Transactional
+    public void journalsEdit(JournalsEditRequest journalsEditRequest) throws IOException {
+        Journals journals = journalsRepository.findById(journalsEditRequest.getJournalId()).orElseThrow(NoSuchJournalsException::new);
+
+        String imageName = journals.getJimageName();
+        String imageUrl = journals.getJimageUrl();
+        if(journalsEditRequest.getFile() != null) {
+            s3Service.delete(journals.getJimageName());
+            S3ResponseUploadEntity journal = s3Service.upload(journalsEditRequest.getFile(), "journal");
+
+            imageName = journal.getImageName();
+            imageUrl = journal.getImageUrl();
+        }
+
+        journals.change(journalsEditRequest.getJtitle(), LocalDateTime.now(), journalsEditRequest.getJcontents(), imageUrl, imageName);
     }
 }

@@ -1,7 +1,9 @@
 package com.hallym.booker.controller;
 
+import com.amazonaws.Response;
 import com.hallym.booker.dto.journals.JournalSaveRequest;
 import com.hallym.booker.dto.journals.JournalsEditFormResponse;
+import com.hallym.booker.dto.journals.JournalsEditRequest;
 import com.hallym.booker.exception.journals.NoJournalContentException;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
@@ -50,5 +52,15 @@ public class JournalsApiController {
     @GetMapping("/journals/{journalId}/edit")
     public JournalsEditFormResponse getJournalsEditForm(@PathVariable Long journalId) {
         return journalsService.getJournalsEditForm(journalId);
+    }
+
+    @PutMapping("/journals/{journalId}/edit")
+    public ResponseEntity<String> journalsEdit(@PathVariable Long journalId,
+                                               @RequestParam(required = false) MultipartFile file,
+                                               @RequestParam(required = false) String jtitle,
+                                               @RequestParam(required = false) String jcontents) throws IOException {
+        JournalsEditRequest journalsEditRequest = new JournalsEditRequest(journalId, jtitle, jcontents, file);
+        journalsService.journalsEdit(journalsEditRequest);
+        return new ResponseEntity<>("Edit Journals Success", HttpStatus.OK);
     }
 }
