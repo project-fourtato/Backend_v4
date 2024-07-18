@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -118,5 +119,21 @@ public class ProfileRepositoryTest {
 
         //Then
         assertThat(deletedProfile).isEmpty();
+    }
+
+    @Test
+    public void existsByProfileUidTest() {
+        //given
+        Date now = new Date();
+        Login login = Login.create("id","pw","email", now);
+        Login logins = loginRepository.save(login);
+        Profile profile = Profile.create(logins,"nickname","userimageUrl","userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+
+        //when
+        boolean existsResult = profileRepository.existsByProfileUid(profile.getProfileUid());
+
+        //then
+        assertThat(existsResult).isEqualTo(true);
     }
 }
