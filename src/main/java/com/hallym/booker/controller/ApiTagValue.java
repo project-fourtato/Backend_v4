@@ -9,15 +9,8 @@ public class ApiTagValue {
 
     // tag값의 정보를 가져오는 함수
     public String getTagValue(String tag, Element eElement) {
-        NodeList nlList = eElement.getElementsByTagName(tag);
-        if (nlList != null && nlList.getLength() > 0) {
-            Element tagElement = (Element) nlList.item(0);
-            NodeList childNodes = tagElement.getChildNodes();
-            if (childNodes != null && childNodes.getLength() > 0) {
-                return childNodes.item(0).getTextContent().trim();
-            }
-        }
-        return "";
+        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+        return nlList.item(0).getTextContent();
     }
 }
 

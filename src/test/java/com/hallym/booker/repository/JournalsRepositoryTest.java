@@ -67,7 +67,7 @@ class JournalsRepositoryTest {
         Journals journals2 = Journals.create(userBooks_0,"백설공주를 읽고..","쌸라쌸라",LocalDateTime.of(2025,1,1,1,1),"url","name");
         journalsRepository.save(journals2);
         //When
-        List<Journals> journalsList = journalsRepository.findByUserBooks_BookUidOrderByJdatetimeDesc(userBooks_0.getBookUid());
+        List<Journals> journalsList = journalsRepository.findByUserBooks_Profile_ProfileUidOrderByJdatetimeDesc(userBooks_0.getProfile().getProfileUid());
         //Then
         org.assertj.core.api.Assertions.assertThat(journalsList.size()).isEqualTo(2);
         Assertions.assertThat(journalsList.get(0).getJtitle()).isEqualTo("백설공주를 읽고..");

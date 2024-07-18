@@ -1,6 +1,6 @@
 package com.hallym.booker.domain;
 
-import com.hallym.booker.exception.FollowCountException;
+import com.hallym.booker.exception.profile.FollowCountException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -93,4 +93,7 @@ public class Profile {
         this.countFollowers -= 1;
     }
 
+    public void removeFollow(Follow follow){
+        this.getFollow().remove(follow);
+    }
 }
