@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -135,5 +136,39 @@ public class ProfileRepositoryTest {
 
         //then
         assertThat(existsResult).isEqualTo(true);
+    }
+  
+    @Test
+    public void findAllByNicknameTest() {
+        //given
+        Date now = new Date();
+        Login login = Login.create("id","pw","email", now);
+        Login logins = loginRepository.save(login);
+        Profile profile = Profile.create(logins,"nickname","userimageUrl","userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+
+        //when
+        boolean existsResult = profileRepository.existsByProfileUid(profile.getProfileUid());
+
+        //then
+        assertThat(existsResult).isEqualTo(true);
+        Profile profile = Profile.create(logins,"감자","userimageUrl","userimageName", "usermessage");
+        Profile profiles = profileRepository.save(profile);
+
+        Login login2 = Login.create("id2","pw2","email2", now);
+        Login logins2 = loginRepository.save(login2);
+        Profile profile2 = Profile.create(logins2,"감자감자","userimageUrl","userimageName", "usermessage");
+        Profile profiles2 = profileRepository.save(profile2);
+
+        Login login3 = Login.create("id3","pw3","email3", now);
+        Login logins3 = loginRepository.save(login3);
+        Profile profile3 = Profile.create(logins3,"고구마","userimageUrl","userimageName", "usermessage");
+        Profile profiles3 = profileRepository.save(profile3);
+
+        //when
+        List<Profile> findNickname = profileRepository.findAllByNickname("감");
+
+        //then
+        assertThat(findNickname).extracting(Profile::getNickname).contains("감자", "감자감자");
     }
 }
