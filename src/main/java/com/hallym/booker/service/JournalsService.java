@@ -62,7 +62,9 @@ public class JournalsService {
         String imageName = journals.getJimageName();
         String imageUrl = journals.getJimageUrl();
         if(journalsEditRequest.getFile() != null) {
-            s3Service.delete(journals.getJimageName());
+            if(!journals.getJimageName().equals("default-profile.png")) {
+                s3Service.delete(journals.getJimageName());
+            }
             S3ResponseUploadEntity journal = s3Service.upload(journalsEditRequest.getFile(), "journal");
 
             imageName = journal.getImageName();
