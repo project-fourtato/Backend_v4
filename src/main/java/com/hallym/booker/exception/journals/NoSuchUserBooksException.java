@@ -3,12 +3,10 @@ package com.hallym.booker.exception.journals;
 import com.hallym.booker.exception.BookerException;
 import org.springframework.http.HttpStatus;
 
-public class NoSuchJournalsException extends BookerException {
+public class NoSuchUserBooksException extends BookerException {
+    private static final String MESSAGE = "저장하지 않은 책입니다.";
 
-    private static final String MESSAGE = "독서록이 존재하지 않습니다.";
-    public NoSuchJournalsException(){
+    public NoSuchUserBooksException() {
         super(MESSAGE, HttpStatus.NOT_FOUND);
     }
-
 }
-

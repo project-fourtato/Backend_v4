@@ -2,15 +2,17 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.controller.ApiTagValue;
 import com.hallym.booker.domain.Journals;
-import com.hallym.booker.dto.Journals.JournalsBookInfoResponseDTO;
-import com.hallym.booker.dto.Journals.JournalsDeleteDTO;
-import com.hallym.booker.dto.Journals.JournalsListResponseDTO;
-import com.hallym.booker.dto.Journals.JournalsResponseDTO;
+import com.hallym.booker.domain.UserBooks;
+import com.hallym.booker.dto.Journals.*;
 import com.hallym.booker.exception.journals.NoSuchBookUidException;
 import com.hallym.booker.exception.journals.NoSuchJournalsException;
-import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
+import com.hallym.booker.exception.journals.NoSuchUserBooksException;
+import com.hallym.booker.global.S3.S3Service;
+import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.repository.JournalsRepository;
+import com.hallym.booker.repository.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +33,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JournalsServiceImpl implements JournalsService {
 
+    @Autowired
     private final JournalsRepository journalsRepository;
+    private final UserBooksRepository userBooksRepository;
+    private final S3Service s3Service;
+
     private final ApiTagValue apiTagValue;
 
     @Value("${aladin.api.key}")
@@ -115,6 +122,52 @@ public class JournalsServiceImpl implements JournalsService {
                 .orElseThrow(NoSuchJournalsException::new);
         journalsRepository.delete(journal);
         return "독서록 삭제 완료";
+    }
+
+    /**
+     * 독서록 등록
+     */
+    @Transactional
+    public void journalSave(JournalSaveRequest journalSaveRequest) {
+        UserBooks userBooks = userBooksRepository.findById(journalSaveRequest.getBookUid()).orElseThrow(NoSuchUserBooksException::new);
+
+        Journals journals = Journals.create(userBooks, journalSaveRequest.getJtitle(), journalSaveRequest.getJcontents(),
+                LocalDateTime.now(), journalSaveRequest.getJimageUrl(), journalSaveRequest.getJimageName());
+
+        journalsRepository.save(journals);
+    }
+
+    /**
+     * 독서록 수정 폼
+     */
+    public JournalsEditFormResponse getJournalsEditForm(Long journalId) {
+        Journals journals = journalsRepository.findById(journalId).orElseThrow(NoSuchJournalsException::new);
+
+        return new JournalsEditFormResponse(journalId,
+                journals.getJdatetime(), journals.getJtitle(), journals.getJcontents(),
+                journals.getJimageUrl(), journals.getJimageName());
+    }
+
+    /**
+     * 독서록 수정
+     */
+    @Transactional
+    public void journalsEdit(JournalsEditRequest journalsEditRequest) throws IOException {
+        Journals journals = journalsRepository.findById(journalsEditRequest.getJournalId()).orElseThrow(NoSuchJournalsException::new);
+
+        String imageName = journals.getJimageName();
+        String imageUrl = journals.getJimageUrl();
+        if(journalsEditRequest.getFile() != null) {
+            if(!journals.getJimageName().equals("default-profile.png")) {
+                s3Service.delete(journals.getJimageName());
+            }
+            S3ResponseUploadEntity journal = s3Service.upload(journalsEditRequest.getFile(), "journal");
+
+            imageName = journal.getImageName();
+            imageUrl = journal.getImageUrl();
+        }
+
+        journals.change(journalsEditRequest.getJtitle(), LocalDateTime.now(), journalsEditRequest.getJcontents(), imageUrl, imageName);
     }
 
 }

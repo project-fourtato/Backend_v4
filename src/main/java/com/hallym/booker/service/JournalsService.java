@@ -1,5 +1,6 @@
 package com.hallym.booker.service;
 
+
 import com.hallym.booker.dto.Journals.JournalsBookInfoResponseDTO;
 import com.hallym.booker.dto.Journals.JournalsDeleteDTO;
 import com.hallym.booker.dto.Journals.JournalsListResponseDTO;
@@ -21,3 +22,4 @@ public interface JournalsService {
     // 독서록 삭제
     String deleteJournal(JournalsDeleteDTO journalsDeleteDTO);
 }
+
