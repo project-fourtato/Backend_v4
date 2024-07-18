@@ -15,4 +15,6 @@ public interface DirectmessageRepository extends JpaRepository<Directmessage, Lo
     @Query(value = "SELECT m FROM Directmessage m WHERE m.recipientUid = :recipient_uid")
     List<Directmessage> findAllDirectMessagesByRecipient(@Param("recipient_uid") Long recipientUid);
 
+    boolean existsByMessageId(Long messageId);
+
 }

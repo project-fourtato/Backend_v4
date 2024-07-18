@@ -45,4 +45,16 @@ public class DirectmessageService {
         return new DirectmessageGetResponse(directmessage.getMessageId(), directmessage.getSenderUid(), directmessage.getRecipientUid(),
                 directmessage.getMdate(), directmessage.getMcheck(), directmessage.getMtitle(), directmessage.getMcontents());
     }
+
+    /**
+     * 쪽지 삭제
+     */
+    @Transactional
+    public void directmessageDelete(Long messageId) {
+        if(directmessageRepository.existsByMessageId(messageId)) {
+            directmessageRepository.deleteById(messageId);
+        } else {
+            throw new NoSuchMessageException();
+        }
+    }
 }

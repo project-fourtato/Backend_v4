@@ -31,4 +31,13 @@ public class DirectmessageApiController {
     public DirectmessageGetResponse getDirecmessage(@PathVariable Long messageId) {
         return directmessageService.getDirectmessage(messageId);
     }
+
+    /**
+     * 쪽지 삭제
+     */
+    @PostMapping("/directmessages/{messageId}/delete")
+    public ResponseEntity<String> directmessageDelete(@PathVariable Long messageId) {
+        directmessageService.directmessageDelete(messageId);
+        return new ResponseEntity<>("Directmessages deleted successfully", HttpStatus.OK);
+    }
 }
