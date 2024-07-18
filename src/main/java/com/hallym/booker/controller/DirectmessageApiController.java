@@ -1,8 +1,8 @@
 package com.hallym.booker.controller;
 
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
-import com.hallym.booker.dto.directmessage.DirectmessageGetResponse;
-import com.hallym.booker.dto.directmessage.DirectmessageSendRequest;
+import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
+import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
 import com.hallym.booker.service.DirectmessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
