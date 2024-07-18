@@ -1,5 +1,6 @@
 package com.hallym.booker.controller;
 
+import com.hallym.booker.dto.userbooks.BestSellerListResponse;
 import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
 import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
 import com.hallym.booker.service.UserBooksService;
@@ -23,5 +24,10 @@ public class UserBooksApiController {
     @GetMapping("/books/{profileId}")
     public ReadingWithAllProfileList readingWithAllProfile(@PathVariable Long profileId) {
         return userBooksService.readingWithProfileList(profileId);
+    }
+
+    @GetMapping("/bestseller")
+    public BestSellerListResponse bestseller() {
+        return userBooksService.bestseller();
     }
 }

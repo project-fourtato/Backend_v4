@@ -3,6 +3,8 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.BookDetails;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
+import com.hallym.booker.dto.userbooks.BestSellerListResponse;
+import com.hallym.booker.dto.userbooks.BestSellerResponse;
 import com.hallym.booker.dto.userbooks.ReadingAllBooksListResponse;
 import com.hallym.booker.dto.userbooks.ReadingWithAllProfileList;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
@@ -13,12 +15,20 @@ import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 @Service
 @Transactional(readOnly = true)
@@ -60,5 +70,55 @@ public class UserBooksService {
         }
 
         return ReadingWithAllProfileList.from(map);
+    }
+
+    /**
+     * 베스트셀러
+     */
+    public BestSellerListResponse bestseller() {
+        // 본인이 받은 api키를 추가
+        String key = "ttbblossom69842039002";
+        List<BestSellerResponse> collect = new ArrayList<>();
+
+        try {
+            // parsing할 url 지정(API 키 포함해서)
+            String url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbhyejmh1853001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
+
+            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
+            Document doc = dBuilder.parse(url);
+
+            // 제일 첫번째 태그
+            doc.getDocumentElement().normalize();
+
+            // 파싱할 tag
+            NodeList nList = doc.getElementsByTagName("item");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+
+                Element eElement = (Element) nNode;
+
+                BestSellerResponse br = new BestSellerResponse(getTagValue("title", eElement), getTagValue("author", eElement), getTagValue("isbn13", eElement), getTagValue("publisher", eElement),getTagValue("cover", eElement));
+                collect.add(br);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new BestSellerListResponse(collect);
+    }
+
+    // tag값의 정보를 가져오는 함수
+    public String getTagValue(String tag, Element eElement) {
+
+        //결과를 저장할 result 변수 선언
+        String result = "";
+
+        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+
+        result = nlList.item(0).getTextContent();
+
+        return result;
     }
 }
