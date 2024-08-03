@@ -6,6 +6,7 @@ import com.hallym.booker.dto.Login.EffectivenessResponse;
 import com.hallym.booker.dto.Login.LoginDto;
 import com.hallym.booker.dto.Login.LoginForm;
 import com.hallym.booker.dto.Login.LoginResponse;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -93,7 +94,7 @@ public class LoginApiController {
     public ResponseEntity<LoginResponse> booksState(@RequestBody @Valid final LoginForm loginForm, HttpServletRequest request) {
         Login l = loginservice.loginLogin(loginForm.getId(),loginForm.getPw());
         if(l == null){
-            return null;
+            throw new NoSuchLoginException();
         }
         LoginResponse loginResponse = new LoginResponse(l.getLoginUid());
 
