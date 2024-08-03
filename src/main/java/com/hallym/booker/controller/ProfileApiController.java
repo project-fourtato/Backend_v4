@@ -32,7 +32,15 @@ public class ProfileApiController {
     @PostMapping("/profile/new") // @RequestBody ProfileInterestDto request
     public ResponseEntity<String> profileRegister(@RequestBody @Valid final RegisterRequest registerRequest, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
-        String loginUid = getSessionValue(session);
+        if(session == null){ //세션이 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        String loginUid = loginResponse.getUid();
 
         String imgUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
         String imgName = "default/default-profile.png";
@@ -58,24 +66,19 @@ public class ProfileApiController {
     @PostMapping("/profile/delete")
     public ResponseEntity<String> profileDelete(HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
-        String loginUid = getSessionValue(session);
+        if(session == null){ //세션이 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
 
-        profileService.deleteOne(loginUid);
+        profileService.deleteOne(loginResponse.getUid());
 
         removeSessionValue(session);
 
         return new ResponseEntity<>("Remove Success", HttpStatus.OK);
-    }
-
-    private String getSessionValue(HttpSession session){ //세션을 통해 loginUid값 찾기
-        if (session == null) { //세션이 없으면 login 등록 페이지로 이동하게 null
-            return null;
-        }
-        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if (loginResponse == null) { //세션에 login 데이터가 없으면 login 등록 페이지로로 이동하게 null
-            return null;
-        }
-        return loginResponse.getUid();
     }
 
     private void removeSessionValue(HttpSession session) { //세션 삭제
