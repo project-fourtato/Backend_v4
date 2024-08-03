@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/login")
@@ -93,9 +95,6 @@ public class LoginApiController {
     @PostMapping("")
     public ResponseEntity<LoginResponse> booksState(@RequestBody @Valid final LoginForm loginForm, HttpServletRequest request) {
         Login l = loginservice.loginLogin(loginForm.getId(),loginForm.getPw());
-        if(l == null){
-            throw new NoSuchLoginException();
-        }
         LoginResponse loginResponse = new LoginResponse(l.getLoginUid());
 
         //로그인 성공 처리
