@@ -55,8 +55,16 @@ public class LoginApiController {
      * 회원 수정 폼
      */
     @PostMapping("/edit")
-    public ResponseEntity<LoginDto> idFind(@RequestBody final String uid){
-        Login login = loginservice.findOne(uid);
+    public ResponseEntity<LoginDto> idFind(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session == null){ //세션이 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        Login login = loginservice.findOne(loginResponse.getUid());
         return ResponseEntity.ok().body(new LoginDto(login.getLoginUid(),login.getPw(),login.getEmail(),login.getBirth()));
     }
 
@@ -64,8 +72,16 @@ public class LoginApiController {
      * 회원 수정
      */
     @PutMapping("/edit")
-    public ResponseEntity<String> loginEdit(@RequestBody @Valid final LoginDto request){
-        loginservice.updateLogin(request.getUid(), request.getPw(), request.getEmail(), request.getBirth());
+    public ResponseEntity<String> loginEdit(@RequestBody @Valid final LoginDto loginDto, HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session == null){ //세션이 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+        loginservice.updateLogin(loginDto.getUid(), loginDto.getPw(), loginDto.getEmail(), loginDto.getBirth());
         return new ResponseEntity("redirection request", HttpStatus.SEE_OTHER);
     }
 
