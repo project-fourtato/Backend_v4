@@ -95,19 +95,20 @@ public class LoginApiController {
         if(l == null){
             return null;
         }
-        else{
-            LoginResponse loginResponse = new LoginResponse(l.getLoginUid());
+        LoginResponse loginResponse = new LoginResponse(l.getLoginUid());
 
-            //로그인 성공 처리
+        //로그인 성공 처리
 
-            //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
-            HttpSession session = request.getSession(true);
+        //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
+        HttpSession session = request.getSession(true);
 
-            //세션에 로그인 회원 정보 저장
-            session.setAttribute(SessionConst.LOGIN_MEMBER, loginResponse);
+        //세션에 로그인 회원 정보 저장
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginResponse);
 
-            return ResponseEntity.ok().body(loginResponse);
-        }
+        //profile 생성했는지 확인 후 안했으면 profile 설정 페이지로 넘어가게
+
+        return ResponseEntity.ok().body(loginResponse);
+
     }
 
     //세션 구현하면서 새로 만듦 : sessionstrorage 에서 uid를 받아왔는데 이걸 세션 같이 쓰도록 하자

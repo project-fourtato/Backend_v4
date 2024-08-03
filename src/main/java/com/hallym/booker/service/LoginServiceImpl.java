@@ -1,6 +1,7 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Login;
+import com.hallym.booker.domain.Profile;
 import com.hallym.booker.exception.login.DuplicateProfileException;
 import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.LoginRepository;
@@ -90,6 +91,12 @@ public class LoginServiceImpl implements LoginService {
      */
     @Transactional
     public Login loginLogin(String id, String pw){
+        //로그인은 했지만 프로필 설정을 안했을 경우
+        Profile profile = loginRepository.findById(id).get().getProfile();
+        if (profile == null){
+            throw new NoSuchProfileException();
+        }
+
         Optional<Login> findLogin = loginRepository.findByLoginUidAndPw(id, pw);
         return findLogin.orElse(null);
     }
