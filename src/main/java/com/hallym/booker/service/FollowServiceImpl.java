@@ -7,6 +7,7 @@ import com.hallym.booker.dto.Follow.LatestJournalsResponse;
 import com.hallym.booker.exception.follow.DuplicateFollowException;
 import com.hallym.booker.repository.FollowRepository;
 import com.hallym.booker.repository.JournalsRepository;
+import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class FollowServiceImpl implements FollowService{
     private final FollowRepository followRepository;
     private final ProfileRepository profileRepository;
     private final JournalsRepository journalsRepository;
+    private final LoginRepository loginRepository;
 
     @Transactional
     @Override
@@ -42,8 +44,8 @@ public class FollowServiceImpl implements FollowService{
     }
 
     @Override
-    public List<Profile> findAllToUserIdProfile(Long fromUserId){
-        List<Follow> followList = followRepository.findAllByFromUserId(fromUserId);
+    public List<Profile> findAllToUserIdProfile(String fromUserId){
+        List<Follow> followList = followRepository.findAllByFromUserId(loginRepository.findById(fromUserId).get().getProfile().getProfileUid());
         List<Profile> profiles = new ArrayList<>();
         for (Follow follow : followList){
             profiles.add(profileRepository.findById(follow.getToUserId()).get());
@@ -52,8 +54,8 @@ public class FollowServiceImpl implements FollowService{
     }
 
     @Override
-    public List<Profile> findAllFromUserIdProfile(Long toUserId){
-        List<Follow> followList = followRepository.findAllByToUserId(toUserId);
+    public List<Profile> findAllFromUserIdProfile(String toUserId){
+        List<Follow> followList = followRepository.findAllByToUserId(loginRepository.findById(toUserId).get().getProfile().getProfileUid());
         List<Profile> profiles = new ArrayList<>();
         for (Follow follow : followList){
             profiles.add(follow.getProfile());
@@ -62,8 +64,8 @@ public class FollowServiceImpl implements FollowService{
     }
 
     @Override
-    public List<LatestJournalsResponse> findFollowingsLatestJournals(Long fromUserId){
-        List<Follow> followList = followRepository.findAllByFromUserId(fromUserId);
+    public List<LatestJournalsResponse> findFollowingsLatestJournals(String fromUserId){
+        List<Follow> followList = followRepository.findAllByFromUserId(loginRepository.findById(fromUserId).get().getProfile().getProfileUid());
         List<Profile> profiles = new ArrayList<>();
         for (Follow follow : followList){
             profiles.add(profileRepository.findById(follow.getToUserId()).get());

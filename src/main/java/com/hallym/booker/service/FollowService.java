@@ -20,9 +20,9 @@ import java.util.Optional;
 public interface FollowService {
 
     public void newFollow(Long fromUserId, Long toUserId);
-    public List<Profile> findAllToUserIdProfile(Long fromUserId);
-    public List<Profile> findAllFromUserIdProfile(Long toUserId);
-    public List<LatestJournalsResponse> findFollowingsLatestJournals(Long fromUserId);
+    public List<Profile> findAllToUserIdProfile(String fromUserId);
+    public List<Profile> findAllFromUserIdProfile(String toUserId);
+    public List<LatestJournalsResponse> findFollowingsLatestJournals(String fromUserId);
     public void removeFollowing(Long fromUserId,Long toUserId);
     public Boolean checkFollowing(Long fromUserId,Long toUserId);
 }
