@@ -39,7 +39,7 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        followService.newFollow(followRequest.getFromUserId(), followRequest.getToUserId());
+        followService.newFollow(followRequest.getFromUserId(), followService.findProfileUid(loginResponse.getUid()));
         return new ResponseEntity<>("Follow created successfully", HttpStatus.OK);
     }
 
@@ -109,7 +109,7 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        followService.removeFollowing(followRequest.getFromUserId(),followRequest.getToUserId());
+        followService.removeFollowing(followRequest.getFromUserId(), followService.findProfileUid(loginResponse.getUid()));
         return new ResponseEntity<>("Follow deleted successfully",HttpStatus.OK);
     }
 
@@ -124,6 +124,6 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        return ResponseEntity.ok().body(followService.checkFollowing(followRequest.getFromUserId(),followRequest.getToUserId()));
+        return ResponseEntity.ok().body(followService.checkFollowing(followRequest.getFromUserId(),followService.findProfileUid(loginResponse.getUid())));
     }
 }

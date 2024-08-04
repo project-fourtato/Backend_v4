@@ -109,4 +109,9 @@ public class FollowServiceImpl implements FollowService{
             return true;
         }
     }
+
+    @Override
+    public Long findProfileUid(String LoginId) {
+        return loginRepository.findById(LoginId).get().getProfile().getProfileUid();
+    }
 }

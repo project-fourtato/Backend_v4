@@ -25,4 +25,5 @@ public interface FollowService {
     public List<LatestJournalsResponse> findFollowingsLatestJournals(String fromUserId);
     public void removeFollowing(Long fromUserId,Long toUserId);
     public Boolean checkFollowing(Long fromUserId,Long toUserId);
+    public Long findProfileUid(String LoginId);
 }
