@@ -40,7 +40,6 @@ public class ProfileApiController {
                                                   @RequestParam(name = "uinterest5", required = false) String uinterest5,
                                                   HttpServletRequest request) throws IOException {
         RegisterRequest registerRequest = new RegisterRequest(file, nickname,usermessage,uinterest1,uinterest2,uinterest3,uinterest4,uinterest5);
-        log.info(registerRequest.getFile().getName()+registerRequest.getUsermessage()+registerRequest.getUinterest4()+"왜");
         HttpSession session = request.getSession(false);
         if(session == null){ //세션이 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
@@ -55,7 +54,9 @@ public class ProfileApiController {
         String imgUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
         String imgName = "default/default-profile.png";
         // 사진 등록
-        if(!registerRequest.getFile().isEmpty()) {
+        if(registerRequest.getFile() != null) {
+            log.info("여기..");
+            log.info(registerRequest.getFile().getName());
             S3ResponseUploadEntity s3Entity = s3Service.upload(registerRequest.getFile(), "profile");
             imgUrl = s3Entity.getImageUrl();
             imgName = s3Entity.getImageName();

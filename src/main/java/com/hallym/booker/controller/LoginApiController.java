@@ -50,7 +50,6 @@ public class LoginApiController {
      */
     @GetMapping("/checkId/{uid}")
     public ResponseEntity<EffectivenessResponse> idCheck(@PathVariable String uid){
-        log.info("이상"+uid);
         Boolean result = loginservice.checkId(uid);
         return ResponseEntity.ok().body(new EffectivenessResponse(result));
     }
