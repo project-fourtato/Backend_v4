@@ -31,8 +31,8 @@ public class LoginApiController {
     @PostMapping("/new")
     public ResponseEntity<LoginResponse> loginRegister(@RequestBody @Valid final LoginDto loginDto, HttpServletRequest request){
         Login login = Login.create(loginDto.getUid(), loginDto.getPw(), loginDto.getEmail(), loginDto.getBirth());
-        loginservice.join(login);
-        LoginResponse loginResponse = new LoginResponse(login.getLoginUid());
+        String uid = loginservice.join(login).getLoginUid();
+        LoginResponse loginResponse = new LoginResponse(uid);
 
         //로그인 성공 처리
 
@@ -48,8 +48,9 @@ public class LoginApiController {
     /**
      * 아이디 중복검사
      */
-    @PostMapping("/checkId")
-    public ResponseEntity<EffectivenessResponse> idCheck(@RequestBody final String uid){
+    @GetMapping("/checkId/{uid}")
+    public ResponseEntity<EffectivenessResponse> idCheck(@PathVariable String uid){
+        log.info("이상"+uid);
         Boolean result = loginservice.checkId(uid);
         return ResponseEntity.ok().body(new EffectivenessResponse(result));
     }
@@ -109,21 +110,6 @@ public class LoginApiController {
 
         return ResponseEntity.ok().body(loginResponse);
 
-    }
-
-    //세션 구현하면서 새로 만듦 : sessionstrorage 에서 uid를 받아왔는데 이걸 세션 같이 쓰도록 하자
-    @GetMapping("/id")
-    public ResponseEntity<LoginResponse> sessionCheck(HttpServletRequest request){
-        HttpSession session = request.getSession(false);
-        if(session == null){ //세션이 없으면 홈으로 이동하게 null
-            return new ResponseEntity<>(null,HttpStatus.FOUND);
-        }
-        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
-            return new ResponseEntity<>(null,HttpStatus.FOUND);
-        }
-        //세션이 유지되면 리턴
-        return ResponseEntity.ok().body(loginResponse);
     }
 
 }

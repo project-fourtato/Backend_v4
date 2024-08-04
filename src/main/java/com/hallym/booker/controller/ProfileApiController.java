@@ -30,7 +30,17 @@ public class ProfileApiController {
      * 프로필 등록
      */
     @PostMapping("/profile/new") // @RequestBody ProfileInterestDto request
-    public ResponseEntity<String> profileRegister(@RequestBody @Valid final RegisterRequest registerRequest, HttpServletRequest request) throws IOException {
+    public ResponseEntity<String> profileRegister(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                    @RequestParam("nickname") String nickname,
+                                                    @RequestParam("usermessage") String usermessage,
+                                                    @RequestParam(name = "uinterest1", required = false) String uinterest1,
+                                                  @RequestParam(name = "uinterest2", required = false) String uinterest2,
+                                                  @RequestParam(name = "uinterest3", required = false) String uinterest3,
+                                                  @RequestParam(name = "uinterest4", required = false) String uinterest4,
+                                                  @RequestParam(name = "uinterest5", required = false) String uinterest5,
+                                                  HttpServletRequest request) throws IOException {
+        RegisterRequest registerRequest = new RegisterRequest(file, nickname,usermessage,uinterest1,uinterest2,uinterest3,uinterest4,uinterest5);
+        log.info(registerRequest.getFile().getName()+registerRequest.getUsermessage()+registerRequest.getUinterest4()+"왜");
         HttpSession session = request.getSession(false);
         if(session == null){ //세션이 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);

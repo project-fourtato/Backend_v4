@@ -13,7 +13,7 @@ public interface LoginService {
     /**
      *  회원 등록
      */
-    void join(Login login);
+    Login join(Login login);
 
     /**
      * 아이디 중복 검사

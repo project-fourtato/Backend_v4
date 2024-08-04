@@ -26,9 +26,9 @@ public class LoginServiceImpl implements LoginService {
      *  회원 등록
      */
     @Transactional //변경
-    public void join(Login login){
+    public Login join(Login login){
         validateDuplicateMember(login); //중복 회원 검증
-        loginRepository.save(login);
+        return loginRepository.save(login);
     }
 
     private void validateDuplicateMember(Login login) {
