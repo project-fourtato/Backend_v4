@@ -10,6 +10,7 @@ import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.userBooks.DuplicateUserBooksException;
 import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
 import com.hallym.booker.repository.BookDetailsRepository;
+import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserBooksServiceImpl implements UserBooksService {
 
+    private final LoginRepository loginRepository;
     private final UserBooksRepository userBooksRepository;
     private final BookDetailsRepository bookDetailsRepository;
     private final ProfileRepository profileRepository;
@@ -43,11 +45,11 @@ public class UserBooksServiceImpl implements UserBooksService {
     private String apiKey;
 
     private static final String ALADIN_API_URL1 = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Sort=SalesPoint&Query=%s&QueryType=Keyword&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
-
+/*
     // 책 등록
     @Override
-    public void saveUserBooks(UserBooksDTO userBooksDTO) {
-        Profile profile = profileRepository.findById(userBooksDTO.getProfileUid())
+    public void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO) {
+        Profile profile = profileRepository.findById(loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                 .orElseThrow(() -> new NoSuchProfileException());
 
         BookDetails bookDetails = bookDetailsRepository.findByIsbn(userBooksDTO.getIsbn());
@@ -72,6 +74,7 @@ public class UserBooksServiceImpl implements UserBooksService {
         userBooksRepository.save(userBooks);
     }
 
+*/
     // 독서 상태 변경
     @Override
     public String updateReadStatus(Long bookUid, UserBooksUpdateRequestDTO updateDTO) {
@@ -98,8 +101,9 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 한 책에 대한 독서 상태 조회
     @Override
-    public UserBooksReadStatusResponseDTO getReadStatus(Long profileUid, String isbn) {
-        Profile profile = profileRepository.findById(profileUid)
+    public UserBooksReadStatusResponseDTO getReadStatus(String loginUid, String isbn) {
+        Profile profile = profileRepository.findById(
+                        loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                 .orElseThrow(() -> new NoSuchProfileException());
 
         UserBooks userBooks = userBooksRepository.findByProfileUidAndIsbn(profile, isbn);
@@ -117,7 +121,7 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 책 검색에서 isbn을 통해 독서 상태 및 책(알라딘) 조회
     @Override
-    public List<BooksWithStatusDTO> searchBooks(Long profileUid, String searchOne) {
+    public List<BooksWithStatusDTO> searchBooks(String loginUid, String searchOne) {
         List<BooksWithStatusDTO> booksList = new ArrayList<>();
         String url = String.format(ALADIN_API_URL1, apiKey, searchOne);
 
@@ -144,7 +148,8 @@ public class UserBooksServiceImpl implements UserBooksService {
             BooksWithStatusDTO bookDto = new BooksWithStatusDTO(isbn, bookTitle, author, publisher, coverImageUrl, 0);
 
             // 프로필 조회
-            Profile profile = profileRepository.findById(profileUid)
+            Profile profile = profileRepository.findById(
+                            loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                     .orElseThrow(() -> new NoSuchProfileException());
 
             // 사용자의 책 상태 조회
