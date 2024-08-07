@@ -1,12 +1,15 @@
 package com.hallym.booker.controller;
 
+import com.hallym.booker.domain.SessionConst;
 import com.hallym.booker.dto.Journals.*;
+import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.exception.journals.NoJournalContentException;
 import com.hallym.booker.exception.journals.NoSuchUserBooksException;
 import com.hallym.booker.global.S3.S3Service;
 import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.service.JournalsService;
-import com.hallym.booker.service.JournalsServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -66,18 +69,42 @@ public class JournalsApiController {
         return new ResponseEntity<>("Edit Journals Success", HttpStatus.OK);
     }
 
-
-
     // 독서록 조회 API
     @GetMapping("/journals/{journalId}")
-    public ResponseEntity<JournalsResponseDTO> getJournal(@PathVariable Long journalId) {
+    public ResponseEntity<JournalsResponseDTO> getJournal(@PathVariable Long journalId, HttpServletRequest request) {
+
+        // 세션 확인 코드 추가
+        HttpSession session = request.getSession(false);
+        if (session == null) { // 세션이 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) { // 세션에 회원 데이터가 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        // 기존 로직
         JournalsResponseDTO journal = journalsService.getJournalById(journalId);
         return ResponseEntity.ok().body(journal);
     }
 
     // 한 책에 대한 독서록 목록 조회 API
     @GetMapping("/journals/journalsList/{bookUid}")
-    public ResponseEntity<Map<String, List<JournalsListResponseDTO>>> getJournalsList(@PathVariable Long bookUid) {
+    public ResponseEntity<Map<String, List<JournalsListResponseDTO>>> getJournalsList(@PathVariable Long bookUid, HttpServletRequest request) {
+
+        // 세션 확인 코드 추가
+        HttpSession session = request.getSession(false);
+        if (session == null) { // 세션이 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) { // 세션에 회원 데이터가 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        // 기존 로직
         List<JournalsListResponseDTO> journalsList = journalsService.getJournalsList(bookUid);
 
         if (journalsList.isEmpty()) {
@@ -92,14 +119,40 @@ public class JournalsApiController {
 
     // 해당 독서록의 책 상세정보 조회 API
     @GetMapping("/journals/bookDetailsByISBN/{isbn}")
-    public ResponseEntity<JournalsBookInfoResponseDTO> getBookDetailsByISBN(@PathVariable String isbn) {
+    public ResponseEntity<JournalsBookInfoResponseDTO> getBookDetailsByISBN(@PathVariable String isbn, HttpServletRequest request) {
+
+        // 세션 확인 코드 추가
+        HttpSession session = request.getSession(false);
+        if (session == null) { // 세션이 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) { // 세션에 회원 데이터가 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        // 기존 로직
         JournalsBookInfoResponseDTO bookDetails = journalsService.getBookDetailsByISBN(isbn);
         return ResponseEntity.ok().body(bookDetails);
     }
 
     // 독서록 삭제 API
     @PostMapping("/journals/{journalId}/delete")
-    public ResponseEntity<String> deleteJournal(@PathVariable Long journalId) {
+    public ResponseEntity<String> deleteJournal(@PathVariable Long journalId, HttpServletRequest request) {
+
+        // 세션 확인 코드 추가
+        HttpSession session = request.getSession(false);
+        if (session == null) { // 세션이 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) { // 세션에 회원 데이터가 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        // 기존 로직
         JournalsDeleteDTO deleteDTO = JournalsDeleteDTO.builder().journalId(journalId).build();
         String result = journalsService.deleteJournal(deleteDTO);
         return ResponseEntity.ok().body(result);
