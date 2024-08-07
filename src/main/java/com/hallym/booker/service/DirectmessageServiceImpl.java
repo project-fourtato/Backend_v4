@@ -9,6 +9,7 @@ import com.hallym.booker.exception.directmessage.NoSuchDirectmessageException;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
+import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,17 +24,20 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DirectmessageServiceImpl implements DirectmessageService{
+    private  final LoginRepository loginRepository;
     private final ProfileRepository profileRepository;
     private final DirectmessageRepository directmessageRepository;
 
     // 쪽지 목록 조회(프로필과 함께)
     @Override
-    public List<DirectmessageResponseDTO> getDirectmessageList(Long profileUid) {
-        Profile profile = profileRepository.findById(profileUid)
-                .orElseThrow(() -> new NoSuchProfileException());
+    public List<DirectmessageResponseDTO> getDirectmessageList(String loginUid) {
+        Profile profile = profileRepository.findById(
+                loginRepository.findById(loginUid).get().getProfile().getProfileUid()).orElseThrow(() -> new NoSuchProfileException());
 
-        List<Directmessage> receivedMessages = directmessageRepository.findAllDirectMessagesByRecipient(profileUid);
-        List<Directmessage> sentMessages = directmessageRepository.findAllDirectmessagesBySender(profileUid);
+        List<Directmessage> receivedMessages = directmessageRepository.findAllDirectMessagesByRecipient(
+                loginRepository.findById(loginUid).get().getProfile().getProfileUid());
+        List<Directmessage> sentMessages = directmessageRepository.findAllDirectmessagesBySender(
+                loginRepository.findById(loginUid).get().getProfile().getProfileUid());
 
         if (receivedMessages.isEmpty() && sentMessages.isEmpty()) {
             throw new NoSuchDirectmessageException();
