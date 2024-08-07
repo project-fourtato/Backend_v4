@@ -3,6 +3,7 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Interests;
 import com.hallym.booker.dto.Interests.InterestsResponseDTO;
 import com.hallym.booker.repository.InterestsRepository;
+import com.hallym.booker.repository.LoginRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +16,14 @@ import java.util.stream.Collectors;
 public class InterestsServiceImpl implements InterestsService {
 
     private final InterestsRepository interestsRepository;
+    private final LoginRepository loginRepository;
 
     // 특정 프로필에 대한 모든 관심사 조회
     @Override
     @Transactional(readOnly = true)
-    public List<InterestsResponseDTO> getInterestsByProfile(Long profileUid) {
-        List<Interests> interests = interestsRepository.findByProfile_ProfileUid(profileUid);
+    public List<InterestsResponseDTO> getInterestsByProfile(String loginUid) {
+        List<Interests> interests = interestsRepository.findByProfile_ProfileUid(
+                loginRepository.findById(loginUid).get().getProfile().getProfileUid());
         return mapToDTOList(interests);
     }
 
