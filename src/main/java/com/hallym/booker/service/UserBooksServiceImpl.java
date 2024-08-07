@@ -45,7 +45,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     private String apiKey;
 
     private static final String ALADIN_API_URL1 = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Sort=SalesPoint&Query=%s&QueryType=Keyword&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
-/*
+
     // 책 등록
     @Override
     public void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO) {
@@ -74,7 +74,7 @@ public class UserBooksServiceImpl implements UserBooksService {
         userBooksRepository.save(userBooks);
     }
 
-*/
+
     // 독서 상태 변경
     @Override
     public String updateReadStatus(Long bookUid, UserBooksUpdateRequestDTO updateDTO) {

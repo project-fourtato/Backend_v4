@@ -47,7 +47,6 @@ public class UserBooksApiController {
     public BestSellerListResponse bestseller() {
         return userBooksService.bestseller();
     }
-    /*
 
     // 책 등록 API
     @PostMapping("/search/books/new/{profileUid}")
@@ -69,7 +68,7 @@ public class UserBooksApiController {
 
         userBooksService.saveUserBooks(loginResponse.getUid(), userBooksDTO);
         return ResponseEntity.ok().body("책 등록 성공");
-    }*/
+    }
 
     // 책 삭제 API
     @PostMapping("/{bookUid}/delete")

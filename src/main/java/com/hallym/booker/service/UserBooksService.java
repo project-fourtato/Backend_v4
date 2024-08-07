@@ -8,9 +8,9 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 public interface UserBooksService {
-/*
+
     // 책 등록
-    void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO);*/
+    void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO);
 
     // 독서 상태 변경
     String updateReadStatus(Long bookUid, UserBooksUpdateRequestDTO updateDTO);

@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserBooksDTO {
-    private Long profileUid;
+    private String profileUid;
     private String isbn;
     private Integer readStatus;
     private Integer saleStatus;
