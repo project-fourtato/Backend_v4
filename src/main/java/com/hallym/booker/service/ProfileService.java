@@ -19,22 +19,22 @@ public interface ProfileService {
     /**
      * 프로필 수정 폼
      */
-    ProfileEditResponse getProfileEditForm(Long uid);
+    ProfileEditResponse getProfileEditForm(String loginId);
 
     /**
      * 프로필 수정
      */
-    void editProfile(Long uid, ProfileEditRequest profileEdit) throws IOException;
+    void editProfile(String loginId, ProfileEditRequest profileEdit) throws IOException;
 
     /**
      * 프로필 조회
      */
-    ProfileGetResponse getProfile(Long uid);
+    ProfileGetResponse getProfile(String loginId);
 
     /**
      * 관심사가 동일한 프로필 목록 조회
      */
-    SameAllInterestProfileResponse getProfileSameInterests(Long profileId);
+    SameAllInterestProfileResponse getProfileSameInterests(String loginId);
 
     /**
      * 유저 검색에서 유저 닉네임을 통해 조회

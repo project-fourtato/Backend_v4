@@ -100,38 +100,62 @@ public class ProfileApiController {
     /**
      * 프로필 수정 폼
      */
-    @GetMapping("/profile/{uid}/edit")
-    public ProfileEditResponse profileEditForm(@PathVariable Long uid) {
-        return profileService.getProfileEditForm(uid);
+    @GetMapping("/profile/edit")
+    public ResponseEntity<ProfileEditResponse> profileEditForm(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(profileService.getProfileEditForm(loginResponse.getUid()));
     }
 
     /**
      * 프로필 수정
      */
-    @PutMapping("/profile/{uid}/edit")
-    public ResponseEntity<String> profileEdit(@PathVariable Long uid,
-                                              @RequestParam(required = false) MultipartFile file,
+    @PutMapping("/profile/edit")
+    public ResponseEntity<String> profileEdit(@RequestParam(required = false) MultipartFile file,
                                               @RequestParam(required = false) String usermessage,
-                                              @RequestParam(required = false) List<String> interests) throws IOException {
-        profileService.editProfile(uid, new ProfileEditRequest(file, usermessage, interests));
+                                              @RequestParam(required = false) List<String> interests,
+                                              HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        profileService.editProfile(loginResponse.getUid(), new ProfileEditRequest(file, usermessage, interests));
         return new ResponseEntity<>("Edit Profile Success", HttpStatus.OK);
     }
 
     /**
      * 프로필 조회
      */
-    @GetMapping("/profile/{uid}")
-    public ProfileGetResponse getProfile(@PathVariable Long uid) {
-        return profileService.getProfile(uid);
+    @GetMapping({"/profile", "/profile/{loginId}"})
+    public ResponseEntity<ProfileGetResponse> getProfile(@PathVariable(required = false) String loginId, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        String id = (loginId != null) ? loginId : loginResponse.getUid();
+        return ResponseEntity.ok().body(profileService.getProfile(id));
     }
 
     /**
      * 관심사가 동일한 프로필 목록 조회
      */
-    @GetMapping("/profile/interests/{uid}")
-    public SameAllInterestProfileResponse getSameInterestProfile(@PathVariable Long uid) {
-        SameAllInterestProfileResponse profileSameInterests = profileService.getProfileSameInterests(uid);
-        return profileSameInterests;
+    @GetMapping("/profile/interests")
+    public ResponseEntity<SameAllInterestProfileResponse> getSameInterestProfile(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(profileService.getProfileSameInterests(loginResponse.getUid()));
     }
 
     /**
