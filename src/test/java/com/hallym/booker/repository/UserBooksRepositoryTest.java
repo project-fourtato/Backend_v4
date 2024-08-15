@@ -224,7 +224,7 @@ public class UserBooksRepositoryTest {
 
         Profile profile = Profile.create(logins, "nickname", "userimageUrl", "userimageName", "usermessage");
         Profile profiles = profileRepository.save(profile);
-        Profile profile2 = Profile.create(logins, "nickname2", "userimageUrl2", "userimageName2", "usermessage2");
+        Profile profile2 = Profile.create(logins2, "nickname2", "userimageUrl2", "userimageName2", "usermessage2");
         Profile profiles2 = profileRepository.save(profile2);
 
         BookDetails bookDetails = BookDetails.create("isbn", "bookTitle", "author", "publisher", "coverImageUrl");
@@ -243,7 +243,7 @@ public class UserBooksRepositoryTest {
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profiles.getProfileUid());
 
         //then
-        Assertions.assertThat(withProfileList).extracting(UserBooks::getProfile).extracting(Profile::getNickname).contains("nickname2");
+        Assertions.assertThat(withProfileList).extracting(UserBooks::getProfile).extracting(Profile::getNickname).contains("nickname");
     }
 
 }
