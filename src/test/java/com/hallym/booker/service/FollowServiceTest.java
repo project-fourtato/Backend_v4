@@ -1,6 +1,7 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
+import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.*;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
@@ -67,12 +68,13 @@ public class FollowServiceTest {
         profile2 = profileRepository.save(profile2);
         Profile profile3 = Profile.create(loginRepository.findById("id3").get(),"쥐돌이","resources/DummyImg/S3BasicImg.jpg","default","찍찍");
         profile3 = profileRepository.save(profile3);
+        String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
         followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
         followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
         followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
 
-        Assertions.assertThat(followService.findAllToUserIdProfile(profile1.getProfileUid()).size()).isEqualTo(2);
+        Assertions.assertThat(followService.findAllToUserIdProfile(loginId).size()).isEqualTo(2);
     }
 
     @Test
@@ -83,12 +85,13 @@ public class FollowServiceTest {
         profile2 = profileRepository.save(profile2);
         Profile profile3 = Profile.create(loginRepository.findById("id3").get(),"쥐돌이","resources/DummyImg/S3BasicImg.jpg","default","찍찍");
         profile3 = profileRepository.save(profile3);
+        String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
         followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
         followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
         followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
 
-        Assertions.assertThat(followService.findAllFromUserIdProfile(profile1.getProfileUid()).size()).isEqualTo(1);
+        Assertions.assertThat(followService.findAllFromUserIdProfile(loginId).size()).isEqualTo(1);
     }
 
     @Test
@@ -99,6 +102,7 @@ public class FollowServiceTest {
         profile2 = profileRepository.save(profile2);
         Profile profile3 = Profile.create(loginRepository.findById("id3").get(),"쥐돌이","resources/DummyImg/S3BasicImg.jpg","default","찍찍");
         profile3 = profileRepository.save(profile3);
+        String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
         followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
         followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
@@ -113,7 +117,7 @@ public class FollowServiceTest {
         Journals journals2 = Journals.create(userBooks2,"백설공주를 읽고..","쌸라쌸라",LocalDateTime.of(2025,1,1,1,1),"url","name");
         journalsRepository.save(journals2);
 
-        int cnt = followService.findFollowingsLatestJournals(profile1.getProfileUid()).size();
+        int cnt = followService.findFollowingsLatestJournals(loginId).size();
         Assertions.assertThat(cnt).isEqualTo(2);
     }
 
@@ -125,13 +129,14 @@ public class FollowServiceTest {
         profile2 = profileRepository.save(profile2);
         Profile profile3 = Profile.create(loginRepository.findById("id3").get(),"쥐돌이","resources/DummyImg/S3BasicImg.jpg","default","찍찍");
         profile3 = profileRepository.save(profile3);
+        String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
         followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
         followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
         followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
 
         followService.removeFollowing(profile1.getProfileUid(),profile2.getProfileUid());
-        Assertions.assertThat(followService.findAllToUserIdProfile(profile1.getProfileUid()).size()).isEqualTo(1);
+        Assertions.assertThat(followService.findAllToUserIdProfile(loginId).size()).isEqualTo(1);
     }
 
     @Test
