@@ -12,7 +12,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 public class ReadingWithAllProfileList {
-    List<ReadingWithProfile> result;
+    /*List<ReadingWithProfile> result;
 
     public static ReadingWithAllProfileList from(Map<UserBooks, List<ReadingProfileWithBookUid>> map) {
 
@@ -20,6 +20,5 @@ public class ReadingWithAllProfileList {
                 .map(m -> ReadingWithProfile.from(m.getKey(), m.getValue())).toList();
 
         return new ReadingWithAllProfileList(readingWithProfileStream);
-    }
-
+    }*/
 }
