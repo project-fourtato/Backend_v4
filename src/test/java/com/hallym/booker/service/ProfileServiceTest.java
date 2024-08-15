@@ -3,6 +3,7 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Profile.*;
 import com.hallym.booker.exception.profile.DuplicateNicknameException;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.*;
 import jakarta.transaction.Transactional;
@@ -103,7 +104,13 @@ class ProfileServiceTest {
 
     @Test
     void join() {
-        profileService.join("id1",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
+        //given
+        loginRepository.save(Login.create("id3", "password3", "id3@gmail.com", new Date(2000, 6, 20)));
+
+        //when
+        profileService.join("id3",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
+
+        //then
         assertThat(profileRepository.findAll().size()).isEqualTo(3);
     }
 
@@ -131,7 +138,8 @@ class ProfileServiceTest {
     @Test
     void getEditProfileFormTest() {
         //when
-        ProfileEditResponse profileEditForm = profileService.getProfileEditForm(profile1Id);
+        Profile profile = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new);
+        ProfileEditResponse profileEditForm = profileService.getProfileEditForm(profile.getLogin().getLoginUid());
 
         //then
         assertThat(profileEditForm.getNickname()).isEqualTo("콩쥐");
@@ -139,8 +147,8 @@ class ProfileServiceTest {
 
     @Test
     void notExistProfileExceptionTest() {
-        assertThrows(NoSuchProfileException.class, () -> {
-            profileService.getProfileEditForm(300L);
+        assertThrows(NoSuchLoginException.class, () -> {
+            profileService.getProfileEditForm("No Exist");
         });
     }
 
@@ -161,7 +169,7 @@ class ProfileServiceTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(multipartFile, "무력 감자", interests);
 
         //when
-        profileService.editProfile(profile.getProfileUid(), profileEditRequest);
+        profileService.editProfile(profile.getLogin().getLoginUid(), profileEditRequest);
 
         //then
         assertThat(profile.getInterests()).extracting(Interests::getInterestName).contains("로맨스", "스릴러", "판타지");
@@ -169,8 +177,11 @@ class ProfileServiceTest {
 
     @Test
     void getProfileTest() {
+        //given
+        String loginId = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
+
         //when
-        ProfileGetResponse profile = profileService.getProfile(profile1Id);
+        ProfileGetResponse profile = profileService.getProfile(loginId);
 
         //then
         assertThat(profile.getNickname()).isEqualTo("콩쥐");
