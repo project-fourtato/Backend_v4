@@ -30,7 +30,6 @@ import java.util.List;
 public class DirectmessageServiceImpl implements DirectmessageService{
     private  final LoginRepository loginRepository;
     private final ProfileRepository profileRepository;
-    private final LoginRepository loginRepository;
     private final DirectmessageRepository directmessageRepository;
 
     // 쪽지 목록 조회(프로필과 함께)
