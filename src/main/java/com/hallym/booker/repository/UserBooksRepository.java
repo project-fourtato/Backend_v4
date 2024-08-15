@@ -45,4 +45,6 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
             "FROM UserBooks ub1 JOIN UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
             "WHERE ub1.profile.profileUid = :profileId AND ub1.profile.profileUid != ub2.profile.profileUid")
     List<UserBooks> findWithProfileList(@Param("profileId") Long profileId);
+
+    //isbn과 유저Id로 같이 읽고 있는 사람 조회
 }

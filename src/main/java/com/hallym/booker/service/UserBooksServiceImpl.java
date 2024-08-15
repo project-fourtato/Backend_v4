@@ -6,13 +6,16 @@ import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
 import com.hallym.booker.dto.UserBooks.*;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.userBooks.DuplicateUserBooksException;
 import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
 import com.hallym.booker.repository.BookDetailsRepository;
+import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +35,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserBooksServiceImpl implements UserBooksService {
 
+    private final LoginRepository loginRepository;
     private final UserBooksRepository userBooksRepository;
     private final BookDetailsRepository bookDetailsRepository;
     private final ProfileRepository profileRepository;
@@ -228,8 +233,8 @@ public class UserBooksServiceImpl implements UserBooksService {
      * 읽고 있는 책 목록
      */
     @Override
-    public ReadingAllBooksListResponse readingAllBooksList(Long profileId) {
-        Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchProfileException::new);
+    public ReadingAllBooksListResponse readingAllBooksList(String loginId) {
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
 
         List<UserBooks> allByProfile = userBooksRepository.findAllByProfile(profile);
         return ReadingAllBooksListResponse.from(allByProfile);
@@ -239,21 +244,21 @@ public class UserBooksServiceImpl implements UserBooksService {
      * 책을 같이 읽는 유저 목록
      */
     @Override
-    public ReadingWithAllProfileList readingWithProfileList(Long profileId) {
-        List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profileId);
+    public ReadingWithAllProfileList readingWithProfileList(String loginId) {
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
 
-        Map<BookDetails, List<Profile>> map = new ConcurrentHashMap<>();
+        List<UserBooks> userBooksList = userBooksRepository.findAllByProfile(profile);
+        List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profile.getProfileUid());
+
+        Map<UserBooks, List<ReadingProfileWithBookUid>> map = new ConcurrentHashMap<>();
+        for (UserBooks userBooks : userBooksList) {
+            map.put(userBooks, new ArrayList<>());
+        }
+
         for (UserBooks userBooks : withProfileList) {
-            if(map.containsKey(userBooks.getBookDetails())) {
-                List<Profile> profileList = map.get(userBooks.getBookDetails());
-                profileList.add(userBooks.getProfile());
 
-                map.put(userBooks.getBookDetails(), profileList);
-            } else {
-                List<Profile> profileList = new ArrayList<>();
-                profileList.add(userBooks.getProfile());
-
-                map.put(userBooks.getBookDetails(), profileList);
+            if(map.containsKey(userBooks)) {
+//                map.get(userBooks).add(ReadingProfileWithBookUid.of(ReadingProfile.of(userBooks.getProfile()), userBooks.getBookUid()));
             }
         }
 
