@@ -1,16 +1,20 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Directmessage;
+import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
 import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
 import com.hallym.booker.exception.directmessage.NoSuchDirectmessageException;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
+import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +26,10 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class DirectmessageServiceImpl implements DirectmessageService{
     private final ProfileRepository profileRepository;
+    private final LoginRepository loginRepository;
     private final DirectmessageRepository directmessageRepository;
 
     // 쪽지 목록 조회(프로필과 함께)
@@ -77,11 +83,13 @@ public class DirectmessageServiceImpl implements DirectmessageService{
      */
     @Transactional
     @Override
-    public void directmessageSend(DirectmessageSendRequest directmessageSendRequest) {
+    public void directmessageSend(DirectmessageSendRequest directmessageSendRequest, String loginId) {
+        Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
+        log.info("여기!! {}", directmessageSendRequest.getRecipientUid());
         if(profileRepository.existsByProfileUid(directmessageSendRequest.getRecipientUid())) {
             Directmessage directmessage = Directmessage.create(0, directmessageSendRequest.getMtitle(),
                     directmessageSendRequest.getMcontents(), LocalDateTime.now(),
-                    directmessageSendRequest.getSenderUid(), directmessageSendRequest.getRecipientUid());
+                    login.getProfile().getProfileUid(), directmessageSendRequest.getRecipientUid());
 
             directmessageRepository.save(directmessage);
         } else {

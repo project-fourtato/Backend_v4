@@ -1,9 +1,13 @@
 package com.hallym.booker.controller;
 
+import com.hallym.booker.domain.SessionConst;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
+import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.service.DirectmessageService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,8 +28,14 @@ public class DirectmessageApiController {
      * 쪽지 등록
      */
     @PostMapping("/directmessages/new")
-    public ResponseEntity<String> directmessageSend(@RequestBody DirectmessageSendRequest request) {
-        directmessageService.directmessageSend(request);
+    public ResponseEntity<String> directmessageSend(@RequestBody DirectmessageSendRequest directmessageSendRequest, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        directmessageService.directmessageSend(directmessageSendRequest, loginResponse.getUid());
         return new ResponseEntity<>("Directmessage Send Success", HttpStatus.OK);
     }
 
@@ -33,8 +43,14 @@ public class DirectmessageApiController {
      * 쪽지 조회
      */
     @GetMapping("/directmessages/{messageId}")
-    public DirectmessageGetResponse getDirecmessage(@PathVariable Long messageId) {
-        return directmessageService.getDirectmessage(messageId);
+    public ResponseEntity<DirectmessageGetResponse> getDirecmessage(@PathVariable Long messageId, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(directmessageService.getDirectmessage(messageId));
     }
 
     // 쪽지 목록 조회(프로필과 함께) API
@@ -52,7 +68,13 @@ public class DirectmessageApiController {
      * 쪽지 삭제
      */
     @PostMapping("/directmessages/{messageId}/delete")
-    public ResponseEntity<String> directmessageDelete(@PathVariable Long messageId) {
+    public ResponseEntity<String> directmessageDelete(@PathVariable Long messageId, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
         directmessageService.directmessageDelete(messageId);
         return new ResponseEntity<>("Directmessages deleted successfully", HttpStatus.OK);
     }
