@@ -55,8 +55,21 @@ public class DirectmessageApiController {
 
     // 쪽지 목록 조회(프로필과 함께) API
     @GetMapping("/directmessages/DirectmessagesList/{profileUid}")
-    public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(@PathVariable Long profileUid) {
-        List<DirectmessageResponseDTO> directmessageList = directmessageService.getDirectmessageList(profileUid);
+    public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(HttpServletRequest request) {
+
+        // 세션 확인 코드 추가
+        HttpSession session = request.getSession(false);
+        if (session == null) { // 세션이 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) { // 세션에 회원 데이터가 없으면 홈으로 이동
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        // 기존 로직
+        List<DirectmessageResponseDTO> directmessageList = directmessageService.getDirectmessageList(loginResponse.getUid());
 
         Map<String, List<DirectmessageResponseDTO>> response = new HashMap<>();
         response.put("data", directmessageList);

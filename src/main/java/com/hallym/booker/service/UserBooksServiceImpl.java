@@ -51,8 +51,8 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 책 등록
     @Override
-    public void saveUserBooks(UserBooksDTO userBooksDTO) {
-        Profile profile = profileRepository.findById(userBooksDTO.getProfileUid())
+    public void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO) {
+        Profile profile = profileRepository.findById(loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                 .orElseThrow(() -> new NoSuchProfileException());
 
         BookDetails bookDetails = bookDetailsRepository.findByIsbn(userBooksDTO.getIsbn());
@@ -76,6 +76,7 @@ public class UserBooksServiceImpl implements UserBooksService {
         UserBooks userBooks = UserBooks.create(profile, bookDetails, userBooksDTO.getReadStatus(), userBooksDTO.getSaleStatus());
         userBooksRepository.save(userBooks);
     }
+
 
     // 독서 상태 변경
     @Override
@@ -103,8 +104,9 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 한 책에 대한 독서 상태 조회
     @Override
-    public UserBooksReadStatusResponseDTO getReadStatus(Long profileUid, String isbn) {
-        Profile profile = profileRepository.findById(profileUid)
+    public UserBooksReadStatusResponseDTO getReadStatus(String loginUid, String isbn) {
+        Profile profile = profileRepository.findById(
+                        loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                 .orElseThrow(() -> new NoSuchProfileException());
 
         UserBooks userBooks = userBooksRepository.findByProfileUidAndIsbn(profile, isbn);
@@ -122,7 +124,7 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 책 검색에서 isbn을 통해 독서 상태 및 책(알라딘) 조회
     @Override
-    public List<BooksWithStatusDTO> searchBooks(Long profileUid, String searchOne) {
+    public List<BooksWithStatusDTO> searchBooks(String loginUid, String searchOne) {
         List<BooksWithStatusDTO> booksList = new ArrayList<>();
         String url = String.format(ALADIN_API_URL1, apiKey, searchOne);
 
@@ -149,7 +151,8 @@ public class UserBooksServiceImpl implements UserBooksService {
             BooksWithStatusDTO bookDto = new BooksWithStatusDTO(isbn, bookTitle, author, publisher, coverImageUrl, 0);
 
             // 프로필 조회
-            Profile profile = profileRepository.findById(profileUid)
+            Profile profile = profileRepository.findById(
+                            loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                     .orElseThrow(() -> new NoSuchProfileException());
 
             // 사용자의 책 상태 조회
@@ -245,7 +248,7 @@ public class UserBooksServiceImpl implements UserBooksService {
      */
     @Override
     public ReadingWithAllProfileList readingWithProfileList(String loginId) {
-        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
+        /*Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
 
         List<UserBooks> userBooksList = userBooksRepository.findAllByProfile(profile);
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profile.getProfileUid());
@@ -262,7 +265,8 @@ public class UserBooksServiceImpl implements UserBooksService {
             }
         }
 
-        return ReadingWithAllProfileList.from(map);
+        return ReadingWithAllProfileList.from(map);*/
+        return null;
     }
 
     /**
