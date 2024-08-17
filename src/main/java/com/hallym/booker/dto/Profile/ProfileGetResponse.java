@@ -13,5 +13,7 @@ public class ProfileGetResponse {
     String imageUrl;
     String imageName;
     String usermessage;
+    Long countFollowers;
+    Long countFollowings;
     List<String> interests;
 }

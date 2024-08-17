@@ -31,10 +31,10 @@ public interface UserBooksService {
     List<ProfileResponseDTO> getProfilesByIsbnAndSaleStatus(String isbn);
 
     //읽고 있는 책 목록
-    ReadingAllBooksListResponse readingAllBooksList(Long profileId);
+    ReadingAllBooksListResponse readingAllBooksList(String loginId);
 
     //책을 같이 읽는 유저 목록
-    ReadingWithAllProfileList readingWithProfileList(Long profileId);
+    ReadingWithAllProfileList readingWithProfileList(String loginId);
 
     //베스트셀러
     BestSellerListResponse bestseller();

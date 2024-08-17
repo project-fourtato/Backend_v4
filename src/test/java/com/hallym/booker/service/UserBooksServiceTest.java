@@ -5,6 +5,7 @@ import com.hallym.booker.dto.UserBooks.ReadingAllBooksListResponse;
 import com.hallym.booker.dto.UserBooks.ReadingProfile;
 import com.hallym.booker.dto.UserBooks.ReadingWithAllProfileList;
 import com.hallym.booker.dto.UserBooks.ReadingWithProfile;
+import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -72,8 +73,11 @@ public class UserBooksServiceTest {
     }
     @Test
     public void readingAllBooksListTest() {
+        //given
+        Login login = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new).getLogin();
+
         //when
-        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksService.readingAllBooksList(profile1Id);
+        ReadingAllBooksListResponse readingAllBooksListResponse = userBooksService.readingAllBooksList(login.getLoginUid());
 
         //then
         Assertions.assertThat(readingAllBooksListResponse.getResult().size()).isEqualTo(2);
@@ -82,6 +86,8 @@ public class UserBooksServiceTest {
     @Test
     public void readingWithProfileListTest() {
         //given
+        String loginId = profileRepository.findById(profile1Id).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
+
         Date now = new Date();
         Login login3 = Login.create("id3","pw3","email3",now);
         login3 = loginRepository.save(login3);
@@ -97,7 +103,7 @@ public class UserBooksServiceTest {
         userBooks3 = userBooksRepository.save(userBooks3);
 
         //when
-        ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(profile1Id);
+        ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(loginId);
         List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getResult();
         ReadingWithProfile readingWithProfile = readingWithProfiles.get(0);
         List<ReadingProfile> profiles = readingWithProfile.getProfileList();

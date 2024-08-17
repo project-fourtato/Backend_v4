@@ -10,6 +10,9 @@ import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.service.JournalsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import com.hallym.booker.service.JournalsServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +36,14 @@ public class JournalsApiController {
     public ResponseEntity<String> journalsSave(@PathVariable Long bookUid,
                                                @RequestParam(required = false) MultipartFile file,
                                                @RequestParam(required = false) String jtitle,
-                                               @RequestParam(required = false) String jcontents) throws IOException {
+                                               @RequestParam(required = false) String jcontents,
+                                               HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
         String imageName = "";
         String imageUrl = "";
         if(file == null) {
@@ -55,15 +65,28 @@ public class JournalsApiController {
     }
 
     @GetMapping("/journals/{journalId}/edit")
-    public JournalsEditFormResponse getJournalsEditForm(@PathVariable Long journalId) {
-        return journalsService.getJournalsEditForm(journalId);
+    public ResponseEntity<JournalsEditFormResponse> getJournalsEditForm(@PathVariable Long journalId, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(journalsService.getJournalsEditForm(journalId));
     }
 
     @PutMapping("/journals/{journalId}/edit")
     public ResponseEntity<String> journalsEdit(@PathVariable Long journalId,
                                                @RequestParam(required = false) MultipartFile file,
                                                @RequestParam(required = false) String jtitle,
-                                               @RequestParam(required = false) String jcontents) throws IOException {
+                                               @RequestParam(required = false) String jcontents,
+                                               HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
         JournalsEditRequest journalsEditRequest = new JournalsEditRequest(journalId, jtitle, jcontents, file);
         journalsService.journalsEdit(journalsEditRequest);
         return new ResponseEntity<>("Edit Journals Success", HttpStatus.OK);

@@ -15,6 +15,9 @@ import com.hallym.booker.service.LibraryListService;
 import com.hallym.booker.service.UserBooksService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import com.hallym.booker.service.UserBooksServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,14 +36,26 @@ public class UserBooksApiController {
     private final UserBooksRepository userBooksRepository;
     private final LibraryListService libraryListService;
 
-    @GetMapping("/booksList/{profileId}")
-    public ReadingAllBooksListResponse readingAllBooksList(@PathVariable Long profileId) {
-        return userBooksService.readingAllBooksList(profileId);
+    @GetMapping("/booksList")
+    public ResponseEntity<ReadingAllBooksListResponse> readingAllBooksList(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(userBooksService.readingAllBooksList(loginResponse.getUid()));
     }
 
-    @GetMapping("/books/{profileId}")
-    public ReadingWithAllProfileList readingWithAllProfile(@PathVariable Long profileId) {
-        return userBooksService.readingWithProfileList(profileId);
+    @GetMapping("/books")
+    public ResponseEntity<ReadingWithAllProfileList> readingWithAllProfile(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginResponse == null) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        return ResponseEntity.ok().body(userBooksService.readingWithProfileList(loginResponse.getUid()));
     }
 
     @GetMapping("/bestseller")

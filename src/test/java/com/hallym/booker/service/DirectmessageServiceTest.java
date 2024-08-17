@@ -62,10 +62,11 @@ public class DirectmessageServiceTest {
     @Test
     public void directmessageSendTest() {
         //given
-        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, profileUidB, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
 
         //when
-        directmessageService.directmessageSend(directmessageSendRequest);
+        directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
 
         //then
         List<Directmessage> directmessageList = directmessageRepository.findAll();
@@ -75,19 +76,21 @@ public class DirectmessageServiceTest {
     @Test
     public void directmessageSendEx() {
         //given
-        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, 100L, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(100L, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
 
         //when, then
         assertThrows(NoSuchProfileException.class, (ThrowingRunnable) () -> {
-            directmessageService.directmessageSend(directmessageSendRequest);
+            directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
         });
     }
 
     @Test
     public void getDirectmessageTest() {
         //given
-        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, profileUidB, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
-        directmessageService.directmessageSend(directmessageSendRequest);
+        Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
         List<Directmessage> directmessageList = directmessageRepository.findAll();
 
         //when
@@ -100,8 +103,9 @@ public class DirectmessageServiceTest {
     @Test
     public void deleteDirectmessageTest() {
         //given
-        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, profileUidB, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
-        directmessageService.directmessageSend(directmessageSendRequest);
+        Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
+        DirectmessageSendRequest directmessageSendRequest = new DirectmessageSendRequest(profileUidA, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
+        directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
         List<Directmessage> directmessageList = directmessageRepository.findAll();
 
         //when

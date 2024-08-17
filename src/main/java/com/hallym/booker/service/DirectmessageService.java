@@ -11,7 +11,7 @@ import java.util.List;
 public interface DirectmessageService {
     List<DirectmessageResponseDTO> getDirectmessageList(String loginUid);
 
-    void directmessageSend(DirectmessageSendRequest directmessageSendRequest);
+    void directmessageSend(DirectmessageSendRequest directmessageSendRequest, String loginId);
 
     DirectmessageGetResponse getDirectmessage(Long messageId);
 

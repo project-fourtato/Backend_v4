@@ -91,7 +91,10 @@ public class ProfileServiceImpl implements ProfileService {
      * 프로필 수정 폼
      */
     @Transactional
-    public ProfileEditResponse getProfileEditForm(Long uid) {
+    public ProfileEditResponse getProfileEditForm(String loginId) {
+        Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
+        Long uid = login.getProfile().getProfileUid();
+
         Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
         List<Interests> profileInterests = interestsRepository.findByProfile_ProfileUid(uid);
 
@@ -106,8 +109,8 @@ public class ProfileServiceImpl implements ProfileService {
      * 프로필 수정
      */
     @Transactional
-    public void editProfile(Long uid, ProfileEditRequest profileEdit) throws IOException {
-        Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
+    public void editProfile(String loginId, ProfileEditRequest profileEdit) throws IOException {
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
 
         S3ResponseUploadEntity uploadEntity = new S3ResponseUploadEntity(profile.getUserimageName(), profile.getUserimageUrl());
         if(profileEdit.getFile() != null) {
@@ -139,8 +142,8 @@ public class ProfileServiceImpl implements ProfileService {
     /**
      * 프로필 조회
      */
-    public ProfileGetResponse getProfile(Long uid) {
-        Profile profile = profileRepository.findById(uid).orElseThrow(NoSuchProfileException::new);
+    public ProfileGetResponse getProfile(String loginId) {
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
 
         List<String> interestsList = new ArrayList<>();
         for (Interests interest : profile.getInterests()) {
@@ -148,15 +151,16 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         return new ProfileGetResponse(profile.getProfileUid(), profile.getNickname(), profile.getUserimageUrl(), profile.getUserimageName()
-        ,profile.getUsermessage(), interestsList);
+        ,profile.getUsermessage(), profile.getCountFollowers(), profile.getCountFollowings(), interestsList);
     }
 
     /**
      * 관심사가 동일한 프로필 목록 조회
      */
-    public SameAllInterestProfileResponse getProfileSameInterests(Long profileId) {
-        Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchProfileException::new);
-        List<Profile> sameInterestProfile = interestsRepository.findSameInterestProfile(profileId);
+    public SameAllInterestProfileResponse getProfileSameInterests(String loginId) {
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
+
+        List<Profile> sameInterestProfile = interestsRepository.findSameInterestProfile(profile.getProfileUid());
         sameInterestProfile.remove(profile);
 
         return SameAllInterestProfileResponse.from(sameInterestProfile);
