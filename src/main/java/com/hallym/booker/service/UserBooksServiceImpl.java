@@ -248,25 +248,27 @@ public class UserBooksServiceImpl implements UserBooksService {
      */
     @Override
     public ReadingWithAllProfileList readingWithProfileList(String loginId) {
-        /*Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
-
-        List<UserBooks> userBooksList = userBooksRepository.findAllByProfile(profile);
+        Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profile.getProfileUid());
 
-        Map<UserBooks, List<ReadingProfileWithBookUid>> map = new ConcurrentHashMap<>();
-        for (UserBooks userBooks : userBooksList) {
-            map.put(userBooks, new ArrayList<>());
-        }
+        Map<BookDetails, ReadingProfileWithBookUid> map = new ConcurrentHashMap<>();
 
         for (UserBooks userBooks : withProfileList) {
+            List<ReadingProfile> readingProfile;
 
             if(map.containsKey(userBooks)) {
-//                map.get(userBooks).add(ReadingProfileWithBookUid.of(ReadingProfile.of(userBooks.getProfile()), userBooks.getBookUid()));
+                readingProfile = map.get(userBooks.getBookDetails()).getReadingProfile();
+            } else {
+                readingProfile = new ArrayList<>();
             }
+
+            if(!userBooks.getProfile().getLogin().getLoginUid().equals(loginId)) {
+                readingProfile.add(ReadingProfile.of(userBooks.getProfile()));
+            }
+            map.put(userBooks.getBookDetails(), ReadingProfileWithBookUid.of(readingProfile, userBooks.getBookUid()));
         }
 
-        return ReadingWithAllProfileList.from(map);*/
-        return null;
+        return ReadingWithAllProfileList.from(map);
     }
 
     /**
