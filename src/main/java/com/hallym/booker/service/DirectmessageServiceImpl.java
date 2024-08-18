@@ -4,7 +4,7 @@ import com.hallym.booker.domain.Directmessage;
 import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
-import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
+import com.hallym.booker.dto.Directmessage.DirectmessageResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
@@ -33,12 +33,12 @@ public class DirectmessageServiceImpl implements DirectmessageService{
 
     // 쪽지 목록 조회(프로필과 함께)
     @Override
-    public List<DirectmessageResponseDTO> getDirectmessageList(String loginUid, String userCheck) {
+    public List<DirectmessageResponse> getDirectmessageList(String loginUid, String userCheck) {
         Profile profile = profileRepository.findById(
                 loginRepository.findById(loginUid).get().getProfile().getProfileUid()).orElseThrow(() -> new NoSuchProfileException());
 
         List<Directmessage> messageList;
-        List<DirectmessageResponseDTO> directmessageResponse;
+        List<DirectmessageResponse> directmessageResponse;
         if(userCheck.equals("sender")) {
             messageList = directmessageRepository.findAllDirectmessagesBySender(
                     loginRepository.findById(loginUid).get().getProfile().getProfileUid());
@@ -54,13 +54,13 @@ public class DirectmessageServiceImpl implements DirectmessageService{
         return directmessageResponse;
     }
 
-    private List<DirectmessageResponseDTO> convertToDTO(List<Directmessage> messages, boolean isReceived) {
-        List<DirectmessageResponseDTO> dtos = new LinkedList<>();
+    private List<DirectmessageResponse> convertToDTO(List<Directmessage> messages, boolean isReceived) {
+        List<DirectmessageResponse> dtos = new LinkedList<>();
         for (Directmessage message : messages) {
             Profile profile = profileRepository.findById(isReceived ? message.getSenderUid() : message.getRecipientUid())
                     .orElseThrow(() -> new NoSuchProfileException());
 
-            DirectmessageResponseDTO dto = DirectmessageResponseDTO.builder()
+            DirectmessageResponse dto = DirectmessageResponse.builder()
                     .messageId(message.getMessageId())
                     .senderUid(message.getSenderUid())
                     .recipientUid(message.getRecipientUid())

@@ -1,8 +1,8 @@
 package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.SessionConst;
-import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
+import com.hallym.booker.dto.Directmessage.DirectmessageResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
 import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.service.DirectmessageService;
@@ -55,7 +55,7 @@ public class DirectmessageApiController {
 
     // 쪽지 목록 조회(프로필과 함께) API (내가 받은 메세지)
     @GetMapping("/directmessages/DirectmessagesList/{userCheck}")
-    public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(HttpServletRequest request, @PathVariable("userCheck") String userCheck) {
+    public ResponseEntity<Map<String, List<DirectmessageResponse>>> getDirectmessageList(HttpServletRequest request, @PathVariable("userCheck") String userCheck) {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);
@@ -69,9 +69,9 @@ public class DirectmessageApiController {
         }
 
         // 기존 로직
-        List<DirectmessageResponseDTO> directmessageList = directmessageService.getDirectmessageList(loginResponse.getUid(), userCheck);
+        List<DirectmessageResponse> directmessageList = directmessageService.getDirectmessageList(loginResponse.getUid(), userCheck);
 
-        Map<String, List<DirectmessageResponseDTO>> response = new HashMap<>();
+        Map<String, List<DirectmessageResponse>> response = new HashMap<>();
         response.put("data", directmessageList);
 
         return ResponseEntity.ok().body(response);
