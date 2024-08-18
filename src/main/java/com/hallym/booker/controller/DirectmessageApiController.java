@@ -53,9 +53,9 @@ public class DirectmessageApiController {
         return ResponseEntity.ok().body(directmessageService.getDirectmessage(messageId));
     }
 
-    // 쪽지 목록 조회(프로필과 함께) API
-    @GetMapping("/directmessages/DirectmessagesList")
-    public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(HttpServletRequest request) {
+    // 쪽지 목록 조회(프로필과 함께) API (내가 받은 메세지)
+    @GetMapping("/directmessages/DirectmessagesList/{userCheck}")
+    public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(HttpServletRequest request, @PathVariable("userCheck") String userCheck) {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);
@@ -69,7 +69,7 @@ public class DirectmessageApiController {
         }
 
         // 기존 로직
-        List<DirectmessageResponseDTO> directmessageList = directmessageService.getDirectmessageList(loginResponse.getUid());
+        List<DirectmessageResponseDTO> directmessageList = directmessageService.getDirectmessageList(loginResponse.getUid(), userCheck);
 
         Map<String, List<DirectmessageResponseDTO>> response = new HashMap<>();
         response.put("data", directmessageList);
@@ -91,4 +91,12 @@ public class DirectmessageApiController {
         directmessageService.directmessageDelete(messageId);
         return new ResponseEntity<>("Directmessages deleted successfully", HttpStatus.OK);
     }
+
+    // 쪽지 상태 업데이트
+    @PutMapping("/directmessages/mcheckUpdate/{messageid}")
+    public ResponseEntity<String> updateMcheck(@PathVariable Long messageid) {
+        directmessageService.updateMcheck(messageid, 1);
+        return ResponseEntity.ok().body("mcheck update success");
+    }
+
 }

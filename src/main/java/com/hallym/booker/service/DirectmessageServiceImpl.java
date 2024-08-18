@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,26 +35,25 @@ public class DirectmessageServiceImpl implements DirectmessageService{
 
     // 쪽지 목록 조회(프로필과 함께)
     @Override
-    public List<DirectmessageResponseDTO> getDirectmessageList(String loginUid) {
+    public List<DirectmessageResponseDTO> getDirectmessageList(String loginUid, String userCheck) {
         Profile profile = profileRepository.findById(
                 loginRepository.findById(loginUid).get().getProfile().getProfileUid()).orElseThrow(() -> new NoSuchProfileException());
 
-        List<Directmessage> receivedMessages = directmessageRepository.findAllDirectMessagesByRecipient(
-                loginRepository.findById(loginUid).get().getProfile().getProfileUid());
-        List<Directmessage> sentMessages = directmessageRepository.findAllDirectmessagesBySender(
-                loginRepository.findById(loginUid).get().getProfile().getProfileUid());
-
-        if (receivedMessages.isEmpty() && sentMessages.isEmpty()) {
-            throw new NoSuchDirectmessageException();
+        List<Directmessage> messageList;
+        List<DirectmessageResponseDTO> directmessageResponse;
+        if(userCheck.equals("sender")) {
+            messageList = directmessageRepository.findAllDirectmessagesBySender(
+                    loginRepository.findById(loginUid).get().getProfile().getProfileUid());
+            directmessageResponse = convertToDTO(messageList, false);
+        } else {
+            messageList = directmessageRepository.findAllDirectMessagesByRecipient(
+                    loginRepository.findById(loginUid).get().getProfile().getProfileUid());
+            directmessageResponse = convertToDTO(messageList, true);
         }
 
-        List<DirectmessageResponseDTO> allMessages = new LinkedList<>();
-        allMessages.addAll(convertToDTO(receivedMessages, true));
-        allMessages.addAll(convertToDTO(sentMessages, false));
+        Collections.sort(directmessageResponse, (msg1, msg2) -> msg2.getMdate().compareTo(msg1.getMdate()));
 
-        Collections.sort(allMessages, (msg1, msg2) -> msg2.getMdate().compareTo(msg1.getMdate()));
-
-        return allMessages;
+        return directmessageResponse;
     }
 
     private List<DirectmessageResponseDTO> convertToDTO(List<Directmessage> messages, boolean isReceived) {
@@ -121,5 +121,12 @@ public class DirectmessageServiceImpl implements DirectmessageService{
         } else {
             throw new NoSuchMessageException();
         }
+    }
+
+    @Transactional
+    @Override
+    public void updateMcheck(Long messageid, int mcheck) {
+        Directmessage directmessage = directmessageRepository.findById(messageid).orElseThrow(NoSuchMessageException::new);
+        directmessage.changeMCheck(mcheck);
     }
 }

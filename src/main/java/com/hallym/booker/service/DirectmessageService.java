@@ -9,11 +9,14 @@ import java.util.List;
 
 
 public interface DirectmessageService {
-    List<DirectmessageResponseDTO> getDirectmessageList(String loginUid);
+    List<DirectmessageResponseDTO> getDirectmessageList(String loginUid, String userCheck);
 
     void directmessageSend(DirectmessageSendRequest directmessageSendRequest, String loginId);
 
     DirectmessageGetResponse getDirectmessage(Long messageId);
 
     void directmessageDelete(Long messageId);
+
+    void updateMcheck(Long messageid, int mcheck);
+
 }
