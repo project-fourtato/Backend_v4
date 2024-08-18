@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SearchNicknameResultResponse {
     Long uid;
+    String loginId;
     String nickname;
     String userImageUrl;
     String usermessage;

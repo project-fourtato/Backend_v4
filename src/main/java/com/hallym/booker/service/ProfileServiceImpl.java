@@ -174,7 +174,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         List<SearchNicknameResultResponse> allSearchByNickname = new ArrayList<>();
         for (Profile profile : allByNickname) {
-            allSearchByNickname.add(new SearchNicknameResultResponse(profile.getProfileUid(),
+            allSearchByNickname.add(new SearchNicknameResultResponse(profile.getProfileUid(), profile.getLogin().getLoginUid(),
                     profile.getNickname(), profile.getUserimageUrl(), profile.getUsermessage()));
         }
 
