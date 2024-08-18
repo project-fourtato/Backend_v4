@@ -20,14 +20,14 @@ public class ReadingWithProfile {
     String coverImageUrl;
     List<ReadingProfile> profileList;
 
-    public static ReadingWithProfile from(UserBooks userBooks, ReadingProfileWithBookUid readingProfileWithBookUid) {
+    public static ReadingWithProfile from(BookDetails bookDetails, ReadingProfileWithBookUid readingProfileWithBookUid) {
         return new ReadingWithProfile(
-                userBooks.getBookUid(),
-                userBooks.getBookDetails().getIsbn(),
-                userBooks.getBookDetails().getBookTitle(),
-                userBooks.getBookDetails().getAuthor(),
-                userBooks.getBookDetails().getPublisher(),
-                userBooks.getBookDetails().getCoverImageUrl(),
+                readingProfileWithBookUid.getBookUid(),
+                bookDetails.getIsbn(),
+                bookDetails.getBookTitle(),
+                bookDetails.getAuthor(),
+                bookDetails.getPublisher(),
+                bookDetails.getCoverImageUrl(),
                 readingProfileWithBookUid.getReadingProfile());
     }
 }
