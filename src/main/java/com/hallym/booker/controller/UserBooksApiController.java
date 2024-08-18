@@ -64,7 +64,7 @@ public class UserBooksApiController {
     }
 
     // 책 등록 API
-    @PostMapping("/search/books/new/{profileUid}")
+    @PostMapping("/search/books/new/")
     public ResponseEntity<String> saveUserBooks(HttpServletRequest request, @RequestBody UserBooksDTO userBooksDTO) {
 
         // 세션 확인 코드 추가
@@ -86,7 +86,7 @@ public class UserBooksApiController {
     }
 
     // 책 삭제 API
-    @PostMapping("/{bookUid}/delete")
+    @PostMapping("/books/{bookUid}/delete")
     public ResponseEntity<BookDeleteResponseDTO> booksDelete(@PathVariable("bookUid") Long bookUid, HttpServletRequest request) {
 
         // 세션 확인 코드 추가
@@ -172,7 +172,7 @@ public class UserBooksApiController {
     }
 
     // 책 검색에서 isbn을 통해 독서 상태 및 책(알라딘) 조회 API
-    @GetMapping("/searchByISBN/{profileUid}")
+    @GetMapping("/searchByISBN/")
     public ResponseEntity<List<BooksWithStatusDTO>> searchBooks(HttpServletRequest request, @RequestParam String isbn) {
 
         // 세션 확인 코드 추가
