@@ -6,7 +6,6 @@ import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
 import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
-import com.hallym.booker.exception.directmessage.NoSuchDirectmessageException;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
