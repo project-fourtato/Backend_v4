@@ -116,7 +116,6 @@ public class ProfileApiController {
                                               @RequestParam(required = false) String usermessage,
                                               @RequestParam(required = false) List<String> interests,
                                               HttpServletRequest request) throws IOException {
-        log.info(interests.get(0)+interests.get(1)+"여길까");
         HttpSession session = request.getSession(false);
         LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginResponse == null) {
