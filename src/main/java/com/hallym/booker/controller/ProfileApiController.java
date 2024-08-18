@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ProfileApiController {
@@ -55,8 +54,6 @@ public class ProfileApiController {
         String imgName = "default/default-profile.png";
         // 사진 등록
         if(registerRequest.getFile() != null) {
-            log.info("여기..");
-            log.info(registerRequest.getFile().getName());
             S3ResponseUploadEntity s3Entity = s3Service.upload(registerRequest.getFile(), "profile");
             imgUrl = s3Entity.getImageUrl();
             imgName = s3Entity.getImageName();
@@ -119,6 +116,7 @@ public class ProfileApiController {
                                               @RequestParam(required = false) String usermessage,
                                               @RequestParam(required = false) List<String> interests,
                                               HttpServletRequest request) throws IOException {
+        log.info(interests.get(0)+interests.get(1)+"여길까");
         HttpSession session = request.getSession(false);
         LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginResponse == null) {

@@ -1,6 +1,7 @@
 package com.hallym.booker.service;
 
 import com.hallym.booker.domain.Interests;
+import com.hallym.booker.domain.Login;
 import com.hallym.booker.dto.Interests.InterestsResponseDTO;
 import com.hallym.booker.repository.InterestsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,30 +32,17 @@ class InterestsServiceTest {
     @Test
     void getInterestsByProfile() {
         // Given
-        Long profileUid = 1L;
+        Login login = mock(Login.class);
+        Long profileUid = login.getProfile().getProfileUid();
         Interests interest = mock(Interests.class);
         when(interestsRepository.findByProfile_ProfileUid(profileUid)).thenReturn(List.of(interest));
 
         // When
-        List<InterestsResponseDTO> result = interestsService.getInterestsByProfile(profileUid);
+        List<String> result = interestsService.getInterestsByProfile(login.getLoginUid());
 
         // Then
         assertThat(result).isNotEmpty();
         assertThat(result.size()).isEqualTo(1);
     }
 
-    @Test
-    void getAllInterestsExceptProfile() {
-        // Given
-        Long profileUid = 1L;
-        Interests interest = mock(Interests.class);
-        when(interestsRepository.findByProfile_ProfileUidNotIn(profileUid)).thenReturn(List.of(interest));
-
-        // When
-        List<InterestsResponseDTO> result = interestsService.getAllInterestsExceptProfile(profileUid);
-
-        // Then
-        assertThat(result).isNotEmpty();
-        assertThat(result.size()).isEqualTo(1);
-    }
 }

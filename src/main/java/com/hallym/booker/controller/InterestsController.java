@@ -24,8 +24,8 @@ public class InterestsController {
     private final InterestsService interestsService;
 
     // 특정 프로필에 대한 모든 관심사 조회 API
-    @GetMapping("/{profileUid}")
-    public ResponseEntity<List<InterestsResponseDTO>> getInterestsByProfile(HttpServletRequest request) {
+    @GetMapping("/find")
+    public ResponseEntity<List<String>> getInterestsByProfile(HttpServletRequest request) {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);
@@ -39,15 +39,9 @@ public class InterestsController {
         }
 
         // 기존 로직
-        List<InterestsResponseDTO> interests = interestsService.getInterestsByProfile(loginResponse.getUid());
+        List<String> interests = interestsService.getInterestsByProfile(loginResponse.getUid());
         return ResponseEntity.ok().body(interests);
     }
 
-    // 모든 관심사들 조회(본인 제외) API
-    @GetMapping("/interests/allExcept/{uid}")
-    public ResponseEntity<List<InterestsResponseDTO>> getAllInterestsExceptProfile(@PathVariable("uid") Long profileUid) {
-        List<InterestsResponseDTO> interests = interestsService.getAllInterestsExceptProfile(profileUid);
-        return ResponseEntity.ok().body(interests);
-    }
 
 }
