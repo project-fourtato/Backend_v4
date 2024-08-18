@@ -111,4 +111,13 @@ public class LoginApiController {
 
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<String> logOut(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        LoginResponse loginResponse = (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        session.removeAttribute(SessionConst.LOGIN_MEMBER);
+        session.invalidate(); //관련된 모든 session 속성 삭제
+        return ResponseEntity.status(201).body("Logout Successful");
+    }
+
 }
