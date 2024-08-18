@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class DirectmessageGetResponse {
+    // test
     Long messageId;
     Long senderUid;
     Long recipientUid;

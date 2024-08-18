@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DirectmessageSendRequest {
+public class DirectmessageSenderRequest {
     Long recipientUid;
     String mtitle;
     String mcontents;

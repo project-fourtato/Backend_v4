@@ -5,7 +5,7 @@ import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponseDTO;
-import com.hallym.booker.dto.Directmessage.DirectmessageSendRequest;
+import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
@@ -83,7 +83,7 @@ public class DirectmessageServiceImpl implements DirectmessageService{
      */
     @Transactional
     @Override
-    public void directmessageSend(DirectmessageSendRequest directmessageSendRequest, String loginId) {
+    public void directmessageSend(DirectmessageSenderRequest directmessageSendRequest, String loginId) {
         Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
         log.info("여기!! {}", directmessageSendRequest.getRecipientUid());
         if(profileRepository.existsByProfileUid(directmessageSendRequest.getRecipientUid())) {
