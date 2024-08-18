@@ -24,7 +24,7 @@ public class InterestsController {
     private final InterestsService interestsService;
 
     // 특정 프로필에 대한 모든 관심사 조회 API
-    @GetMapping("/{profileUid}")
+    @GetMapping("/profileUid/")
     public ResponseEntity<List<InterestsResponseDTO>> getInterestsByProfile(HttpServletRequest request) {
 
         // 세션 확인 코드 추가
