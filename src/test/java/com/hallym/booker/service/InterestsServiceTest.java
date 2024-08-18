@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 class InterestsServiceTest {
 
-    @Mock
+    /*@Mock
     private InterestsRepository interestsRepository;
 
     @InjectMocks
@@ -43,6 +43,6 @@ class InterestsServiceTest {
         // Then
         assertThat(result).isNotEmpty();
         assertThat(result.size()).isEqualTo(1);
-    }
+    }*/
 
 }

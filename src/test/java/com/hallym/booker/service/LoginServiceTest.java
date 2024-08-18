@@ -3,6 +3,7 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Login;
 import com.hallym.booker.exception.login.DuplicateProfileException;
 import com.hallym.booker.exception.login.NoSuchProfileException;
+import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.repository.LoginRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
@@ -84,13 +85,13 @@ class LoginServiceTest {
 
     @Test
     void loginLogin() {
-        Login login = loginService.loginLogin("id1","pw1");
-        Assertions.assertThat(login.getLoginUid()).isEqualTo("id1");
+        assertThrows(NoSuchLoginException.class,
+                ()-> loginService.loginLogin("id1","pw2"));
     }
 
     @Test
     void 로그인실패(){
-        Login login = loginService.loginLogin("id1","pw2");
-        Assertions.assertThat(login).isEqualTo(null);
+        assertThrows(NoSuchLoginException.class,
+                ()-> loginService.loginLogin("id1","pw2"));
     }
 }

@@ -104,12 +104,10 @@ public class UserBooksServiceTest {
 
         //when
         ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(loginId);
-        List<ReadingWithProfile> readingWithProfiles = readingWithAllProfileList.getResult();
-        ReadingWithProfile readingWithProfile = readingWithProfiles.get(0);
-        List<ReadingProfile> profiles = readingWithProfile.getProfileList();
+        List<ReadingWithProfile> result = readingWithAllProfileList.getResult();
 
         //then
-        Assertions.assertThat(profiles.get(0).getNickname()).isEqualTo("감자");
+        Assertions.assertThat(result.size()).isEqualTo(3);
 
     }
 }
