@@ -3,9 +3,9 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Directmessage;
 import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
-import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
+import com.hallym.booker.dto.Directmessage.GetDirectmessageResponse;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
@@ -101,10 +101,10 @@ public class DirectmessageServiceImpl implements DirectmessageService{
      * 쪽지 조회
      */
     @Override
-    public DirectmessageGetResponse getDirectmessage(Long messageId) {
+    public GetDirectmessageResponse getDirectmessage(Long messageId) {
         Directmessage directmessage = directmessageRepository.findById(messageId).orElseThrow(NoSuchMessageException::new);
 
-        return new DirectmessageGetResponse(directmessage.getMessageId(), directmessage.getSenderUid(), directmessage.getRecipientUid(),
+        return new GetDirectmessageResponse(directmessage.getMessageId(), directmessage.getSenderUid(), directmessage.getRecipientUid(),
                 directmessage.getMdate(), directmessage.getMcheck(), directmessage.getMtitle(), directmessage.getMcontents());
     }
 

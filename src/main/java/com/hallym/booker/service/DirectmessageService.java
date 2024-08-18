@@ -1,9 +1,9 @@
 package com.hallym.booker.service;
 
 
-import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
+import com.hallym.booker.dto.Directmessage.GetDirectmessageResponse;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface DirectmessageService {
 
     void directmessageSend(DirectmessageSenderRequest directmessageSendRequest, String loginId);
 
-    DirectmessageGetResponse getDirectmessage(Long messageId);
+    GetDirectmessageResponse getDirectmessage(Long messageId);
 
     void directmessageDelete(Long messageId);
 

@@ -1,9 +1,9 @@
 package com.hallym.booker.controller;
 
 import com.hallym.booker.domain.SessionConst;
-import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
+import com.hallym.booker.dto.Directmessage.GetDirectmessageResponse;
 import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.service.DirectmessageService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class DirectmessageApiController {
      * 쪽지 조회
      */
     @GetMapping("/directmessages/{messageId}")
-    public ResponseEntity<DirectmessageGetResponse> getDirecmessage(@PathVariable Long messageId, HttpServletRequest request) {
+    public ResponseEntity<GetDirectmessageResponse> getDirecmessage(@PathVariable Long messageId, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginResponse == null) {

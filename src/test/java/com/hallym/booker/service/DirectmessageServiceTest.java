@@ -3,8 +3,8 @@ package com.hallym.booker.service;
 import com.hallym.booker.domain.Directmessage;
 import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
-import com.hallym.booker.dto.Directmessage.DirectmessageGetResponse;
 import com.hallym.booker.dto.Directmessage.DirectmessageSenderRequest;
+import com.hallym.booker.dto.Directmessage.GetDirectmessageResponse;
 import com.hallym.booker.exception.directmessage.NoSuchMessageException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.repository.DirectmessageRepository;
@@ -94,7 +94,7 @@ public class DirectmessageServiceTest {
         List<Directmessage> directmessageList = directmessageRepository.findAll();
 
         //when
-        DirectmessageGetResponse directmessage = directmessageService.getDirectmessage(directmessageList.get(0).getMessageId());
+        GetDirectmessageResponse directmessage = directmessageService.getDirectmessage(directmessageList.get(0).getMessageId());
 
         //then
         Assertions.assertThat(directmessage.getMtitle()).isEqualTo("책 좀 사게 해줘요");
