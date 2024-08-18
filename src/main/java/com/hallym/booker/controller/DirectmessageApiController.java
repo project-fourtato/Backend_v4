@@ -54,7 +54,7 @@ public class DirectmessageApiController {
     }
 
     // 쪽지 목록 조회(프로필과 함께) API
-    @GetMapping("/directmessages/DirectmessagesList/{profileUid}")
+    @GetMapping("/directmessages/DirectmessagesList")
     public ResponseEntity<Map<String, List<DirectmessageResponseDTO>>> getDirectmessageList(HttpServletRequest request) {
 
         // 세션 확인 코드 추가
