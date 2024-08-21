@@ -172,8 +172,8 @@ public class UserBooksApiController {
     }
 
     // 책 검색에서 isbn을 통해 독서 상태 및 책(알라딘) 조회 API
-    @GetMapping("/searchByISBN/")
-    public ResponseEntity<List<BooksWithStatusDTO>> searchBooks(HttpServletRequest request, @RequestParam String isbn) {
+    @GetMapping("/searchByISBN")
+    public ResponseEntity<List<BooksWithStatusDTO>> searchBooks(@PathVariable("searchOne") String searchOne, HttpServletRequest request) {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);
@@ -187,7 +187,7 @@ public class UserBooksApiController {
         }
 
         // 기존 로직
-        List<BooksWithStatusDTO> booksList = userBooksService.searchBooks(loginResponse.getUid(), isbn);
+        List<BooksWithStatusDTO> booksList = userBooksService.searchBooks(loginResponse.getUid(), searchOne);
         return ResponseEntity.ok().body(booksList);
     }
 

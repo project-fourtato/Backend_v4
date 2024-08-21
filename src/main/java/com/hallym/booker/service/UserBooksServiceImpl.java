@@ -111,7 +111,7 @@ public class UserBooksServiceImpl implements UserBooksService {
 
         UserBooks userBooks = userBooksRepository.findByProfileUidAndIsbn(profile, isbn);
         if (userBooks == null) {
-            throw new NoSuchUserBooksException();
+            return new UserBooksReadStatusResponseDTO(null, -1, -1);
         }
 
         UserBooksReadStatusResponseDTO responseDTO = new UserBooksReadStatusResponseDTO();
