@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class LatestJournalsResponse {
-    private Long toUserId;
+    private String toUserId;
     private Long jid;
     private LocalDateTime pdatetime;
     private String ptitle;
@@ -20,7 +20,7 @@ public class LatestJournalsResponse {
     private String userimageName;
 
     @Builder
-    public LatestJournalsResponse(Long toUserId, Long jid, LocalDateTime pdatetime, String ptitle, String pcontents, String nickname, String userimageUrl, String userimageName) {
+    public LatestJournalsResponse(String toUserId, Long jid, LocalDateTime pdatetime, String ptitle, String pcontents, String nickname, String userimageUrl, String userimageName) {
         this.toUserId = toUserId;
         this.jid = jid;
         this.pdatetime = pdatetime;

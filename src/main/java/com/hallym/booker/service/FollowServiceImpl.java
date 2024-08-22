@@ -75,7 +75,7 @@ public class FollowServiceImpl implements FollowService{
             List<Journals> journals = journalsRepository.findByUserBooks_Profile_ProfileUidOrderByJdatetimeDesc(profile.getProfileUid());
             for(Journals journal : journals){
                 LatestJournalsResponse l = LatestJournalsResponse.builder()
-                        .toUserId(profile.getProfileUid())
+                        .toUserId(profile.getLogin().getLoginUid())
                         .jid(journal.getJournalId())
                         .pdatetime(journal.getJdatetime())
                         .ptitle(journal.getJtitle())

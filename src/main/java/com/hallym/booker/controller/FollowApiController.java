@@ -58,7 +58,7 @@ public class FollowApiController {
         List<Profile> followings = followService.findAllToUserIdProfile(loginResponse.getUid());
         List<ProfileDto> followingsInfo = new ArrayList<>();
         for(Profile profile : followings){
-            followingsInfo.add(new ProfileDto(profile.getProfileUid(),profile.getNickname(),
+            followingsInfo.add(new ProfileDto(profile.getLogin().getLoginUid(),profile.getNickname(),
                     profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage()));
         }
         return ResponseEntity.ok().body(followingsInfo);
@@ -78,7 +78,7 @@ public class FollowApiController {
         List<Profile> followers = followService.findAllFromUserIdProfile(loginResponse.getUid());
         List<ProfileDto> followersInfo = new ArrayList<>();
         for(Profile profile : followers){
-            followersInfo.add(new ProfileDto(profile.getProfileUid(),profile.getNickname(),
+            followersInfo.add(new ProfileDto(profile.getLogin().getLoginUid(),profile.getNickname(),
                     profile.getUserimageUrl(), profile.getUserimageName(), profile.getUsermessage()));
         }
         return ResponseEntity.ok().body(followersInfo);

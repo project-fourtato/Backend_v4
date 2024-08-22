@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileResponseDTO {
-    private Long profileUid;
+    private String loginId;
     private String nickname;
     private String userimageUrl;
     private String userimageName;
