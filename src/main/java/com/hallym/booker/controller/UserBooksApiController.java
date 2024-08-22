@@ -15,9 +15,6 @@ import com.hallym.booker.service.LibraryListService;
 import com.hallym.booker.service.UserBooksService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import com.hallym.booker.service.UserBooksServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,18 +34,22 @@ public class UserBooksApiController {
     private final LibraryListService libraryListService;
 
     @GetMapping("/booksList")
-    public ResponseEntity<ReadingAllBooksListResponse> readingAllBooksList(HttpServletRequest request) {
+    public ResponseEntity<ReadingAllBooksListResponse> readingAllBooksList(HttpServletRequest request, @RequestParam(value = "userId", required = false) String userId) {
         HttpSession session = request.getSession(false);
         LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginResponse == null) {
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
 
-        return ResponseEntity.ok().body(userBooksService.readingAllBooksList(loginResponse.getUid()));
+        if(userId == null) {
+            return ResponseEntity.ok().body(userBooksService.readingAllBooksList(loginResponse.getUid()));
+        } else {
+            return ResponseEntity.ok().body(userBooksService.readingAllBooksList(userId));
+        }
     }
 
     @GetMapping("/books")
-    public ResponseEntity<ReadingWithAllProfileList> readingWithAllProfile(HttpServletRequest request) {
+    public ResponseEntity<ReadingWithAllUserList> readingWithAllProfile(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         LoginResponse loginResponse = (session == null) ? null : (LoginResponse) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginResponse == null) {
@@ -100,15 +101,7 @@ public class UserBooksApiController {
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
 
-        // 기존 로직
-        List<Journals> allJournalsByBookUid = journalsRepository.findByUserBooks_BookUid(bookUid);
-        allJournalsByBookUid.forEach(journalsRepository::delete);
-
-        UserBooks userBooks = userBooksRepository.findById(bookUid)
-                .orElseThrow(() -> new NoSuchUserBooksException());
-
-        userBooksRepository.delete(userBooks);
-        return ResponseEntity.ok().body(new BookDeleteResponseDTO("책 삭제 성공"));
+        return ResponseEntity.ok().body(new BookDeleteResponseDTO(userBooksService.deleteUserBooks(bookUid)));
     }
 
     // 독서 상태 변경 API

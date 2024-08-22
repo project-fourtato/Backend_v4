@@ -2,9 +2,8 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.UserBooks.ReadingAllBooksListResponse;
-import com.hallym.booker.dto.UserBooks.ReadingProfile;
-import com.hallym.booker.dto.UserBooks.ReadingWithAllProfileList;
-import com.hallym.booker.dto.UserBooks.ReadingWithProfile;
+import com.hallym.booker.dto.UserBooks.ReadingWithAllUserList;
+import com.hallym.booker.dto.UserBooks.ReadingWithUser;
 import com.hallym.booker.exception.login.NoSuchProfileException;
 import com.hallym.booker.repository.*;
 import org.assertj.core.api.Assertions;
@@ -103,8 +102,8 @@ public class UserBooksServiceTest {
         userBooks3 = userBooksRepository.save(userBooks3);
 
         //when
-        ReadingWithAllProfileList readingWithAllProfileList = userBooksService.readingWithProfileList(loginId);
-        List<ReadingWithProfile> result = readingWithAllProfileList.getResult();
+        ReadingWithAllUserList readingWithAllUserList = userBooksService.readingWithProfileList(loginId);
+        List<ReadingWithUser> result = readingWithAllUserList.getResult();
 
         //then
         Assertions.assertThat(result.size()).isEqualTo(3);

@@ -12,6 +12,9 @@ public interface UserBooksService {
     // 책 등록
     void saveUserBooks(String loginUid, UserBooksDTO userBooksDTO);
 
+    // 책 삭제
+    String deleteUserBooks(Long bookUid);
+
     // 독서 상태 변경
     String updateReadStatus(Long bookUid, UserBooksUpdateRequestDTO updateDTO);
 
@@ -34,7 +37,7 @@ public interface UserBooksService {
     ReadingAllBooksListResponse readingAllBooksList(String loginId);
 
     //책을 같이 읽는 유저 목록
-    ReadingWithAllProfileList readingWithProfileList(String loginId);
+    ReadingWithAllUserList readingWithProfileList(String loginId);
 
     //베스트셀러
     BestSellerListResponse bestseller();

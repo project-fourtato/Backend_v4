@@ -42,7 +42,8 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
 
     // 같이 읽고 있는 유저 목록
     @Query("SELECT ub2 " +
-            "FROM UserBooks ub1 JOIN UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
+            "FROM UserBooks ub1 JOIN FETCH UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
+            "JOIN FETCH Follow f ON f.toUserId = :profileId " +
             "WHERE ub1.profile.profileUid = :profileId")
     List<UserBooks> findWithProfileList(@Param("profileId") Long profileId);
 
