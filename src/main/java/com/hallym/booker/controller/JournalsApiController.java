@@ -44,12 +44,9 @@ public class JournalsApiController {
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
 
-        String imageName = "";
+        String imageName = "not-image";
         String imageUrl = "";
-        if(file == null) {
-            imageName = "default-profile.png";
-            imageUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
-        } else {
+        if(file != null) {
             S3ResponseUploadEntity s3Image = s3Service.upload(file, "journal");
             imageName = s3Image.getImageName();
             imageUrl = s3Image.getImageUrl();
@@ -162,7 +159,7 @@ public class JournalsApiController {
 
     // 독서록 삭제 API
     @PostMapping("/journals/{journalId}/delete")
-    public ResponseEntity<String> deleteJournal(@PathVariable Long journalId, HttpServletRequest request) {
+    public ResponseEntity<String> deleteJournal(@PathVariable Long journalId, HttpServletRequest request) throws IOException {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);

@@ -18,7 +18,7 @@ public interface JournalsService {
     JournalsBookInfoResponseDTO getBookDetailsByISBN(String isbn);
 
     // 독서록 삭제
-    String deleteJournal(JournalsDeleteDTO journalsDeleteDTO);
+    String deleteJournal(JournalsDeleteDTO journalsDeleteDTO) throws IOException;
 
     //독서록 등록
     void journalSave(JournalSaveRequest journalSaveRequest);

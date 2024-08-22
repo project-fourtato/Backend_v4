@@ -12,6 +12,7 @@ import com.hallym.booker.global.S3.dto.S3ResponseUploadEntity;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class JournalsServiceImpl implements JournalsService {
 
     @Autowired
@@ -117,9 +119,14 @@ public class JournalsServiceImpl implements JournalsService {
     // 독서록 삭제
     @Override
     @Transactional
-    public String deleteJournal(JournalsDeleteDTO journalsDeleteDTO) {
+    public String deleteJournal(JournalsDeleteDTO journalsDeleteDTO) throws IOException {
         Journals journal = journalsRepository.findById(journalsDeleteDTO.getJournalId())
                 .orElseThrow(NoSuchJournalsException::new);
+
+        if(!journal.getJimageName().equals("not-image")) {
+            s3Service.delete(journal.getJimageName());
+        }
+
         journalsRepository.delete(journal);
         return "독서록 삭제 완료";
     }
