@@ -2,8 +2,10 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.controller.ApiTagValue;
 import com.hallym.booker.domain.BookDetails;
+import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
+import com.hallym.booker.dto.BookDetails.BookDetailsResponseDTO;
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
 import com.hallym.booker.dto.UserBooks.*;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
@@ -29,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -48,6 +51,7 @@ public class UserBooksServiceImpl implements UserBooksService {
     private String apiKey;
 
     private static final String ALADIN_API_URL1 = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Sort=SalesPoint&Query=%s&QueryType=Keyword&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
+    private static final String ALADIN_API_URL2 = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=%s&itemIdType=ISBN&ItemId=%s&output=xml&Version=20131101&Cover=Big";
 
     // 책 등록
     @Override
@@ -55,26 +59,62 @@ public class UserBooksServiceImpl implements UserBooksService {
         Profile profile = profileRepository.findById(loginRepository.findById(loginUid).get().getProfile().getProfileUid())
                 .orElseThrow(() -> new NoSuchProfileException());
 
-        BookDetails bookDetails = bookDetailsRepository.findByIsbn(userBooksDTO.getIsbn());
+        Optional<BookDetails> bookDetails = bookDetailsRepository.findByIsbn(userBooksDTO.getIsbn());
 
-        if (bookDetails == null) {
-            bookDetails = BookDetails.create(
-                    userBooksDTO.getIsbn(),
-                    userBooksDTO.getBookTitle(),
-                    userBooksDTO.getAuthor(),
-                    userBooksDTO.getPublisher(),
-                    userBooksDTO.getCoverImageUrl()
-            );
-            bookDetailsRepository.save(bookDetails);
+        if (!bookDetails.isPresent()) {
+            BookDetailsResponseDTO bookDetailsResponseDTO = searchBook(userBooksDTO.getIsbn());
+
+            bookDetails = Optional.of(BookDetails.create(
+                    bookDetailsResponseDTO.getIsbn(),
+                    bookDetailsResponseDTO.getBookTitle(),
+                    bookDetailsResponseDTO.getAuthor(),
+                    bookDetailsResponseDTO.getPublisher(),
+                    bookDetailsResponseDTO.getCoverImageUrl()
+            ));
+            bookDetailsRepository.save(bookDetails.get());
         }
 
-        List<UserBooks> existingUserBooks = userBooksRepository.findByProfileAndBookDetails(profile, bookDetails);
+        List<UserBooks> existingUserBooks = userBooksRepository.findByProfileAndBookDetails(profile, bookDetails.get());
         if (!existingUserBooks.isEmpty()) {
             throw new DuplicateUserBooksException();
         }
 
-        UserBooks userBooks = UserBooks.create(profile, bookDetails, userBooksDTO.getReadStatus(), userBooksDTO.getSaleStatus());
+        UserBooks userBooks = UserBooks.create(profile, bookDetails.get(), userBooksDTO.getReadStatus(), userBooksDTO.getSaleStatus());
         userBooksRepository.save(userBooks);
+    }
+
+    private BookDetailsResponseDTO searchBook(String searchIsbn) {
+        BookDetailsResponseDTO bookDetailsResponseDTO = null;
+        String url = String.format(ALADIN_API_URL2, apiKey, searchIsbn);
+        Document doc = getXmlDocument(url);
+
+        NodeList nList = doc.getElementsByTagName("item");
+
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Element eElement = (Element) nList.item(temp);
+
+            // 책 정보 추출
+            String bookTitle = apiTagValue.getTagValue("title", eElement);
+            String author = apiTagValue.getTagValue("author", eElement);
+            String isbn = apiTagValue.getTagValue("isbn13", eElement);
+            String publisher = apiTagValue.getTagValue("publisher", eElement);
+            String coverImageUrl = apiTagValue.getTagValue("cover", eElement);
+
+            bookDetailsResponseDTO = new BookDetailsResponseDTO(isbn, bookTitle, author, publisher, coverImageUrl);
+        }
+        return bookDetailsResponseDTO;
+    }
+
+    // 책 삭제
+    @Override
+    @Transactional
+    public String deleteUserBooks(Long bookUid) {
+        UserBooks userBooks = userBooksRepository.findById(bookUid)
+                .orElseThrow(() -> new NoSuchUserBooksException());
+
+        userBooksRepository.delete(userBooks);
+
+        return "책 삭제 성공";
     }
 
 
@@ -213,7 +253,7 @@ public class UserBooksServiceImpl implements UserBooksService {
         }
         return profiles.stream()
                 .map(profile -> new ProfileResponseDTO(
-                        profile.getProfileUid(),
+                        profile.getLogin().getLoginUid(),
                         profile.getNickname(),
                         profile.getUserimageUrl(),
                         profile.getUserimageName(),
@@ -247,7 +287,7 @@ public class UserBooksServiceImpl implements UserBooksService {
      * 책을 같이 읽는 유저 목록
      */
     @Override
-    public ReadingWithAllProfileList readingWithProfileList(String loginId) {
+    public ReadingWithAllUserList readingWithProfileList(String loginId) {
         Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profile.getProfileUid());
 
@@ -256,7 +296,7 @@ public class UserBooksServiceImpl implements UserBooksService {
         for (UserBooks userBooks : withProfileList) {
             List<ReadingProfile> readingProfile;
 
-            if(map.containsKey(userBooks)) {
+            if(map.containsKey(userBooks.getBookDetails())) {
                 readingProfile = map.get(userBooks.getBookDetails()).getReadingProfile();
             } else {
                 readingProfile = new ArrayList<>();
@@ -268,7 +308,7 @@ public class UserBooksServiceImpl implements UserBooksService {
             map.put(userBooks.getBookDetails(), ReadingProfileWithBookUid.of(readingProfile, userBooks.getBookUid()));
         }
 
-        return ReadingWithAllProfileList.from(map);
+        return ReadingWithAllUserList.from(map);
     }
 
     /**
