@@ -22,6 +22,8 @@ public class Directmessage {
     private LocalDateTime mdate;
     private Long senderUid;
     private Long recipientUid;
+    private boolean deleteSenderCheck;
+    private boolean deleteRecipientCheck;
 
     private Directmessage(Integer mcheck, String mtitle, String mcontents, LocalDateTime mdate, Long senderUid, Long recipientUid) {
         this.mcheck = mcheck;
@@ -30,6 +32,8 @@ public class Directmessage {
         this.mdate = mdate;
         this.senderUid = senderUid;
         this.recipientUid = recipientUid;
+        this.deleteSenderCheck = false;
+        this.deleteRecipientCheck = false;
     }
 
     // 생성 메서드
@@ -41,6 +45,16 @@ public class Directmessage {
     // 비지니스 로직
     public Directmessage changeMCheck(Integer mcheck) {
         this.mcheck = mcheck;
+        return this;
+    }
+
+    public Directmessage changeDeleteSenderCheck() {
+        this.deleteSenderCheck = true;
+        return this;
+    }
+
+    public Directmessage changeDeleteRecipientCheck() {
+        this.deleteRecipientCheck = true;
         return this;
     }
 

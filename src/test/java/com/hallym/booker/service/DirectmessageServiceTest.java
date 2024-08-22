@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
@@ -44,17 +46,17 @@ public class DirectmessageServiceTest {
     @Before
     public void setUp() {
         //given
-        Login loginA = Login.create("gamja", "gamjapw", "gamja@mail.com", new Date(2000, 12, 21));
+        Login loginA = Login.create("gamjaja", "gamjapw", "gamjaja@mail.com", new Date(2000, 12, 21));
         loginA = loginRepository.save(loginA);
 
-        Profile profileA = Profile.create(loginA, "감자", "default/default-image.png", "https://default/default-image.png", "무력 감자");
+        Profile profileA = Profile.create(loginA, "감자자", "default/default-image.png", "https://default/default-image.png", "무력 감자");
         profileA = profileRepository.save(profileA);
         profileUidA = profileA.getProfileUid();
 
-        Login loginB = Login.create("dubu", "dubupw", "dubu@mail.com", new Date(2000, 07, 03));
+        Login loginB = Login.create("dububu", "dubupw", "dububu@mail.com", new Date(2000, 07, 03));
         loginB = loginRepository.save(loginB);
 
-        Profile profileB = Profile.create(loginB, "두부", "default/default-image.png", "https://default/default-image.png", "무기력 두부");
+        Profile profileB = Profile.create(loginB, "두부부", "default/default-image.png", "https://default/default-image.png", "무기력 두부");
         profileB = profileRepository.save(profileB);
         profileUidB = profileB.getProfileUid();
     }
@@ -69,8 +71,8 @@ public class DirectmessageServiceTest {
         directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
 
         //then
-        List<Directmessage> directmessageList = directmessageRepository.findAll();
-        Assertions.assertThat(directmessageList.size()).isEqualTo(1);
+        List<Directmessage> allDirectmessagesBySender = directmessageRepository.findAllDirectmessagesBySender(profileUidB);
+        Assertions.assertThat(allDirectmessagesBySender.size()).isEqualTo(1);
     }
 
     @Test
@@ -89,32 +91,28 @@ public class DirectmessageServiceTest {
     public void getDirectmessageTest() {
         //given
         Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
-        DirectmessageSenderRequest directmessageSendRequest = new DirectmessageSenderRequest(profileUidA, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
-        directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
-        List<Directmessage> directmessageList = directmessageRepository.findAll();
+        Directmessage directmessage = Directmessage.create(0, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..", LocalDateTime.now(), profileUidB, profileUidA);
+        directmessage = directmessageRepository.save(directmessage);
 
         //when
-        GetDirectmessageResponse directmessage = directmessageService.getDirectmessage(directmessageList.get(0).getMessageId());
+        GetDirectmessageResponse getDirectmessage = directmessageService.getDirectmessage(directmessage.getMessageId(), profile.getLogin().getLoginUid());
 
         //then
-        Assertions.assertThat(directmessage.getMtitle()).isEqualTo("책 좀 사게 해줘요");
+        Assertions.assertThat(getDirectmessage.getSenderUid()).isEqualTo(profile.getProfileUid());
     }
 
     @Test
     public void deleteDirectmessageTest() {
         //given
         Profile profile = profileRepository.findById(profileUidB).orElseThrow(NoSuchProfileException::new);
-        DirectmessageSenderRequest directmessageSendRequest = new DirectmessageSenderRequest(profileUidA, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..");
-        directmessageService.directmessageSend(directmessageSendRequest, profile.getLogin().getLoginUid());
-        List<Directmessage> directmessageList = directmessageRepository.findAll();
+        Directmessage directmessage = Directmessage.create(0, "책 좀 사게 해줘요", "해리포터 책 사고 싶은데 안될까여..", LocalDateTime.now(), profileUidB, profileUidA);
+        directmessage = directmessageRepository.save(directmessage);
 
         //when
-        directmessageService.directmessageDelete(directmessageList.get(0).getMessageId());
+        directmessageService.directmessageDelete(directmessage.getMessageId(), profile.getLogin().getLoginUid());
 
         //then
-        org.junit.jupiter.api.Assertions.assertThrows(NoSuchMessageException.class, () -> {
-            directmessageService.directmessageDelete(directmessageList.get(0).getMessageId());
-        });
+        Assertions.assertThat(directmessage.isDeleteSenderCheck()).isEqualTo(true);
     }
 }
 

@@ -50,7 +50,7 @@ public class DirectmessageApiController {
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
 
-        return ResponseEntity.ok().body(directmessageService.getDirectmessage(messageId));
+        return ResponseEntity.ok().body(directmessageService.getDirectmessage(messageId, loginResponse.getUid()));
     }
 
     // 쪽지 목록 조회(프로필과 함께) API (내가 받은 메세지)
@@ -88,7 +88,7 @@ public class DirectmessageApiController {
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
 
-        directmessageService.directmessageDelete(messageId);
+        directmessageService.directmessageDelete(messageId, loginResponse.getUid());
         return new ResponseEntity<>("Directmessages deleted successfully", HttpStatus.OK);
     }
 

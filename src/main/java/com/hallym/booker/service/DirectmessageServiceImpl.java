@@ -85,7 +85,7 @@ public class DirectmessageServiceImpl implements DirectmessageService{
     @Override
     public void directmessageSend(DirectmessageSenderRequest directmessageSendRequest, String loginId) {
         Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
-        log.info("여기!! {}", directmessageSendRequest.getRecipientUid());
+
         if(profileRepository.existsByProfileUid(directmessageSendRequest.getRecipientUid())) {
             Directmessage directmessage = Directmessage.create(0, directmessageSendRequest.getMtitle(),
                     directmessageSendRequest.getMcontents(), LocalDateTime.now(),
@@ -101,8 +101,14 @@ public class DirectmessageServiceImpl implements DirectmessageService{
      * 쪽지 조회
      */
     @Override
-    public GetDirectmessageResponse getDirectmessage(Long messageId) {
+    public GetDirectmessageResponse getDirectmessage(Long messageId, String loginId) {
+        Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
         Directmessage directmessage = directmessageRepository.findById(messageId).orElseThrow(NoSuchMessageException::new);
+
+        if((directmessage.getRecipientUid() == login.getProfile().getProfileUid() && directmessage.isDeleteRecipientCheck()) ||
+                directmessage.getSenderUid() == login.getProfile().getProfileUid() && directmessage.isDeleteSenderCheck()) {
+            throw new NoSuchMessageException();
+        }
 
         return new GetDirectmessageResponse(directmessage.getMessageId(), directmessage.getSenderUid(), directmessage.getRecipientUid(),
                 directmessage.getMdate(), directmessage.getMcheck(), directmessage.getMtitle(), directmessage.getMcontents());
@@ -113,11 +119,18 @@ public class DirectmessageServiceImpl implements DirectmessageService{
      */
     @Transactional
     @Override
-    public void directmessageDelete(Long messageId) {
-        if(directmessageRepository.existsByMessageId(messageId)) {
-            directmessageRepository.deleteById(messageId);
+    public void directmessageDelete(Long messageId, String loginId) {
+        Directmessage directmessage = directmessageRepository.findById(messageId).orElseThrow(NoSuchMessageException::new);
+        Login login = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new);
+
+        if(directmessage.getRecipientUid() == login.getProfile().getProfileUid()) {
+            directmessage.changeDeleteRecipientCheck();
         } else {
-            throw new NoSuchMessageException();
+            directmessage.changeDeleteSenderCheck();
+        }
+
+        if(directmessage.isDeleteSenderCheck() && directmessage.isDeleteRecipientCheck()) {
+            directmessageRepository.deleteById(messageId);
         }
     }
 

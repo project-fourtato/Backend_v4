@@ -13,9 +13,9 @@ public interface DirectmessageService {
 
     void directmessageSend(DirectmessageSenderRequest directmessageSendRequest, String loginId);
 
-    GetDirectmessageResponse getDirectmessage(Long messageId);
+    GetDirectmessageResponse getDirectmessage(Long messageId, String loginId);
 
-    void directmessageDelete(Long messageId);
+    void directmessageDelete(Long messageId, String loginId);
 
     void updateMcheck(Long messageid, int mcheck);
 
