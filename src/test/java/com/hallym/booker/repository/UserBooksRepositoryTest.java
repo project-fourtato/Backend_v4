@@ -1,9 +1,6 @@
 package com.hallym.booker.repository;
 
-import com.hallym.booker.domain.BookDetails;
-import com.hallym.booker.domain.Login;
-import com.hallym.booker.domain.Profile;
-import com.hallym.booker.domain.UserBooks;
+import com.hallym.booker.domain.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
@@ -238,9 +235,11 @@ public class UserBooksRepositoryTest {
         UserBooks userBooks2 = userBooksRepository.save(userBook2);
         UserBooks userBook3 = UserBooks.create(profiles2, bookDetail1, 0, 0);
         UserBooks userBooks3 = userBooksRepository.save(userBook);
-        
+
+        Follow.create(profile, profiles2.getProfileUid())
+
         //then
-        List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profiles.getProfileUid());
+        List<UserBooks> withProfileList = userBooksRepository.findWithProfileListAndFollowList(profiles.getProfileUid());
 
         //then
         Assertions.assertThat(withProfileList).extracting(UserBooks::getProfile).extracting(Profile::getNickname).contains("nickname");

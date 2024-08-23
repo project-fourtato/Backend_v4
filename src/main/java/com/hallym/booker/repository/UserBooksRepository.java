@@ -31,6 +31,9 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
     @Query("SELECT ub FROM UserBooks ub WHERE ub.bookDetails.isbn = :isbn AND ub.profile = :profile")
     UserBooks findByProfileUidAndIsbn(@Param("profile") Profile profile, @Param("isbn") String isbn);
 
+    @Query("SELECT ub FROM UserBooks ub WHERE ub.profile.profileUid = :profileId")
+    List<UserBooks> findAllByProfileUid(@Param("profileId") Long profileId);
+
     // 주어진 ISBN과 판매 상태가 활성화된 책을 가진 프로필들을 조회
     @Query("SELECT ub.profile FROM UserBooks ub WHERE ub.bookDetails.isbn = :isbn AND ub.saleStatus = 1")
     List<Profile> findByIsbnAndSalesstate(@Param("isbn") String isbn);
@@ -43,9 +46,8 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Long> {
     // 같이 읽고 있는 유저 목록
     @Query("SELECT ub2 " +
             "FROM UserBooks ub1 JOIN FETCH UserBooks ub2 ON ub1.bookDetails.isbn = ub2.bookDetails.isbn " +
-            "JOIN FETCH Follow f ON f.toUserId = :profileId " +
+            "JOIN FETCH Follow f ON f.profile.profileUid = :profileId " +
             "WHERE ub1.profile.profileUid = :profileId")
-    List<UserBooks> findWithProfileList(@Param("profileId") Long profileId);
+    List<UserBooks> findWithProfileListAndFollowList(@Param("profileId") Long profileId);
 
-    //isbn과 유저Id로 같이 읽고 있는 사람 조회
 }
