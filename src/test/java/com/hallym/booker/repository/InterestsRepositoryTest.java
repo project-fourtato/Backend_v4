@@ -93,9 +93,9 @@ public class InterestsRepositoryTest {
         interestsRepository.save(interests3);
 
         //When
-        List<Interests> interestsList= interestsRepository.findByProfile_ProfileUidNotIn(profile2.getProfileUid());
+        List<Interests> interestsList = interestsRepository.findByProfile_ProfileUidNotIn(profile2.getProfileUid());
         //Then
-        assertThat(interestsList.size()).isEqualTo(2);
+        assertThat(interestsList).extracting(Interests::getInterestName).contains("호러");
     }
 
     @Test

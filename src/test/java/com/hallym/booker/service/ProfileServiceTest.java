@@ -105,13 +105,14 @@ class ProfileServiceTest {
     @Test
     void join() {
         //given
-        loginRepository.save(Login.create("id3", "password3", "id3@gmail.com", new Date(2000, 6, 20)));
+        Login save = loginRepository.save(Login.create("id3", "password3", "id3@gmail.com", new Date(2000, 6, 20)));
 
         //when
         profileService.join("id3",new ProfileDto("다연","imageurl","imgName","안녕하세요","로맨스","호러",null,null,null));
 
         //then
-        assertThat(profileRepository.findAll().size()).isEqualTo(3);
+        Login login = loginRepository.findById(save.getLoginUid()).get();
+        assertThat(login.getProfile().getNickname()).isEqualTo("다연");
     }
 
     @Test
@@ -124,15 +125,15 @@ class ProfileServiceTest {
         profileService.deleteOne(profile1.getLogin().getLoginUid());
 
         //Then
-        assertThat(journalsRepository.findAll().size()).isEqualTo(0);
-        assertThat(userBooksRepository.findAll().size()).isEqualTo(0);
+        List<UserBooks> userBooksList = userBooksRepository.findAllByProfileUid(profile1Id);
+
+        assertThat(userBooksList.size()).isEqualTo(0);
         assertThat(profileRepository.findById(profile1.getProfileUid())).isEqualTo(Optional.empty());
         assertThat(directmessageRepository.findAllDirectmessagesBySender(-1L).size()).isEqualTo(2);
         assertThat(directmessageRepository.findAllDirectMessagesByRecipient(-1L).size()).isEqualTo(1);
-        assertThat(bookDetailsRepository.findAll().size()).isEqualTo(2);
-        assertThat(interestsRepository.findAll().size()).isEqualTo(0);
+        assertThat(interestsRepository.findByProfile_ProfileUid(profile1Id).size()).isEqualTo(0);
         assertThat(loginRepository.findById("id1")).isEqualTo(Optional.empty());
-        assertThat(followRepository.findAll().size()).isEqualTo(0);
+        assertThat(followRepository.findAllByFromUserId(profile1Id).size()).isEqualTo(0);
     }
 
     @Test

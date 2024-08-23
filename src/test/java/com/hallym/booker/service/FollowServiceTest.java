@@ -56,8 +56,9 @@ public class FollowServiceTest {
         profile2 = profileRepository.save(profile2);
 
         followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
+        List<Follow> allByFromUserId = followRepository.findAllByFromUserId(profile1.getProfileUid());
 
-        Assertions.assertThat(followRepository.findAll().size()).isEqualTo(1);
+        Assertions.assertThat(allByFromUserId).extracting(Follow::getToUserId).contains(profile2.getProfileUid());
     }
 
     @Test

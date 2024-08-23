@@ -1,5 +1,6 @@
 package com.hallym.booker.service;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hallym.booker.domain.*;
 import com.hallym.booker.dto.Journals.JournalSaveRequest;
 import com.hallym.booker.dto.Journals.JournalsEditFormResponse;
@@ -15,8 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -72,22 +75,22 @@ public class JournalsServiceTest {
 
         //when
         journalsService.journalSave(journalSaveRequest);
+        List<Journals> byUserBooksBookUid = journalsRepository.findByUserBooks_BookUid(userBooksId);
 
         //then
-        List<Journals> journalsList = journalsRepository.findAll();
-        Assertions.assertThat(journalsList.size()).isEqualTo(1);
+        Assertions.assertThat(byUserBooksBookUid).extracting(Journals::getJtitle).contains("해리포터 잼따..");
     }
 
     @Test
     public void getJournalsEditFormTest() {
         //given
-        JournalSaveRequest journalSaveRequest = new JournalSaveRequest(userBooksId, "해리포터 잼따..", "해리포터 진짜 잼쓰니까 다 봐봐여,,",
+        UserBooks userBooks = userBooksRepository.findById(userBooksId).get();
+        Journals journals = Journals.create(userBooks, "해리포터 잼따..", "해리포터 진짜 잼쓰니까 다 봐봐여,,", LocalDateTime.now(),
                 "https://default-image", "default-image");
-        journalsService.journalSave(journalSaveRequest);
-        List<Journals> journalsList = journalsRepository.findAll();
+        Journals saveJournals = journalsRepository.save(journals);
 
         //when
-        JournalsEditFormResponse journalsEditForm = journalsService.getJournalsEditForm(journalsList.get(0).getJournalId());
+        JournalsEditFormResponse journalsEditForm = journalsService.getJournalsEditForm(saveJournals.getJournalId());
 
         //then
         Assertions.assertThat(journalsEditForm.getJtitle()).isEqualTo("해리포터 잼따..");

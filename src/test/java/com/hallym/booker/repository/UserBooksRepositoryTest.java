@@ -34,6 +34,9 @@ public class UserBooksRepositoryTest {
     @Autowired
     private BookDetailsRepository bookDetailsRepository;
 
+    @Autowired
+    private FollowRepository followRepository;
+
     @PersistenceContext
     private EntityManager em; // EntityManager 주입
 
@@ -236,7 +239,8 @@ public class UserBooksRepositoryTest {
         UserBooks userBook3 = UserBooks.create(profiles2, bookDetail1, 0, 0);
         UserBooks userBooks3 = userBooksRepository.save(userBook);
 
-        Follow.create(profile, profiles2.getProfileUid())
+        Follow follow = Follow.create(profile, profiles2.getProfileUid());
+        followRepository.save(follow);
 
         //then
         List<UserBooks> withProfileList = userBooksRepository.findWithProfileListAndFollowList(profiles.getProfileUid());
