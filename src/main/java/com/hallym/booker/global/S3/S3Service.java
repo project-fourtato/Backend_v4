@@ -32,7 +32,7 @@ public class S3Service {
 
         String uuid = UUID.randomUUID().toString();
         String uniqueFileName = dir + "/" + uuid + "-" + fileName.replace("//s", "-");
-        String url = "https://booker-v4-bucket.s3.amazonaws.com/";
+        String url = "https://booker-v4-aws.s3.ap-northeast-2.amazonaws.com/";
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucket,
                 uniqueFileName,
