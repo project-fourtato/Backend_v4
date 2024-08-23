@@ -85,7 +85,7 @@ public class JournalsServiceImpl implements JournalsService {
     // 해당 독서록의 책 상세정보 조회
     @Override
     public JournalsBookInfoResponseDTO getBookDetailsByISBN(String isbn) {
-        String url = "https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=" + apiKey + "&itemIdType=ISBN13&ItemId=" + isbn + "&output=xml&Version=20131101&OptResult=cover=Big";
+        String url = "https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=" + apiKey + "&itemIdType=ISBN13&ItemId=" + isbn + "&output=xml&Version=20131101&Cover=Big";
 
         Document doc;
         try {

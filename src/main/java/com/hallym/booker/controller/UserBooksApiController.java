@@ -1,14 +1,11 @@
 package com.hallym.booker.controller;
 
-import com.hallym.booker.domain.Journals;
 import com.hallym.booker.domain.SessionConst;
-import com.hallym.booker.domain.UserBooks;
 import com.hallym.booker.dto.LibraryList.LibraryListDTO;
 import com.hallym.booker.dto.Login.LoginResponse;
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
 import com.hallym.booker.dto.Result;
 import com.hallym.booker.dto.UserBooks.*;
-import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
 import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.UserBooksRepository;
 import com.hallym.booker.service.LibraryListService;
@@ -60,7 +57,7 @@ public class UserBooksApiController {
     }
 
     @GetMapping("/bestseller")
-    public BestSellerListResponse bestseller() {
+    public BookFindAllDTO bestseller() {
         return userBooksService.bestseller();
     }
 
@@ -186,7 +183,7 @@ public class UserBooksApiController {
 
     // 책 교환에서 검색된 책 목록 조회 API
     @GetMapping("/sale/searchOne/{searchOne}")
-    public ResponseEntity<List<BooksFindDTO>> booksFind(@PathVariable("searchOne") String searchOne, HttpServletRequest request) {
+    public ResponseEntity<BookFindAllDTO> booksFind(@PathVariable("searchOne") String searchOne, HttpServletRequest request) {
 
         // 세션 확인 코드 추가
         HttpSession session = request.getSession(false);
@@ -200,8 +197,7 @@ public class UserBooksApiController {
         }
 
         // 기존 로직
-        List<BooksFindDTO> booksList = userBooksService.searchBooks(searchOne);
-        return ResponseEntity.ok().body(booksList);
+        return ResponseEntity.ok().body(userBooksService.searchBooks(searchOne));
     }
 
     // 책 교환에서 isbn과 salesstate을 이용하여 profileUid 추출 후 프로필 목록 조회 API

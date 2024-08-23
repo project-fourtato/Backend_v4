@@ -3,7 +3,6 @@ package com.hallym.booker.service;
 
 import com.hallym.booker.dto.Profile.ProfileResponseDTO;
 import com.hallym.booker.dto.UserBooks.*;
-import org.w3c.dom.Element;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public interface UserBooksService {
     List<BooksWithStatusDTO> searchBooks(String loginUid, String searchOne);
 
     // 책 교환에서 검색된 책 목록 조회
-    List<BooksFindDTO> searchBooks(String searchOne);
+    BookFindAllDTO searchBooks(String searchOne);
 
     // 책 교환에서 isbn과 salesstate을 이용하여 profileUid 추출 후 프로필 목록 조회
     List<ProfileResponseDTO> getProfilesByIsbnAndSaleStatus(String isbn);
@@ -40,8 +39,5 @@ public interface UserBooksService {
     ReadingWithAllUserList readingWithProfileList(String loginId);
 
     //베스트셀러
-    BestSellerListResponse bestseller();
-
-    // tag값의 정보를 가져오는 함수
-    String getTagValue(String tag, Element eElement);
+    BookFindAllDTO bestseller();
 }

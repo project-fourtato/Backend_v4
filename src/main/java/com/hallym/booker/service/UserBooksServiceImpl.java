@@ -1,8 +1,9 @@
 package com.hallym.booker.service;
 
-import com.hallym.booker.controller.ApiTagValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hallym.booker.domain.BookDetails;
-import com.hallym.booker.domain.Journals;
+import com.hallym.booker.domain.Login;
 import com.hallym.booker.domain.Profile;
 import com.hallym.booker.domain.UserBooks;
 import com.hallym.booker.dto.BookDetails.BookDetailsResponseDTO;
@@ -11,6 +12,7 @@ import com.hallym.booker.dto.UserBooks.*;
 import com.hallym.booker.exception.profile.NoSuchLoginException;
 import com.hallym.booker.exception.profile.NoSuchProfileException;
 import com.hallym.booker.exception.userBooks.DuplicateUserBooksException;
+import com.hallym.booker.exception.userBooks.NoSuchAladinApiIsbnSearchResult;
 import com.hallym.booker.exception.userBooks.NoSuchUserBooksException;
 import com.hallym.booker.repository.BookDetailsRepository;
 import com.hallym.booker.repository.LoginRepository;
@@ -21,17 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -45,13 +44,12 @@ public class UserBooksServiceImpl implements UserBooksService {
     private final UserBooksRepository userBooksRepository;
     private final BookDetailsRepository bookDetailsRepository;
     private final ProfileRepository profileRepository;
-    private final ApiTagValue apiTagValue;
 
     @Value("${aladin.api.key}")
     private String apiKey;
 
-    private static final String ALADIN_API_URL1 = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Sort=SalesPoint&Query=%s&QueryType=Keyword&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
-    private static final String ALADIN_API_URL2 = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=%s&itemIdType=ISBN&ItemId=%s&output=xml&Version=20131101&Cover=Big";
+    private static final String ALADIN_API_URL1 = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Sort=SalesPoint&Query=%s&QueryType=Keyword&start=1&SearchTarget=Book&output=js&Version=20131101&Cover=Big";
+    private static final String ALADIN_API_URL2 = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=%s&itemIdType=ISBN13&ItemId=%s&output=js&Version=20131101&Cover=Big";
 
     // 책 등록
     @Override
@@ -62,14 +60,14 @@ public class UserBooksServiceImpl implements UserBooksService {
         Optional<BookDetails> bookDetails = bookDetailsRepository.findByIsbn(userBooksDTO.getIsbn());
 
         if (!bookDetails.isPresent()) {
-            BookDetailsResponseDTO bookDetailsResponseDTO = searchBook(userBooksDTO.getIsbn());
+            BookFindDTO bookFindDTO = searchBook(userBooksDTO.getIsbn());
 
             bookDetails = Optional.of(BookDetails.create(
-                    bookDetailsResponseDTO.getIsbn(),
-                    bookDetailsResponseDTO.getBookTitle(),
-                    bookDetailsResponseDTO.getAuthor(),
-                    bookDetailsResponseDTO.getPublisher(),
-                    bookDetailsResponseDTO.getCoverImageUrl()
+                    bookFindDTO.getIsbn(),
+                    bookFindDTO.getBookTitle(),
+                    bookFindDTO.getAuthor(),
+                    bookFindDTO.getPublisher(),
+                    bookFindDTO.getCoverImageUrl()
             ));
             bookDetailsRepository.save(bookDetails.get());
         }
@@ -83,26 +81,15 @@ public class UserBooksServiceImpl implements UserBooksService {
         userBooksRepository.save(userBooks);
     }
 
-    private BookDetailsResponseDTO searchBook(String searchIsbn) {
-        BookDetailsResponseDTO bookDetailsResponseDTO = null;
+    private BookFindDTO searchBook(String searchIsbn) {
         String url = String.format(ALADIN_API_URL2, apiKey, searchIsbn);
-        Document doc = getXmlDocument(url);
+        List<BookFindDTO> bookFindAllDTO = aladinApiJson(url);
 
-        NodeList nList = doc.getElementsByTagName("item");
-
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Element eElement = (Element) nList.item(temp);
-
-            // 책 정보 추출
-            String bookTitle = apiTagValue.getTagValue("title", eElement);
-            String author = apiTagValue.getTagValue("author", eElement);
-            String isbn = apiTagValue.getTagValue("isbn13", eElement);
-            String publisher = apiTagValue.getTagValue("publisher", eElement);
-            String coverImageUrl = apiTagValue.getTagValue("cover", eElement);
-
-            bookDetailsResponseDTO = new BookDetailsResponseDTO(isbn, bookTitle, author, publisher, coverImageUrl);
+        if(bookFindAllDTO.size() == 0) {
+            throw new NoSuchAladinApiIsbnSearchResult();
         }
-        return bookDetailsResponseDTO;
+
+        return bookFindAllDTO.get(0);
     }
 
     // 책 삭제
@@ -165,43 +152,36 @@ public class UserBooksServiceImpl implements UserBooksService {
     // 책 검색에서 isbn을 통해 독서 상태 및 책(알라딘) 조회
     @Override
     public List<BooksWithStatusDTO> searchBooks(String loginUid, String searchOne) {
+        Profile profile = profileRepository.findById(
+                        loginRepository.findById(loginUid).get().getProfile().getProfileUid())
+                .orElseThrow(() -> new NoSuchProfileException());
         List<BooksWithStatusDTO> booksList = new ArrayList<>();
         String url = String.format(ALADIN_API_URL1, apiKey, searchOne);
 
-        Document doc = getXmlDocument(url);
-        if (doc == null) {
-            throw new NoSuchUserBooksException();
-        }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String response = restTemplate.getForObject(url, String.class);
 
-        NodeList nList = doc.getElementsByTagName("item");
-        if (nList.getLength() == 0) {
-            throw new NoSuchUserBooksException();
-        }
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response);
 
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Element eElement = (Element) nList.item(temp);
+            JsonNode arrayNode = rootNode.get("item");
+            for (JsonNode element : arrayNode) {
+                BooksWithStatusDTO bookDto = new BooksWithStatusDTO(element.get("author").asText(),
+                        element.get("title").asText(),
+                        element.get("author").asText(),
+                        element.get("publisher").asText(),
+                        element.get("cover").asText(), 0);
 
-            // 책 정보 추출
-            String bookTitle = apiTagValue.getTagValue("title", eElement);
-            String author = apiTagValue.getTagValue("author", eElement);
-            String isbn = apiTagValue.getTagValue("isbn13", eElement);
-            String publisher = apiTagValue.getTagValue("publisher", eElement);
-            String coverImageUrl = apiTagValue.getTagValue("cover", eElement);
+                UserBooks userBook = userBooksRepository.findByProfileUidAndIsbn(profile, element.get("isbn13").asText());
+                if (userBook != null) {
+                    bookDto.setReadStatus(userBook.getReadStatus());
+                }
 
-            BooksWithStatusDTO bookDto = new BooksWithStatusDTO(isbn, bookTitle, author, publisher, coverImageUrl, 0);
-
-            // 프로필 조회
-            Profile profile = profileRepository.findById(
-                            loginRepository.findById(loginUid).get().getProfile().getProfileUid())
-                    .orElseThrow(() -> new NoSuchProfileException());
-
-            // 사용자의 책 상태 조회
-            UserBooks userBook = userBooksRepository.findByProfileUidAndIsbn(profile, isbn);
-            if (userBook != null) {
-                bookDto.setReadStatus(userBook.getReadStatus());
+                booksList.add(bookDto);
             }
-
-            booksList.add(bookDto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return booksList;
@@ -209,39 +189,13 @@ public class UserBooksServiceImpl implements UserBooksService {
 
     // 책 교환에서 검색된 책 목록 조회
     @Override
-    public List<BooksFindDTO> searchBooks(String searchOne) {
-        return searchBooksCommon(searchOne);
-    }
-
-    // 책 검색 공통 메소드
-    private List<BooksFindDTO> searchBooksCommon(String searchOne) {
-        List<BooksFindDTO> booksList = new ArrayList<>();
+    public BookFindAllDTO searchBooks(String searchOne) {
         String encodedQuery = searchOne.replace(" ", "%20");
         String url = String.format(ALADIN_API_URL1, apiKey, encodedQuery);
 
-        Document doc = getXmlDocument(url);
-        if (doc == null) {
-            throw new NoSuchUserBooksException();
-        }
+        List<BookFindDTO> bookFindAllDTO = aladinApiJson(url);
 
-        NodeList nList = doc.getElementsByTagName("item");
-        if (nList.getLength() == 0) {
-            throw new NoSuchUserBooksException();
-        }
-
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Element eElement = (Element) nList.item(temp);
-            BooksFindDTO bookDto = new BooksFindDTO(
-                    apiTagValue.getTagValue("title", eElement),
-                    apiTagValue.getTagValue("author", eElement),
-                    apiTagValue.getTagValue("isbn13", eElement),
-                    apiTagValue.getTagValue("publisher", eElement),
-                    apiTagValue.getTagValue("cover", eElement)
-            );
-            booksList.add(bookDto);
-        }
-
-        return booksList;
+        return BookFindAllDTO.of(bookFindAllDTO);
     }
 
     // 책 교환에서 isbn과 salesstate을 이용하여 profileUid 추출 후 프로필 목록 조회
@@ -289,9 +243,14 @@ public class UserBooksServiceImpl implements UserBooksService {
     @Override
     public ReadingWithAllUserList readingWithProfileList(String loginId) {
         Profile profile = loginRepository.findById(loginId).orElseThrow(NoSuchLoginException::new).getProfile();
-        List<UserBooks> withProfileList = userBooksRepository.findWithProfileList(profile.getProfileUid());
+        List<UserBooks> userBooksList = userBooksRepository.findAllByProfileUid(profile.getProfileUid());
+        List<UserBooks> withProfileList = userBooksRepository.findWithProfileListAndFollowList(profile.getProfileUid());
 
         Map<BookDetails, ReadingProfileWithBookUid> map = new ConcurrentHashMap<>();
+
+        for (UserBooks userBooks : userBooksList) {
+            map.put(userBooks.getBookDetails(), ReadingProfileWithBookUid.of(new ArrayList<>(), userBooks.getBookUid()));
+        }
 
         for (UserBooks userBooks : withProfileList) {
             List<ReadingProfile> readingProfile;
@@ -315,52 +274,38 @@ public class UserBooksServiceImpl implements UserBooksService {
      * 베스트셀러
      */
     @Override
-    public BestSellerListResponse bestseller() {
-        // 본인이 받은 api키를 추가
-        String key = "ttbblossom69842039002";
-        List<BestSellerResponse> collect = new ArrayList<>();
+    public BookFindAllDTO bestseller() {
+        String url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=" + apiKey + "&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101&Cover=Big";
+        List<BookFindDTO> bookFindAllDTO = aladinApiJson(url);
+
+        return BookFindAllDTO.of(bookFindAllDTO);
+    }
+
+    private List<BookFindDTO> aladinApiJson(String url) {
+        List<BookFindDTO> collect = new ArrayList<>();
 
         try {
-            // parsing할 url 지정(API 키 포함해서)
-            String url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbhyejmh1853001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=xml&Version=20131101&Cover=Big";
+            RestTemplate restTemplate = new RestTemplate();
+            String response = restTemplate.getForObject(url, String.class);
 
-            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
-            Document doc = dBuilder.parse(url);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response);
 
-            // 제일 첫번째 태그
-            doc.getDocumentElement().normalize();
+            JsonNode arrayNode = rootNode.get("item");
+            for (JsonNode element : arrayNode) {
+                BookFindDTO bookFindDTO = new BookFindDTO(element.get("title").asText(),
+                        element.get("author").asText(),
+                        element.get("isbn13").asText(),
+                        element.get("publisher").asText(),
+                        element.get("cover").asText());
 
-            // 파싱할 tag
-            NodeList nList = doc.getElementsByTagName("item");
-
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);
-
-                Element eElement = (Element) nNode;
-
-                BestSellerResponse br = new BestSellerResponse(getTagValue("title", eElement), getTagValue("author", eElement), getTagValue("isbn13", eElement), getTagValue("publisher", eElement),getTagValue("cover", eElement));
-                collect.add(br);
+                collect.add(bookFindDTO);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new BestSellerListResponse(collect);
-    }
-
-    // tag값의 정보를 가져오는 함수
-    @Override
-    public String getTagValue(String tag, Element eElement) {
-
-        //결과를 저장할 result 변수 선언
-        String result = "";
-
-        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
-
-        result = nlList.item(0).getTextContent();
-
-        return result;
+        return collect;
     }
 
 }

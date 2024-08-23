@@ -27,7 +27,7 @@ public class BookDetailsServiceImpl implements BookDetailsService {
     @Override
     public BookDetailsResponseDTO getBookDetailsByISBN(String isbn) {
         try {
-            String url = "https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=" + apiKey + "&itemIdType=ISBN13&ItemId=" + isbn + "&output=xml&Version=20131101&OptResult=cover=Big";
+            String url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=" + apiKey + "&itemIdType=ISBN13&ItemId=" + isbn + "&output=js&Version=20131101&Cover=Big";
 
             Document doc = getDocument(url);
             if (doc != null) {
