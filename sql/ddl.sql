@@ -50,6 +50,8 @@ CREATE TABLE `directmessage` (
                                  `mdate` DATETIME DEFAULT NULL,
                                  `sender_uid` BIGINT NOT NULL,
                                  `recipient_uid` BIGINT NOT NULL,
+                                 `delete_sender_check` TINYINT DEFAULT NULL,
+                                 `delete_recipient_check` TINYINT DEFAULT NULL,
                                  PRIMARY KEY (`message_id`)
 );
 
