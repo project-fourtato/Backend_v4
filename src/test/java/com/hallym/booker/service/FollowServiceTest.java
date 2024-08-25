@@ -18,6 +18,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+//@SpringBootTest
+//@Transactional
+//@RunWith(SpringRunner.class)
 public class FollowServiceTest {
 //    @Autowired
 //    FollowService followService;
@@ -53,7 +56,7 @@ public class FollowServiceTest {
 //        profile2 = profileRepository.save(profile2);
 //
 //        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
-//        List<Follow> allByFromUserId = followRepository.findAllByFromUserId(profile2.getProfileUid());
+//        List<Follow> allByFromUserId = followRepository.findAllByFromUserId(profile1.getProfileUid());
 //
 //        Assertions.assertThat(allByFromUserId).extracting(Follow::getToUserId).contains(profile2.getProfileUid());
 //    }
