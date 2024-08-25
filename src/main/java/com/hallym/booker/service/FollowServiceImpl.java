@@ -10,6 +10,7 @@ import com.hallym.booker.repository.JournalsRepository;
 import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class FollowServiceImpl implements FollowService{
     private final FollowRepository followRepository;
     private final ProfileRepository profileRepository;
@@ -28,18 +30,18 @@ public class FollowServiceImpl implements FollowService{
 
     @Transactional
     @Override
-    public void newFollow(Long fromUserId, Long toUserId){
-        Boolean check = checkFollowing(fromUserId,toUserId);
+    public void newFollow(String toUserId, Long fromUserId){
+        Boolean check = checkFollowing(toUserId,fromUserId);
         if (check == Boolean.TRUE){
             throw new DuplicateFollowException();
         }
+        Long toProfileId = loginRepository.findById(toUserId).get().getProfile().getProfileUid();
 
+        Profile to = profileRepository.findById(toProfileId).get();
+        to.addFollowers();
         Profile from = profileRepository.findById(fromUserId).get();
         from.addFollowings();
-        Profile to = profileRepository.findById(toUserId).get();
-        to.addFollowers();
-
-        Follow follow = Follow.create(from, toUserId);
+        Follow follow = Follow.create(from, to.getProfileUid());
         followRepository.save(follow);
     }
 
@@ -93,16 +95,21 @@ public class FollowServiceImpl implements FollowService{
 
     @Transactional
     @Override
-    public void removeFollowing(Long fromUserId,Long toUserId){
-        profileRepository.findById(toUserId).get().removeFollowers();
-        Profile from = profileRepository.findById(fromUserId).get();
+    public void removeFollowing(String toUserId,Long fromUserId){
+        Long fromProfileId = profileRepository.findById(fromUserId).get().getProfileUid();
+
+        profileRepository.findById(fromUserId).get().removeFollowers();
+        Profile from = profileRepository.findById(fromProfileId).get();
+        Profile to = loginRepository.findById(toUserId).get().getProfile();
         from.removeFollowings();
-        from.removeFollow(followRepository.findByFromUserIdAndToUserId(fromUserId,toUserId).get());
+        to.removeFollowers();
+        from.removeFollow(followRepository.findByFromUserIdAndToUserId(fromProfileId,to.getProfileUid()).get());
     }
 
     @Override
-    public Boolean checkFollowing(Long fromUserId,Long toUserId){
-        Optional<Follow> follow= followRepository.findByFromUserIdAndToUserId(fromUserId,toUserId);
+    public Boolean checkFollowing(String toUserId,Long fromUserId){
+        Long toProfileId = loginRepository.findById(toUserId).get().getProfile().getProfileUid();
+        Optional<Follow> follow= followRepository.findByFromUserIdAndToUserId(fromUserId,toProfileId);
         if(follow.isEmpty()){
             return false;
         } else {

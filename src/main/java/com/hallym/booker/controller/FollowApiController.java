@@ -39,14 +39,14 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        followService.newFollow(followRequest.getFromUserId(), followService.findProfileUid(loginResponse.getUid()));
+        followService.newFollow(followRequest.getToUserId(), followService.findProfileUid(loginResponse.getUid()));
         return new ResponseEntity<>("Follow created successfully", HttpStatus.OK);
     }
 
 
     // 팔로잉 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
     @PostMapping("/followingsList")
-    public ResponseEntity<List<ProfileDto>> followingsList(HttpServletRequest request) {
+    public ResponseEntity<List<ProfileDto>> followingsList(@RequestBody @Valid final FollowRequest followRequest,HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session == null){ //세션이 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
@@ -55,7 +55,7 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        List<Profile> followings = followService.findAllToUserIdProfile(loginResponse.getUid());
+        List<Profile> followings = followService.findAllToUserIdProfile(followRequest.getToUserId());
         List<ProfileDto> followingsInfo = new ArrayList<>();
         for(Profile profile : followings){
             followingsInfo.add(new ProfileDto(profile.getLogin().getLoginUid(),profile.getNickname(),
@@ -66,7 +66,7 @@ public class FollowApiController {
 
     // 팔로워 목록 조회 - 프로필(사진 이름, URL)&닉네임 (전체)
     @PostMapping("/followersList")
-    public ResponseEntity<List<ProfileDto>> followersList(HttpServletRequest request) {
+    public ResponseEntity<List<ProfileDto>> followersList(@RequestBody @Valid final FollowRequest followRequest,HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session == null){ //세션이 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
@@ -75,7 +75,8 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        List<Profile> followers = followService.findAllFromUserIdProfile(loginResponse.getUid());
+
+        List<Profile> followers = followService.findAllFromUserIdProfile(followRequest.getFromUserId());
         List<ProfileDto> followersInfo = new ArrayList<>();
         for(Profile profile : followers){
             followersInfo.add(new ProfileDto(profile.getLogin().getLoginUid(),profile.getNickname(),
@@ -109,7 +110,7 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        followService.removeFollowing(followRequest.getFromUserId(), followService.findProfileUid(loginResponse.getUid()));
+        followService.removeFollowing(followRequest.getToUserId(), followService.findProfileUid(loginResponse.getUid()));
         return new ResponseEntity<>("Follow deleted successfully",HttpStatus.OK);
     }
 
@@ -124,6 +125,6 @@ public class FollowApiController {
         if(loginResponse == null){ //세션에 회원 데이터가 없으면 홈으로 이동하게 null
             return new ResponseEntity<>(null, HttpStatus.FOUND);
         }
-        return ResponseEntity.ok().body(followService.checkFollowing(followRequest.getFromUserId(),followService.findProfileUid(loginResponse.getUid())));
+        return ResponseEntity.ok().body(followService.checkFollowing(followRequest.getToUserId(),followService.findProfileUid(loginResponse.getUid())));
     }
 }

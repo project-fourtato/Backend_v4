@@ -55,7 +55,7 @@ public class FollowServiceTest {
         Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","resources/DummyImg/S3BasicImg.jpg","default","책 안좋아해요");
         profile2 = profileRepository.save(profile2);
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
         List<Follow> allByFromUserId = followRepository.findAllByFromUserId(profile1.getProfileUid());
 
         Assertions.assertThat(allByFromUserId).extracting(Follow::getToUserId).contains(profile2.getProfileUid());
@@ -71,9 +71,9 @@ public class FollowServiceTest {
         profile3 = profileRepository.save(profile3);
         String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
-        followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
-        followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
+        followService.newFollow(profile2.getLogin().getLoginUid(), profile1.getProfileUid()); //profile2 -> profile1
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile3.getProfileUid()); //profile1 -> profile3
 
         Assertions.assertThat(followService.findAllToUserIdProfile(loginId).size()).isEqualTo(2);
     }
@@ -88,9 +88,9 @@ public class FollowServiceTest {
         profile3 = profileRepository.save(profile3);
         String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
-        followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
-        followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile2.getLogin().getLoginUid(), profile1.getProfileUid()); //profile2 -> profile1
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile3.getProfileUid()); //profile1 -> profile3
 
         Assertions.assertThat(followService.findAllFromUserIdProfile(loginId).size()).isEqualTo(1);
     }
@@ -105,9 +105,9 @@ public class FollowServiceTest {
         profile3 = profileRepository.save(profile3);
         String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
-        followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
-        followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile2.getLogin().getLoginUid(), profile1.getProfileUid()); //profile2 -> profile1
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile3.getProfileUid()); //profile1 -> profile3
 
         BookDetails bookDetails2 = BookDetails.create("isbn","어린왕자","dy","dy","url");
         bookDetails2 = bookDetailsRepository.save(bookDetails2);
@@ -132,11 +132,11 @@ public class FollowServiceTest {
         profile3 = profileRepository.save(profile3);
         String loginId = profileRepository.findById(profile1.getProfileUid()).orElseThrow(NoSuchProfileException::new).getLogin().getLoginUid();
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
-        followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
-        followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile2.getLogin().getLoginUid(), profile1.getProfileUid()); //profile2 -> profile1
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile3.getProfileUid()); //profile1 -> profile3
 
-        followService.removeFollowing(profile1.getProfileUid(),profile2.getProfileUid());
+        followService.removeFollowing(profile1.getLogin().getLoginUid(),profile2.getProfileUid());
         Assertions.assertThat(followService.findAllToUserIdProfile(loginId).size()).isEqualTo(1);
     }
 
@@ -147,10 +147,10 @@ public class FollowServiceTest {
         Profile profile2 = Profile.create(loginRepository.findById("id2").get(),"팥쥐","resources/DummyImg/S3BasicImg.jpg","default","책 안좋아해요");
         profile2 = profileRepository.save(profile2);
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
 
-        Assertions.assertThat(followService.checkFollowing(profile1.getProfileUid(),profile2.getProfileUid())).isEqualTo(true);
-        Assertions.assertThat(followService.checkFollowing(profile2.getProfileUid(),profile1.getProfileUid())).isEqualTo(false);
+        Assertions.assertThat(followService.checkFollowing(profile1.getLogin().getLoginUid(),profile2.getProfileUid())).isEqualTo(true);
+        Assertions.assertThat(followService.checkFollowing(profile2.getLogin().getLoginUid(),profile1.getProfileUid())).isEqualTo(false);
     }
 
     @Test
@@ -162,14 +162,14 @@ public class FollowServiceTest {
         Profile profile3 = Profile.create(loginRepository.findById("id3").get(),"쥐돌이","resources/DummyImg/S3BasicImg.jpg","default","찍찍");
         profile3 = profileRepository.save(profile3);
 
-        followService.newFollow(profile1.getProfileUid(), profile2.getProfileUid()); //profile1 -> profile2
-        followService.newFollow(profile2.getProfileUid(), profile1.getProfileUid()); //profile2 -> profile1
-        followService.newFollow(profile1.getProfileUid(), profile3.getProfileUid()); //profile1 -> profile3
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile2.getProfileUid()); //profile1 -> profile2
+        followService.newFollow(profile2.getLogin().getLoginUid(), profile1.getProfileUid()); //profile2 -> profile1
+        followService.newFollow(profile1.getLogin().getLoginUid(), profile3.getProfileUid()); //profile1 -> profile3
 
         Assertions.assertThat(profile1.getCountFollowings()).isEqualTo(2);
         Assertions.assertThat(profile1.getCountFollowers()).isEqualTo(1);
 
-        followService.removeFollowing(profile1.getProfileUid(),profile2.getProfileUid());
+        followService.removeFollowing(profile1.getLogin().getLoginUid(),profile2.getProfileUid());
         Assertions.assertThat(profile1.getCountFollowings()).isEqualTo(1);
         Assertions.assertThat(profile2.getCountFollowers()).isEqualTo(0);
     }

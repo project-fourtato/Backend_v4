@@ -19,11 +19,11 @@ import java.util.Optional;
 
 public interface FollowService {
 
-    public void newFollow(Long fromUserId, Long toUserId);
+    public void newFollow(String fromUserId, Long toUserId);
     public List<Profile> findAllToUserIdProfile(String fromUserId);
     public List<Profile> findAllFromUserIdProfile(String toUserId);
     public List<LatestJournalsResponse> findFollowingsLatestJournals(String fromUserId);
-    public void removeFollowing(Long fromUserId,Long toUserId);
-    public Boolean checkFollowing(Long fromUserId,Long toUserId);
+    public void removeFollowing(String fromUserId,Long toUserId);
+    public Boolean checkFollowing(String fromUserId,Long toUserId);
     public Long findProfileUid(String LoginId);
 }
