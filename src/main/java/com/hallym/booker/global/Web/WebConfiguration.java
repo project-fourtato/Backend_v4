@@ -10,7 +10,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://our-booker.site")
+                .allowedOrigins("https://d1kitkwt0ofexm.cloudfront.net/")
                 .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.POST.name(),
