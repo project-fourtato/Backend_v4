@@ -8,17 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings (CorsRegistry registry){
         registry.addMapping("/**")
-                .allowedOrigins("https://d1kitkwt0ofexm.cloudfront.net/")
-                .allowedMethods(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.OPTIONS.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.PUT.name()
-                )
-                .allowCredentials(true) // 쿠키나 인증 헤더 정보를 포함시켜 요청하고 싶을 때 필요
-                .allowedHeaders("*"); //클라이언트 CORS 허용
+                .allowedOriginPatterns("*") // 안에 해당 주소를 넣어도 됨
+                .allowedHeaders("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS" , "PATCH")
+                .exposedHeaders("Authorization", "RefreshToken")
+                .allowCredentials(true);
     }
 }
