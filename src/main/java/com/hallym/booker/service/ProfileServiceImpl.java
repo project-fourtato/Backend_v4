@@ -64,7 +64,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = login.getProfile();
 
         //사진 삭제
-        if(!Objects.equals(profile.getUserimageName(), "/default/default-profile.png")) {
+        if(!profile.getUserimageName().equals("/default/default-profile.png")) {
             s3Service.delete(profile.getUserimageName());
         }
 

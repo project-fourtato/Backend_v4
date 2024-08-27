@@ -57,9 +57,13 @@ public class DirectmessageServiceImpl implements DirectmessageService{
     private List<DirectmessageResponse> convertToDTO(List<Directmessage> messages, boolean isReceived) {
         List<DirectmessageResponse> dtos = new LinkedList<>();
         for (Directmessage message : messages) {
-            Profile profile = profileRepository.findById(isReceived ? message.getSenderUid() : message.getRecipientUid())
-                    .orElseThrow(() -> new NoSuchProfileException());
+            Profile profile =
+            (!(message.getSenderUid() == -1 || message.getRecipientUid() == -1))?
+                profileRepository.findById(isReceived ? message.getSenderUid() : message.getRecipientUid())
+                        .orElseThrow(() -> new NoSuchProfileException()) : null;
 
+            String defaultImgUrl = "https://booker-v4-aws.s3.ap-northeast-2.amazonaws.com/default/default-profile.png";
+            String defaultImgName = "default/default-profile.png";
             DirectmessageResponse dto = DirectmessageResponse.builder()
                     .messageId(message.getMessageId())
                     .senderUid(message.getSenderUid())
@@ -68,9 +72,9 @@ public class DirectmessageServiceImpl implements DirectmessageService{
                     .mcheck(message.getMcheck())
                     .mtitle(message.getMtitle())
                     .mcontents(message.getMcontents())
-                    .nickname(profile.getNickname())
-                    .userimageUrl(profile.getUserimageUrl())
-                    .userimageName(profile.getUserimageName())
+                    .nickname(profile==null? "탈퇴한 사용자":profile.getNickname())
+                    .userimageUrl(profile==null?defaultImgUrl:profile.getUserimageUrl())
+                    .userimageName(profile==null?defaultImgName:profile.getUserimageName())
                     .build();
 
             dtos.add(dto);
