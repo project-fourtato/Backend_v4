@@ -50,7 +50,7 @@ public class ProfileApiController {
 
         String loginUid = loginResponse.getUid();
 
-        String imgUrl = "https://booker-v4-bucket.s3.amazonaws.com/default/default-profile.png";
+        String imgUrl = "https://booker-v4-aws.s3.ap-northeast-2.amazonaws.com/default/default-profile.png";
         String imgName = "default/default-profile.png";
         // 사진 등록
         if(registerRequest.getFile() != null) {

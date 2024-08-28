@@ -64,14 +64,20 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = login.getProfile();
 
         //사진 삭제
-        if(!Objects.equals(profile.getUserimageName(), "/default/default-profile.png")) {
+        if(!profile.getUserimageName().equals("/default/default-profile.png")) {
             s3Service.delete(profile.getUserimageName());
         }
 
         List<Follow> followList = followRepository.findAllByToUserId(profile.getProfileUid()); //딴 사람이 날 팔로우한 것을 취소해야 함
         for (Follow follow : followList){
             Profile following = profileRepository.findById(follow.getProfile().getProfileUid()).get();
+            following.removeFollowings();
             following.getFollow().remove(follow);
+        }
+        List<Follow> follwerList = followRepository.findAllByFromUserId(profile.getProfileUid());
+        for(Follow follow: follwerList){
+            Profile follower = profileRepository.findById(follow.getToUserId()).get();
+            follower.removeFollowers();
         }
         List<Directmessage> directMessagesByRecipientList = directmessageRepository.findAllDirectMessagesByRecipient(profile.getProfileUid());
         for (int i=0;i<directMessagesByRecipientList.size();i++){
