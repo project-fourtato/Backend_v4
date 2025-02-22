@@ -26,7 +26,7 @@
 [https://www.canva.com/design/DAGP3hzGuVY/qFD940nfR-PlXeNvLcncNA/view?utm_content=DAGP3hzGuVY&utm_campaign=designshare&utm_medium=link&utm_source=editor](https://youtu.be/1_8XdzArRtM?si=Ru1rJNPsBwGLHum_)
 
 ## 6. Booker 소개 PPT
-https://www.canva.com/design/DAGQWfadArs/TiUrTBkgcN6IH6OxuVlh5w/view?utm_content=DAGQWfadArs&utm_campaign=designshare&utm_medium=link&utm_source=editor
+[https://www.canva.com/design/DAGQWfadArs/TiUrTBkgcN6IH6OxuVlh5w/view?utm_content=DAGQWfadArs&utm_campaign=designshare&utm_medium=link&utm_source=editor](https://www.canva.com/design/DAGVntyGEmM/RO-4D86gLwdy-IzW9Fpysw/view?utm_content=DAGVntyGEmM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h1284d2efba)
 
 ## 7. 기술 스택 🛠
 <img width="960" alt="SA" src="https://github.com/user-attachments/assets/d37fd644-d4a8-46d9-a23d-8cbfa8753bc5">
@@ -40,7 +40,7 @@ https://capable-oboe-cce.notion.site/WORKFLOW-3a1e6afa67ea496584673b33ad937ef6?p
 ## 10. ERD 🗂
 ![ERD](https://github.com/user-attachments/assets/75b312a2-af39-49d6-b16e-6db69e56c515)
 
-## 11. UI
+## 11. UI 👩🏻‍💻
 https://capable-oboe-cce.notion.site/UI-51f2bd25ef814651b13dfead020686ae?pvs=4
 
 ## 12. 트러블 슈팅 🎃
