@@ -86,7 +86,7 @@ public class FollowApiController {
     }
 
     // 팔로잉들의 최신 독서록 목록 조회 - 프로필(사진 이름, URL)&닉네임
-    @PostMapping("/followingsLatestJournals")
+    @GetMapping("/followingsLatestJournals")
     public ResponseEntity<List<LatestJournalsResponse>> followingsLatestJournals(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session == null){ //세션이 없으면 홈으로 이동하게 null
