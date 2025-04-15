@@ -11,6 +11,7 @@ import com.hallym.booker.repository.LoginRepository;
 import com.hallym.booker.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,30 +68,8 @@ public class FollowServiceImpl implements FollowService{
 
     @Override
     public List<LatestJournalsResponse> findFollowingsLatestJournals(String fromUserId){
-        List<Follow> followList = followRepository.findAllByFromUserId(loginRepository.findById(fromUserId).get().getProfile().getProfileUid());
-        List<Profile> profiles = new ArrayList<>();
-        for (Follow follow : followList){
-            profiles.add(profileRepository.findById(follow.getToUserId()).get());
-        }
-        List<LatestJournalsResponse> AllFollowingsjournals = new ArrayList<>();
-        for (Profile profile: profiles){
-            List<Journals> journals = journalsRepository.findByUserBooks_Profile_ProfileUidOrderByJdatetimeDesc(profile.getProfileUid());
-            for(Journals journal : journals){
-                LatestJournalsResponse l = LatestJournalsResponse.builder()
-                        .toUserId(profile.getLogin().getLoginUid())
-                        .jid(journal.getJournalId())
-                        .pdatetime(journal.getJdatetime())
-                        .ptitle(journal.getJtitle())
-                        .pcontents(journal.getJcontents())
-                        .nickname(profile.getNickname())
-                        .userimageUrl(profile.getUserimageUrl())
-                        .userimageName(profile.getUserimageName())
-                        .build();
-                AllFollowingsjournals.add(l);
-            }
-        }
-        int numberOfJournalsToShow = Math.min(7, AllFollowingsjournals.size()); //개수 제한
-        return AllFollowingsjournals.subList(0,numberOfJournalsToShow);
+        Profile fromProfile = loginRepository.findById(fromUserId).get().getProfile();
+        return followRepository.findLatestJournals(fromProfile.getProfileUid(), PageRequest.of(0, 7));
     }
 
     @Transactional
